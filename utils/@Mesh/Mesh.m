@@ -25,8 +25,21 @@ methods
     function obj = Mesh(varargin)
         if (length(varargin)==1) && isa(varargin{1},'Mesh')
             obj.V=varargin{1}.V;
+            obj.nV=varargin{1}.nV;
+            obj.Nv=varargin{1}.Nv;
             obj.F=varargin{1}.F;
+            obj.nF=varargin{1}.nF;
+            obj.Nf=varargin{1}.Nf;
+            obj.F2V=varargin{1}.F2V;
+            obj.V2E=varargin{1}.V2E;
+            obj.A=varargin{1}.A;
+            obj.E=varargin{1}.E;
+            obj.nE=varargin{1}.nE;
+            obj.BE=varargin{1}.BE;
+            obj.BV=varargin{1}.BV;
             obj.Aux=varargin{1}.Aux;
+            obj.V2V=varargin{1}.V2V;
+            obj.E2E=varargin{1}.E2E;
         elseif length(varargin)>=2
             switch(varargin{1})
                 case 'off'

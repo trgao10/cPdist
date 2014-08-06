@@ -38,7 +38,11 @@ for ref=0:1
                     % Push GM to GN by m
                     m = [exp(1i*tet) -a*exp(1i*tet); -conj(a) 1];%takes z_0 -> w_0
                     pushFeatureM = CORR_apply_moebius_as_matrix(m,compl(GM.Aux.UniformizationV(:,FeaturesM)));
-                    HDist = TEETH_compute_pairwise_hyperbolic_distances(pushFeatureM.',compl(GN.Aux.UniformizationV(:,FeaturesN)).');
+                    if ref==0
+                        HDist = TEETH_compute_pairwise_hyperbolic_distances(pushFeatureM.',compl(GN.Aux.UniformizationV(:,FeaturesN)).');
+                    elseif ref==1
+                        HDist = TEETH_compute_pairwise_hyperbolic_distances(pushFeatureM.',compl(GN.Aux.UniformizationV(:,FeaturesN))');
+                    end
                     [~, tind1] = min(HDist,[],2);
                     [~, tind2] = min(HDist,[],1);
                     tind2 = tind2';
@@ -109,10 +113,10 @@ end
 %     V2(2,:) = -V2(2,:);
 % end
 % 
-figure;GM.draw();hold on;
-scatter3(GM.V(1,FeaturesM(best_jj)),GM.V(2,FeaturesM(best_jj)),GM.V(3,FeaturesM(best_jj)),50,'g','filled');
-figure;GN.draw();hold on;
-scatter3(GN.V(1,FeaturesN(best_kk)),GN.V(2,FeaturesN(best_kk)),GN.V(3,FeaturesN(best_kk)),50,'g','filled');
+% figure;GM.draw();hold on;
+% scatter3(GM.V(1,FeaturesM(best_jj)),GM.V(2,FeaturesM(best_jj)),GM.V(3,FeaturesM(best_jj)),50,'g','filled');
+% figure;GN.draw();hold on;
+% scatter3(GN.V(1,FeaturesN(best_kk)),GN.V(2,FeaturesN(best_kk)),GN.V(3,FeaturesN(best_kk)),50,'g','filled');
 
 end
 

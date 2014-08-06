@@ -15,13 +15,6 @@ Display = getoptions(options,'Display','off');
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % extract features (local maximum of conformal factors)
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-KM = Mesh('VF',GM.Aux.UniformizationV/2,GM.F);
-[~,AG] = GM.ComputeSurfaceArea;
-[~,KG] = KM.ComputeSurfaceArea;
-ratio = AG./KG;
-GM.Aux.Conf = ratio'*KM.F2V/3;
-[ConfMaxInds,~] = GM.FindLocalMax(GM.Aux.Conf',ConfMaxLocalWidth,ExcludeBoundary);
-
 [~,~,Cmin,Cmax,Cmean,Cgauss] = GM.ComputeCurvature(options);
 DNE = Cmin.^2+Cmax.^2;
 DNETruncInds = find(DNE>median(DNE));
@@ -35,23 +28,34 @@ AD = AreaDistortionFeature(GM,r);
 ADMaxInds(AD(ADMaxInds)>1) = [];
 
 Ring = GM.ComputeVertexRing;
-ToBeDelInds = [];
-for j=1:length(ConfMaxInds)
-    if isempty(find(DNETruncInds == ConfMaxInds(j), 1))
-        RingNBD = Ring{ConfMaxInds(j)};
-        flag = 0;
-        for k=1:length(RingNBD)
-            if find(DNETruncInds == RingNBD(k))
-                flag = 1;
-                break;
+
+if isfield(GM.Aux,'Conf')
+    % KM = Mesh('VF',GM.Aux.UniformizationV/2,GM.F);
+    % [~,AG] = GM.ComputeSurfaceArea;
+    % [~,KG] = KM.ComputeSurfaceArea;
+    % ratio = AG./KG;
+    % GM.Aux.Conf = ratio'*KM.F2V/3;
+    [ConfMaxInds,~] = GM.FindLocalMax(GM.Aux.Conf,ConfMaxLocalWidth,ExcludeBoundary);
+    ToBeDelInds = [];
+    for j=1:length(ConfMaxInds)
+        if isempty(find(DNETruncInds == ConfMaxInds(j), 1))
+            RingNBD = Ring{ConfMaxInds(j)};
+            flag = 0;
+            for k=1:length(RingNBD)
+                if find(DNETruncInds == RingNBD(k))
+                    flag = 1;
+                    break;
+                end
+            end
+            if (flag == 0)
+                ToBeDelInds = [ToBeDelInds,j];
             end
         end
-        if (flag == 0)
-            ToBeDelInds = [ToBeDelInds,j];
-        end
     end
+    ConfMaxInds(ToBeDelInds) = [];
+    
+    GM.Aux.ConfMaxInds = ConfMaxInds;
 end
-ConfMaxInds(ToBeDelInds) = [];
 
 ToBeDelInds = [];
 for j=1:length(GaussMaxInds)
@@ -107,7 +111,6 @@ if strcmpi(Display, 'on')
 end
 
 GM.Aux.ADMaxInds = ADMaxInds;
-GM.Aux.ConfMaxInds = ConfMaxInds;
 GM.Aux.GaussMaxInds = GaussMaxInds;
 GM.Aux.GaussMinInds = GaussMinInds;
 

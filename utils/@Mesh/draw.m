@@ -1,4 +1,4 @@
-function h = draw(G, options, FaceField)
+function h = draw(G, options, FeatureType)    
 
 F = G.F;
 V = G.V;
@@ -29,15 +29,10 @@ for i=minmax_face_size(1):minmax_face_size(2)
 end
 
 h = h( h>0 );
-if exist('options', 'var')==1
+if exist('options', 'var')==1 && ~isempty(options)
     set(h, options);
 end
 
-if exist('FaceField', 'var')
-    faceCenter=cell2mat(cellfun(@(x)(sum(V(:,x),2)), F','UniformOutput',false))./repmat(face_size',3,1);
-    hold on;
-    quiver3(faceCenter(1,:),faceCenter(2,:),faceCenter(3,:),FaceField(1,:),FaceField(2,:),FaceField(3,:));
-end
 dim = size(V, 1);
 if dim==3 && max(abs(V(3,:))) < 1e-8
     dim = 2;
@@ -53,6 +48,20 @@ grid off;
 axis off;
 axis tight;
 axis equal; 
+
+if exist('FeatureType','var')
+    hold on;
+    switch FeatureType
+        case 'ConfMax'
+            scatter3(G.V(1,G.Aux.ConfMaxInds),G.V(2,G.Aux.ConfMaxInds),G.V(3,G.Aux.ConfMaxInds),30,'g','filled');
+        case 'GaussMax'
+            scatter3(G.V(1,G.Aux.GaussMaxInds),G.V(2,G.Aux.GaussMaxInds),G.V(3,G.Aux.GaussMaxInds),30,'r','filled');
+        case 'GaussMin'
+            scatter3(G.V(1,G.Aux.GaussMinInds),G.V(2,G.Aux.GaussMinInds),G.V(3,G.Aux.GaussMinInds),30,'b','filled');
+        case 'ADMax'
+            scatter3(G.V(1,G.Aux.ADMaxInds),G.V(2,G.Aux.ADMaxInds),G.V(3,G.Aux.ADMaxInds),30,'y','filled');
+    end
+end
 
 cameratoolbar;
 cameratoolbar('SetCoordSys', 'none');
