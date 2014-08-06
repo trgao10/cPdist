@@ -52,7 +52,7 @@ G.Aux.UniformizationV = [uniV,zeros(G.nV,1)]';
 
 %%% 5) spread density points on mesh
 disp('spread density points on mesh...');
-Cgauss = G.ExtractFeatures;
+Cgauss = G.ExtractFeatures(options);
 for j=1:SmoothCurvatureFields
     CgaussFace = mean(Cgauss(G.F));
     [~,TriAreas] = G.ComputeSurfaceArea;

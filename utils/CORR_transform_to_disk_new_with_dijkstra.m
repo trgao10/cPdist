@@ -62,7 +62,7 @@ end
 % %further take the center point to the center by disc mobius
 center=P(center_ind);
 mob = [ 1 -center ; -conj(center) 1 ];
-[P] = CORR_apply_mobius_as_matrix(mob,P);
+[P] = CORR_apply_moebius_as_matrix(mob,P);
 
 dpmV = [real(P) imag(P)];
 

@@ -88,7 +88,11 @@ end
 ADMaxInds(ToBeDelInds) = [];
 
 if strcmpi(Display, 'on')
-    figure('Name',['Features on ' GM.Aux.name]);
+    if isfield(GM.Aux,'name')
+        figure('Name',['Features on ' GM.Aux.name]);
+    else
+        figure;
+    end
     GM.draw();hold on;
     set(gcf,'ToolBar','none');
     scatter3(GM.V(1,ConfMaxInds),GM.V(2,ConfMaxInds),GM.V(3,ConfMaxInds),'g','filled');

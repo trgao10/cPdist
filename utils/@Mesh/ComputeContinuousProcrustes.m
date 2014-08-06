@@ -17,10 +17,6 @@ FeaturesM = GM.Aux.ConfMaxInds;
 FeaturesN = GN.Aux.ConfMaxInds;
 
 for ref=0:1
-    best_err = Inf;
-    best_a = 0;
-    best_tet = 0;
-    
     if ref==1
         local_target = conj(target);
     else
@@ -75,15 +71,19 @@ for ref=0:1
                     end
                 end
                 % Record if best so far
-                if (err < best_err)
+                if ~exist('best_err','var')
                     best_err = err;
-                    ref12 = ref;
-%                     best_a = a;
-%                     best_tet = tet;
-                    TextureCoords1 = V1;
-                    TextureCoords2 = V2;
-                    best_jj = jj;
-                    best_kk = kk;
+                else
+                    if (err < best_err)
+                        best_err = err;
+                        ref12 = ref;
+                        %                     best_a = a;
+                        %                     best_tet = tet;
+                        TextureCoords1 = V1;
+                        TextureCoords2 = V2;
+                        best_jj = jj;
+                        best_kk = kk;
+                    end
                 end
             end
         end

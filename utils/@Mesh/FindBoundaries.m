@@ -20,10 +20,14 @@ BE = sparse(Nv,2);
 for m=1:length(I)
     i = I(m); j = J(m);
     if xor(E(i,j),E(j,i))
-        loc = find(BE(i,:) == 0); 
-        BE(i,loc(1)) = j;
-        loc = find(BE(j,:) == 0); 
-        BE(j,loc(1)) = i;
+        loc = find(BE(i,:) == 0);
+        if ~isempty(loc)
+            BE(i,loc(1)) = j;
+        end
+        loc = find(BE(j,:) == 0);
+        if ~isempty(loc)
+            BE(j,loc(1)) = i;
+        end
         BV(i) = 1;
         BV(j) = 1;
     end
