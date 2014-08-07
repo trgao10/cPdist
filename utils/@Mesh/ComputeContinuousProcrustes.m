@@ -1,6 +1,26 @@
-function [rslt] = ComputeContinuousProcrustes(GM,GN)
+function [rslt] = ComputeContinuousProcrustes(GM,GN,options)
 %COMPUTECONTINUOUSPROCRUSTES Summary of this function goes here
 %   Detailed explanation goes here
+
+if nargin<3
+    options = [];
+end
+
+FeatureType = getoptions(options,'FeatureType','ConfMax');
+switch FeatureType
+    case 'ADMax'
+        FeaturesM = GM.Aux.ADMaxInds;
+        FeaturesN = GN.Aux.ADMaxInds;
+    case 'GaussMax'
+        FeaturesM = GM.Aux.GaussMaxInds;
+        FeaturesN = GN.Aux.GaussMaxInds;
+    case 'GaussMin'
+        FeaturesM = GM.Aux.GaussMinInds;
+        FeaturesN = GN.Aux.GaussMinInds;
+    case 'ConfMax'
+        FeaturesM = GM.Aux.ConfMaxInds;
+        FeaturesN = GN.Aux.ConfMaxInds;
+end
 
 compl = @(x) x(1,:)+1i*x(2,:);
 
@@ -12,9 +32,6 @@ source(delInds) = [];
 target = compl(GN.Aux.UniformizationV);
 delInds = isnan(target);
 target(delInds) = [];
-
-FeaturesM = GM.Aux.ConfMaxInds;
-FeaturesN = GN.Aux.ConfMaxInds;
 
 for ref=0:1
     if ref==1

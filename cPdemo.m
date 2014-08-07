@@ -5,12 +5,14 @@ path(pathdef);
 addpath(path,genpath('./utils/'));
 
 %% set parameters
+Names = {'a15','Q18'};
+options.FeatureType = 'ConfMax';
+
 obj_path = [pwd '/obj/'];
 sample_path = [pwd '/sample/'];
-delete_command = 'rm -f ';
 data_path = '~/Work/DATA/PNAS/';
 meshes_path = [data_path 'meshes/'];
-Names = {'Q18','Q19'};
+delete_command = 'rm -f ';
 
 %% parse parameters
 if ~exist(obj_path, 'dir')
@@ -24,7 +26,6 @@ if ~exist(sample_path, 'dir')
 end
 
 Gs = cell(2,1);
-options = [];
 
 taxa_code = load([data_path 'teeth_taxa_table.mat']);
 taxa_code = taxa_code.taxa_code;
@@ -53,8 +54,8 @@ end
 % options.Display = 'on';
 
 %% compute continuous Procrustes distance
-rslt12 = Gs{1}.ComputeContinuousProcrustes(Gs{2});
-rslt21 = Gs{2}.ComputeContinuousProcrustes(Gs{1});
+rslt12 = Gs{1}.ComputeContinuousProcrustes(Gs{2},options);
+rslt21 = Gs{2}.ComputeContinuousProcrustes(Gs{1},options);
 
 %% print maps to texture coordinates
 obj_surf_1 = [obj_path '1.obj'];
