@@ -1,4 +1,4 @@
-function [cPdist,cPmap,TextureCoords1,TextureCoords2,ref12] = ComputeContinuousProcrustes(GM,GN)
+function [rslt] = ComputeContinuousProcrustes(GM,GN)
 %COMPUTECONTINUOUSPROCRUSTES Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -101,6 +101,12 @@ if ref12==1
     TextureCoords1(2,:) = -TextureCoords1(2,:);
     TextureCoords2(2,:) = -TextureCoords2(2,:);
 end
+
+rslt.cPdist = cPdist;
+rslt.cPmap = cPmap;
+rslt.TextureCoords1 = TextureCoords1;
+rslt.TextureCoords2 = TextureCoords2;
+rslt.ref12 = ref12;
 
 % m = [exp(1i*best_tet) -best_a*exp(1i*best_tet); -conj(best_a) 1];
 % ts = compl(GM.Aux.UniformizationV);
