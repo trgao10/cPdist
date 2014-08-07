@@ -5,8 +5,16 @@ path(pathdef);
 addpath(path,genpath('./utils/'));
 
 %% set parameters
-Names = {'a15','Q18'};
+Names = {'a19','P30'};
 options.FeatureType = 'ConfMax';
+options.NumDensityPnts = 200;
+options.AngleIncrement = 0.05;
+% options.ConfMaxLocalWidth = 5;
+% options.GaussMaxLocalWidth = 5;
+% options.GaussMinLocalWidth = 5;
+% options.ADMaxLocalWidth = 5;
+% options.ExcludeBoundary = 1;
+% options.Display = 'on';
 
 obj_path = [pwd '/obj/'];
 sample_path = [pwd '/sample/'];
@@ -15,15 +23,11 @@ meshes_path = [data_path 'meshes/'];
 delete_command = 'rm -f ';
 
 %% parse parameters
-if ~exist(obj_path, 'dir')
-    mkdir(obj_path);
-end
+touch(sample_path);
+touch(obj_path);
 command_text = [delete_command obj_path '*.obj'];
 system(command_text);
 disp(command_text);
-if ~exist(sample_path, 'dir')
-    mkdir(sample_path);
-end
 
 Gs = cell(2,1);
 
@@ -33,25 +37,18 @@ TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
 
 %% load mesh and uniformize
 for j=1:2
-    if ~exist([sample_path Names{j} '.mat'],'file')
+    if ~exist([sample_path taxa_code{TAXAind(j)} '.mat'],'file')
         Gs{j} = Mesh('off',[meshes_path taxa_code{TAXAind(j)} '_sas.off']);
-        Gs{j}.Aux.name = Names{j};
+        Gs{j}.Aux.name = taxa_code{TAXAind(j)};
         Gs{j}.Centralize('ScaleArea');
         Gs{j}.ComputeMidEdgeUniformization(options);
         G = Mesh(Gs{j});
-        save([sample_path Names{j} '.mat'], 'G');
+        save([sample_path taxa_code{TAXAind(j)} '.mat'], 'G');
     else
-        Gs{j} = load([sample_path Names{j} '.mat']);
+        Gs{j} = load([sample_path taxa_code{TAXAind(j)} '.mat']);
         Gs{j} = Gs{j}.G;
     end
 end
-
-% options.ConfMaxLocalWidth = 5;
-% options.GaussMaxLocalWidth = 5;
-% options.GaussMinLocalWidth = 5;
-% options.ADMaxLocalWidth = 5;
-% options.ExcludeBoundary = 1;
-% options.Display = 'on';
 
 %% compute continuous Procrustes distance
 rslt12 = Gs{1}.ComputeContinuousProcrustes(Gs{2},options);

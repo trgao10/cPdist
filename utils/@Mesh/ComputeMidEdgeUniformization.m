@@ -87,13 +87,6 @@ minds = unique(minds);
 spread_pnts = CORR_spread_points_euclidean(G.V',minds,G.nV-length(minds));
 G.Aux.DensityPnts = [minds; spread_pnts];
 
-% [~,~,Q] = G.PerformFastMarching(G.Aux.DensityPnts);
-% VorAreaM = zeros(size(G.Aux.DensityPnts));
-% for i=1:length(G.Aux.DensityPnts)
-%     VorAreaM(i) = sum(G.Aux.VertArea(Q == G.Aux.DensityPnts(i)));
-% end
-% G.Aux.VorArea = VorAreaM;
-
 disp('DONE!');
 
 end
