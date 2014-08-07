@@ -13,6 +13,7 @@ compl = @(x) x(1,:)+1i*x(2,:);
 FeatureType = getoptions(options,'FeatureType','ConfMax');
 NumDensityPnts = getoptions(options,'NumDensityPnts',100);
 AngleIncrement = getoptions(options,'AngleIncrement',0.05);
+NumFeatureMatch = getoptions(options,'NumFeatureMatch',3);
 switch FeatureType
     case 'ADMax'
         FeaturesM = GM.Aux.ADMaxInds;
@@ -97,7 +98,7 @@ for ref=0:1
                     
                     TPS_DISC_VERTICES_FEATURESM = DISCtoPLANE([real(pushInterpCoords1);imag(pushInterpCoords1)]','d2p');
                     TPS_DISC_VERTICES_FEATURESN = DISCtoPLANE([real(InterpCoords2);imag(InterpCoords2)]','d2p');
-                    if length(InterpInds1)>=3
+                    if length(InterpInds1)>=NumFeatureMatch
                         if (length(InterpInds1)>3) % TPS (Thin Plate Spline)
                             tP = DISCtoPLANE([real(pushSource);imag(pushSource)]','d2p');
                             [ftps] = TEETH_calc_tps(TPS_DISC_VERTICES_FEATURESM,TPS_DISC_VERTICES_FEATURESN-TPS_DISC_VERTICES_FEATURESM);

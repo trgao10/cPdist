@@ -1,14 +1,15 @@
 %% preparation
 clear vars;
-close all;
+% close all;
 path(pathdef);
 addpath(path,genpath('./utils/'));
 
 %% set parameters
-Names = {'a19','P30'};
+Names = {'a15','h08'};
 options.FeatureType = 'ConfMax';
-options.NumDensityPnts = 200;
+options.NumDensityPnts = 100;
 options.AngleIncrement = 0.05;
+options.NumFeatureMatch = 4;
 % options.ConfMaxLocalWidth = 5;
 % options.GaussMaxLocalWidth = 5;
 % options.GaussMinLocalWidth = 5;
