@@ -13,6 +13,8 @@ function [V1,V2,proj_map12] = ProjMoebius(GM,GN,map12,ref12,options)
 %   trgao10@math.duke.edu
 %
 
+debug = getoptions(options,'debug',0);
+
 compl = @(x) x(1,:)+1i*x(2,:);
 
 if nargin<5
@@ -38,7 +40,7 @@ end
 FeaturesM = GM.Aux.ConfMaxInds;
 FeaturesN = GN.Aux.ConfMaxInds;
 
-if options.debug==1
+if debug==1
     pfFeaturesM = map12(FeaturesM);
     [D,~,~] = GN.PerformFastMarching(FeaturesN);
     options.method = 'continuous';
@@ -88,13 +90,13 @@ for jj=1:length(FeaturesM)
         w_0 = V2(1,FeaturesN(kk))+1i*V2(2,FeaturesN(kk));
         
         for tet=0:0.01:2*pi %traverse angles: sould be in range 0.05-0.1
-            [a] = CORR_evaluate_disc_mobius_from_tet(tet,z_0,w_0);
+            [a] = CORR_evaluate_disc_moebius_from_tet(tet,z_0,w_0);
             if(a*conj(a) > 0.9999)
                 err = Inf;
             else
                 % Push GM to GN by m
                 m = [exp(1i*tet) -a*exp(1i*tet); -conj(a) 1];%takes z_0 -> w_0
-                push_GM = CORR_apply_mobius_as_matrix(m,ts);
+                push_GM = CORR_apply_moebius_as_matrix(m,ts);
                 push_GM = [real(push_GM);imag(push_GM)];
                 err = sum(sum((push_GM-ref_GM).^2));
             end
@@ -117,13 +119,13 @@ end
 
 m = [exp(1i*best_tet) -best_a*exp(1i*best_tet); -conj(best_a) 1];
 ts = GM.Aux.UniformizationV(1,:)+1i*GM.Aux.UniformizationV(2,:);
-push_GM = CORR_apply_mobius_as_matrix(m,ts);
+push_GM = CORR_apply_moebius_as_matrix(m,ts);
 push_GM(isnan(push_GM)) = 1+1i;
 V1 = [real(push_GM);imag(push_GM)];
 
 proj_map12 = knnsearch(V2',V1');
 
-if options.debug==1
+if debug==1
     pfFeaturesM = proj_map12(FeaturesM);
     options.method = 'continuous';
     Paths = compute_geodesic_mesh(D, GN.V, GN.F, pfFeaturesM, options);
@@ -163,7 +165,7 @@ end
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 [InterpADMaxInds1,InterpADMaxInds2] = FindMutuallyNearestNeighbors(GM,GN,proj_map12,'ADMax');
 
-if options.debug==1
+if debug==1
     GM_ADMaxInds = GM.Aux.ADMaxInds;
     pfGM_ADMaxInds = proj_map12(GM_ADMaxInds);
     GN_ADMaxInds = GN.Aux.ADMaxInds;

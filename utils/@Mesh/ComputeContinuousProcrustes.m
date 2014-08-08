@@ -14,6 +14,7 @@ FeatureType = getoptions(options,'FeatureType','ConfMax');
 NumDensityPnts = getoptions(options,'NumDensityPnts',100);
 AngleIncrement = getoptions(options,'AngleIncrement',0.05);
 NumFeatureMatch = getoptions(options,'NumFeatureMatch',3);
+GaussMinMatch = getoptions(options,'GaussMinMatch','on');
 switch FeatureType
     case 'ADMax'
         FeaturesM = GM.Aux.ADMaxInds;
@@ -21,9 +22,6 @@ switch FeatureType
     case 'GaussMax'
         FeaturesM = GM.Aux.GaussMaxInds;
         FeaturesN = GN.Aux.GaussMaxInds;
-    case 'GaussMin'
-        FeaturesM = GM.Aux.GaussMinInds;
-        FeaturesN = GN.Aux.GaussMinInds;
     case 'ConfMax'
         FeaturesM = GM.Aux.ConfMaxInds;
         FeaturesN = GN.Aux.ConfMaxInds;
@@ -53,6 +51,7 @@ for ref=0:1
         local_target = target;
     end
     V2 = [real(local_target);imag(local_target)];
+    V2_kdtree = KDTreeSearcher(V2');
     
     for jj=1:length(FeaturesM)
         progressbar(jj,length(FeaturesM),10);
@@ -68,7 +67,7 @@ for ref=0:1
                 if(a*conj(a) > 0.9999)
                     err = Inf;
                 else
-                    % Push features on GM to GN by m
+                    % push features on GM to GN by m
                     m = [exp(1i*tet) -a*exp(1i*tet); -conj(a) 1];%takes z_0 -> w_0
                     pushFeatureM = CORR_apply_moebius_as_matrix(m,FeaturesMCoords);
                     if ref==0
@@ -94,23 +93,22 @@ for ref=0:1
                     %%% both InterpInds1, InterpInds2 are indices on GN
                     pushSource = CORR_apply_moebius_as_matrix(m,source);
                     pushInterpCoords1 = CORR_apply_moebius_as_matrix(m,InterpCoords1);
-                    InterpInds1 = knnsearch(V2',[real(pushInterpCoords1);imag(pushInterpCoords1)]');
                     
                     TPS_DISC_VERTICES_FEATURESM = DISCtoPLANE([real(pushInterpCoords1);imag(pushInterpCoords1)]','d2p');
                     TPS_DISC_VERTICES_FEATURESN = DISCtoPLANE([real(InterpCoords2);imag(InterpCoords2)]','d2p');
-                    if length(InterpInds1)>=NumFeatureMatch
-                        if (length(InterpInds1)>3) % TPS (Thin Plate Spline)
+                    if length(pushInterpCoords1)>=NumFeatureMatch
+                        if (length(pushInterpCoords1)>3) % TPS (Thin Plate Spline)
                             tP = DISCtoPLANE([real(pushSource);imag(pushSource)]','d2p');
                             [ftps] = TEETH_calc_tps(TPS_DISC_VERTICES_FEATURESM,TPS_DISC_VERTICES_FEATURESN-TPS_DISC_VERTICES_FEATURESM);
                             pt = tP + TEETH_eval_tps(ftps,tP);
                             V1 = DISCtoPLANE(pt,'p2d')';
-                        elseif (length(InterpInds1)==3) % affine transformation
+                        elseif (length(pushInterpCoords1)==3) % affine transformation
                             tP = DISCtoPLANE([real(pushSource);imag(pushSource)]','d2p');
                             [A,b] = PlanarThreePtsDeform(TPS_DISC_VERTICES_FEATURESM,TPS_DISC_VERTICES_FEATURESN);
                             pt = [A,b]*[tP';ones(1,size(tP,1))];
                             V1 = DISCtoPLANE(pt','p2d')';
                         end
-                        err = MapToDist(GM.V(:,sourceInds),GN.V(:,targetInds),knnsearch(V2',V1'),VorArea);
+                        err = MapToDist(GM.V(:,sourceInds),GN.V(:,targetInds),V2_kdtree.knnsearch(V1'),VorArea);
                     else
                         err = Inf;
                     end
@@ -124,8 +122,8 @@ for ref=0:1
                         ref12 = ref;
                         best_a = a;
                         best_tet = tet;
-                        best_TPS_DISC_VERTICES_FEATURESM = TPS_DISC_VERTICES_FEATURESM;
-                        best_TPS_DISC_VERTICES_FEATURESN = TPS_DISC_VERTICES_FEATURESN;
+                        TPS_FEATURESM = TPS_DISC_VERTICES_FEATURESM;
+                        TPS_FEATURESN = TPS_DISC_VERTICES_FEATURESN;
                     end
                 end
             end
@@ -141,22 +139,43 @@ TextureCoords2(:,isnan(compl(TextureCoords2))) = ones(2,sum(isnan(compl(TextureC
 if ref12==1
     TextureCoords2(2,:) = -TextureCoords2(2,:);
 end
-if length(best_TPS_DISC_VERTICES_FEATURESM)>=3
-    if (length(best_TPS_DISC_VERTICES_FEATURESM)>3) % TPS (Thin Plate Spline)
+
+if (length(TPS_FEATURESM)>3) % TPS (Thin Plate Spline)
+    tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
+    [ftps] = TEETH_calc_tps(TPS_FEATURESM,TPS_FEATURESN-TPS_FEATURESM);
+    pt = tP + TEETH_eval_tps(ftps,tP);
+    TextureCoords1 = DISCtoPLANE(pt,'p2d')';
+elseif (length(TPS_FEATURESM)==3) % Affine Transformation
+    tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
+    [A,b] = PlanarThreePtsDeform(TPS_FEATURESM,TPS_FEATURESN);
+    pt = [A,b]*[tP';ones(1,size(tP,1))];
+    TextureCoords1 = DISCtoPLANE(pt','p2d')';
+end
+
+TextureCoords2_kdtree = KDTreeSearcher(TextureCoords2');
+cPmap = TextureCoords2_kdtree.knnsearch(TextureCoords1');
+
+if strcmpi(GaussMinMatch,'on')
+    [~,InterpGaussMinInds2,preInterpGaussMinInds1] = FindMutuallyNearestNeighbors(GM,GN,cPmap,'GaussMin');
+    TPS_GaussMinCoords1 = DISCtoPLANE([real(pushGM(preInterpGaussMinInds1));imag(pushGM(preInterpGaussMinInds1))]','d2p');
+    TPS_GaussMinCoords2 = DISCtoPLANE(TextureCoords2(:,InterpGaussMinInds2)','d2p');
+    TPS_FEATURESM = [TPS_FEATURESM;TPS_GaussMinCoords1];
+    TPS_FEATURESN = [TPS_FEATURESN;TPS_GaussMinCoords2];
+    if (length(TPS_FEATURESM)>3) % TPS (Thin Plate Spline)
         tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
-        [ftps] = TEETH_calc_tps(best_TPS_DISC_VERTICES_FEATURESM,best_TPS_DISC_VERTICES_FEATURESN-best_TPS_DISC_VERTICES_FEATURESM);
+        [ftps] = TEETH_calc_tps(TPS_FEATURESM,TPS_FEATURESN-TPS_FEATURESM);
         pt = tP + TEETH_eval_tps(ftps,tP);
         TextureCoords1 = DISCtoPLANE(pt,'p2d')';
-    elseif (length(best_TPS_DISC_VERTICES_FEATURESM)==3) % Affine Transformation
+    elseif (length(TPS_FEATURESM)==3) % Affine Transformation
         tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
-        [A,b] = PlanarThreePtsDeform(best_TPS_DISC_VERTICES_FEATURESM,best_TPS_DISC_VERTICES_FEATURESN);
+        [A,b] = PlanarThreePtsDeform(TPS_FEATURESM,TPS_FEATURESN);
         pt = [A,b]*[tP';ones(1,size(tP,1))];
         TextureCoords1 = DISCtoPLANE(pt','p2d')';
     end
+    cPmap = TextureCoords2_kdtree.knnsearch(TextureCoords1');
 end
 
-cPmap = knnsearch(TextureCoords2',TextureCoords1');
-cPdist = MapToDist(GM.V,GN.V,knnsearch(TextureCoords2',TextureCoords1'),GM.Aux.VertArea);
+cPdist = MapToDist(GM.V,GN.V,cPmap,GM.Aux.VertArea);
 
 if ref12==1
     TextureCoords1(2,:) = -TextureCoords1(2,:);
@@ -167,7 +186,50 @@ rslt.cPdist = cPdist;
 rslt.cPmap = cPmap;
 rslt.TextureCoords1 = TextureCoords1;
 rslt.TextureCoords2 = TextureCoords2;
-rslt.ref12 = ref12;
+rslt.ref = ref12;
+
+end
+
+function [InterpInds1,InterpInds2,preInterpInds1] = FindMutuallyNearestNeighbors(GM,GN,map,Type)
+
+switch Type
+    case 'ADMax'
+        GM_MaxInds = GM.Aux.ADMaxInds;
+        GN_MaxInds = GN.Aux.ADMaxInds;
+    case 'ConfMax'
+        GM_MaxInds = GM.Aux.ConfMaxInds;
+        GN_MaxInds = GN.Aux.ConfMaxInds;
+    case 'GaussMax'
+        GM_MaxInds = GM.Aux.GaussMaxInds;
+        GN_MaxInds = GN.Aux.GaussMaxInds;
+    case 'GaussMin'
+        GM_MaxInds = GM.Aux.GaussMinInds;
+        GN_MaxInds = GN.Aux.GaussMinInds;
+end
+pfGM_MaxInds = map(GM_MaxInds);
+
+if ~isempty(GM_MaxInds)&&~isempty(GN_MaxInds)
+    [~,~,Q] = GN.PerformFastMarching(pfGM_MaxInds);
+    GN2pfGM = Q(GN_MaxInds);
+    tind1 = zeros(size(GN_MaxInds));
+    for j=1:length(tind1)
+        tind1(j) = find(pfGM_MaxInds==GN2pfGM(j));
+    end
+    
+    [~,~,Q] = GN.PerformFastMarching(GN_MaxInds);
+    pfGM2GN = Q(pfGM_MaxInds);
+    tind2 = zeros(size(pfGM_MaxInds));
+    for j=1:length(tind2)
+        tind2(j) = find(GN_MaxInds==pfGM2GN(j));
+    end
+    
+    InterpMaxInds2 = find(tind2(tind1)==(1:length(tind1))');
+    InterpMaxInds1 = tind1(InterpMaxInds2);
+    
+    InterpInds1 = pfGM_MaxInds(InterpMaxInds1);
+    InterpInds2 = GN_MaxInds(InterpMaxInds2);
+    preInterpInds1 = GM_MaxInds(InterpMaxInds1);
+end
 
 end
 
