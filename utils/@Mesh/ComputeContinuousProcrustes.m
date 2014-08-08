@@ -51,7 +51,8 @@ for ref=0:1
         local_target = target;
     end
     V2 = [real(local_target);imag(local_target)];
-    V2_kdtree = KDTreeSearcher(V2');
+    V2_kdtree = kdtree_build(V2');
+%     V2_kdtree = KDTreeSearcher(V2');
     
     for jj=1:length(FeaturesM)
         progressbar(jj,length(FeaturesM),10);
@@ -108,7 +109,10 @@ for ref=0:1
                             pt = [A,b]*[tP';ones(1,size(tP,1))];
                             V1 = DISCtoPLANE(pt','p2d')';
                         end
-                        err = MapToDist(GM.V(:,sourceInds),GN.V(:,targetInds),V2_kdtree.knnsearch(V1'),VorArea);
+                        err = MapToDist(GM.V(:,sourceInds),GN.V(:,targetInds),kdtree_nearest_neighbor(V2_kdtree,V1'),VorArea);
+                        
+%                         [~,map] = nrsearch(V2,V1,1,0);
+%                         err = MapToDist(GM.V(:,sourceInds),GN.V(:,targetInds),cell2mat(map),VorArea);
                     else
                         err = Inf;
                     end
@@ -152,8 +156,12 @@ elseif (length(TPS_FEATURESM)==3) % Affine Transformation
     TextureCoords1 = DISCtoPLANE(pt','p2d')';
 end
 
-TextureCoords2_kdtree = KDTreeSearcher(TextureCoords2');
-cPmap = TextureCoords2_kdtree.knnsearch(TextureCoords1');
+TextureCoords2_kdtree = kdtree_build(TextureCoords2');
+cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
+% TextureCoords2_kdtree = KDTreeSearcher(TextureCoords2');
+% [~,map] = nrsearch(TextureCoords2,TextureCoords1,1,0);
+% cPmap = cell2mat(map);
+% cPmap = TextureCoords2_kdtree.knnsearch(TextureCoords1');
 
 if strcmpi(GaussMinMatch,'on')
     [~,InterpGaussMinInds2,preInterpGaussMinInds1] = FindMutuallyNearestNeighbors(GM,GN,cPmap,'GaussMin');
@@ -172,7 +180,9 @@ if strcmpi(GaussMinMatch,'on')
         pt = [A,b]*[tP';ones(1,size(tP,1))];
         TextureCoords1 = DISCtoPLANE(pt','p2d')';
     end
-    cPmap = TextureCoords2_kdtree.knnsearch(TextureCoords1');
+    [~,map] = nrsearch(TextureCoords2,TextureCoords1,1,0);
+    cPmap = cell2mat(map);
+%     cPmap = TextureCoords2_kdtree.knnsearch(TextureCoords1');
 end
 
 cPdist = MapToDist(GM.V,GN.V,cPmap,GM.Aux.VertArea);

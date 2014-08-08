@@ -5,12 +5,12 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'a10','x02'};
+Names = {'i14','b19'};
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
 options.AngleIncrement = 0.05;
 options.NumFeatureMatch = 4;
-options.GaussMinMatch = 'on';
+options.GaussMinMatch = 'off';
 % options.ConfMaxLocalWidth = 5;
 % options.GaussMaxLocalWidth = 5;
 % options.GaussMinLocalWidth = 5;

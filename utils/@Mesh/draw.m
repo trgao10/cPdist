@@ -1,7 +1,26 @@
-function h = draw(G, options, FeatureType)    
+function h = draw(G,varargin)    
+
+if nargin>1
+    if isstruct(varargin{1})
+        options = varargin{1};
+    elseif ischar(varargin{1})
+        FeatureType = varargin{1};
+        if length(varargin)>1
+            MeshType = varargin{2};
+        else
+            MeshType = 'original';
+        end
+    end
+end
 
 F = G.F;
 V = G.V;
+if exist('MeshType','var')
+    if strcmpi(MeshType,'flat')
+        V = G.Aux.UniformizationV;
+    end
+end
+
 if isempty(F) || isempty(V)
     disp('Empty vertices or faces!');
     return;
@@ -51,15 +70,17 @@ axis equal;
 
 if exist('FeatureType','var')
     hold on;
-    switch FeatureType
-        case 'ConfMax'
-            scatter3(G.V(1,G.Aux.ConfMaxInds),G.V(2,G.Aux.ConfMaxInds),G.V(3,G.Aux.ConfMaxInds),30,'g','filled');
-        case 'GaussMax'
-            scatter3(G.V(1,G.Aux.GaussMaxInds),G.V(2,G.Aux.GaussMaxInds),G.V(3,G.Aux.GaussMaxInds),30,'r','filled');
-        case 'GaussMin'
-            scatter3(G.V(1,G.Aux.GaussMinInds),G.V(2,G.Aux.GaussMinInds),G.V(3,G.Aux.GaussMinInds),30,'b','filled');
-        case 'ADMax'
-            scatter3(G.V(1,G.Aux.ADMaxInds),G.V(2,G.Aux.ADMaxInds),G.V(3,G.Aux.ADMaxInds),30,'y','filled');
+    switch lower(FeatureType)
+        case 'confmax'
+            scatter3(V(1,G.Aux.ConfMaxInds),V(2,G.Aux.ConfMaxInds),V(3,G.Aux.ConfMaxInds),30,'g','filled');
+        case 'gaussmax'
+            scatter3(V(1,G.Aux.GaussMaxInds),V(2,G.Aux.GaussMaxInds),V(3,G.Aux.GaussMaxInds),30,'r','filled');
+        case 'gaussmin'
+            scatter3(V(1,G.Aux.GaussMinInds),V(2,G.Aux.GaussMinInds),V(3,G.Aux.GaussMinInds),30,'b','filled');
+        case 'admax'
+            scatter3(V(1,G.Aux.ADMaxInds),V(2,G.Aux.ADMaxInds),V(3,G.Aux.ADMaxInds),30,'y','filled');
+        otherwise
+            disp('Un-recognizable Feature Type');
     end
 end
 
