@@ -10,6 +10,8 @@ SmoothCurvatureFields = getoptions(options,'SmoothCurvatureFields',10);
 DensityLocalWidth = getoptions(options,'DensityLocalWidth',5);
 ExcludeBoundary = getoptions(options,'ExcludeBoundary',1);
 
+[~,TriAreas] = G.ComputeSurfaceArea;
+G.Aux.VertArea = TriAreas'*G.F2V;
 %%% compute mid-edge mesh
 [mV,mF,M,E2Vmap] = G.ComputeMidEdge;
 
@@ -68,9 +70,7 @@ disp('Spreading density points on mesh...');
 Cgauss = G.ExtractFeatures(options);
 Conf = G.Aux.Conf;
 for j=1:SmoothCurvatureFields
-    [~,TriAreas] = G.ComputeSurfaceArea;
-    VertAreas = TriAreas'*G.F2V;
-    WeightMatrix = repmat(TriAreas,1,G.nV).*G.F2V.*repmat(1./VertAreas,G.nF,1);
+    WeightMatrix = repmat(TriAreas,1,G.nV).*G.F2V.*repmat(1./G.Aux.VertArea,G.nF,1);
     
     CgaussFace = mean(Cgauss(G.F));
     Cgauss = CgaussFace*WeightMatrix;
@@ -84,8 +84,7 @@ end
 minds = [G.Aux.GaussMaxInds;G.Aux.GaussMinInds;G.Aux.ConfMaxInds];
 minds = unique(minds);
 
-spread_pnts = CORR_spread_points_euclidean(G.V',minds,G.nV-length(minds));
-G.Aux.DensityPnts = [minds; spread_pnts];
+G.Aux.DensityPnts = G.GeodesicFarthestPointSampling(G.nV,minds);
 
 disp('DONE!');
 
