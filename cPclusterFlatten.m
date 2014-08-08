@@ -2,6 +2,7 @@
 clear all;
 close all;
 path(pathdef);
+addpath(path,genpath([pwd '/utils/']));
 
 %%% setup paths
 base_path = [pwd '/'];
