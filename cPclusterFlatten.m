@@ -12,7 +12,7 @@ data_path = '../DATA/PNAS/';
 %%% clean up paths
 meshes_path = [data_path 'meshes/'];
 taxa_file = [data_path 'teeth_taxa_table.mat'];
-samples_path = [base_path 'samples/'];
+samples_path = [base_path 'sample/'];
 cluster_path = [base_path 'cluster/'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];
@@ -51,7 +51,7 @@ for k = 1:GroupSize
     script_name = [scripts_path 'script_' num2str(job_id)];
     
     mesh_file= [meshes_path taxa_code{k} '_sas.off'];
-    sample_file= [samples_path taxa_code{k} '_sample.mat'];
+    sample_file= [samples_path taxa_code{k} '.mat'];
     
     fid = fopen(script_name,'w');
     fprintf(fid, '#!/bin/bash\n');

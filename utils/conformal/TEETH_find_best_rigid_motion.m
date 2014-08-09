@@ -2,7 +2,11 @@ function [R, T, err] = TEETH_find_best_rigid_motion(P,Q,VertArea)
 %give two corresponding point sets P,Q Nx3, find best rigid alignment R
 %(rotation ) and T (translation), and err the mean-squared-deviation
 
-n=size(P,1);
+if size(VertArea,1)<size(VertArea,2)
+    VertArea = VertArea';
+end
+
+n = size(P,1);
 if(size(Q,1) ~= n)
     disp('error, P,Q not equal size');    
     return;

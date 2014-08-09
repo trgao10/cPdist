@@ -6,21 +6,21 @@ function flatten_ongrid(mesh_file, sample_file)
 % Preprocessing
 %==========================================================================
 
-GM = Mesh('off', mesh_file);
+G = Mesh('off', mesh_file);
 revName = strtok(mesh_file(end:-1:1),'/');
-GM.Aux.name = strtok(revName(end:-1:1),'_');
-GM.Centralize('ScaleArea');
-GM.ComputeMidEdgeUniformization; %%% default options
+G.Aux.name = strtok(revName(end:-1:1),'_');
+G.Centralize('ScaleArea');
+G.ComputeMidEdgeUniformization; %%% default options
 
-GM.Nf = GM.ComputeFaceNormals;
-GM.Nv = GM.F2V'*GM.Nf';
-GM.Nv = GM.Nv'*diag(1./sqrt(sum((GM.Nv').^2,1)));
+G.Nf = G.ComputeFaceNormals;
+G.Nv = G.F2V'*G.Nf';
+G.Nv = G.Nv'*diag(1./sqrt(sum((G.Nv').^2,1)));
 
 %%% Compute cotangent Laplacian operator.
-GM.Aux.LB = GM.ComputeCotanLaplacian;
+G.Aux.LB = G.ComputeCotanLaplacian;
 
 %%% Save results to a .mat file.
-save(sample_file, 'GM');
+save(sample_file, 'G');
 
 end
 

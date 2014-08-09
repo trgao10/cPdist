@@ -110,9 +110,6 @@ for ref=0:1
                             V1 = DISCtoPLANE(pt','p2d')';
                         end
                         err = MapToDist(GM.V(:,sourceInds),GN.V(:,targetInds),kdtree_nearest_neighbor(V2_kdtree,V1'),VorArea);
-                        
-%                         [~,map] = nrsearch(V2,V1,1,0);
-%                         err = MapToDist(GM.V(:,sourceInds),GN.V(:,targetInds),cell2mat(map),VorArea);
                     else
                         err = Inf;
                     end
