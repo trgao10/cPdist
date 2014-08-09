@@ -6,34 +6,31 @@ addpath(path,genpath([pwd '/utils/']));
 
 %%% setup paths
 base_path = [pwd '/'];
-result_path = base_path;
 data_path = '../DATA/PNAS/';
-
-%%% clean up paths
 meshes_path = [data_path 'meshes/'];
-taxa_file = [data_path 'teeth_taxa_table.mat'];
 samples_path = [base_path 'sample/'];
 cluster_path = [base_path 'cluster/'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];
 outputs_path = [cluster_path 'outputs/'];
 
-%%% load taxa codes
-taxa_code = load(taxa_file);
-taxa_code = taxa_code.taxa_code;
-GroupSize = length(taxa_code);
-
-%%% build folders
-touch(result_path);
+%%% build folders if they don't exist
 touch(samples_path);
 touch(scripts_path);
 touch(errors_path);
 touch(outputs_path);
 
+%%% clean up paths
 command_text = ['!rm -f ' scripts_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' errors_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' outputs_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' samples_path '*']; eval(command_text); disp(command_text);
+
+%%% load taxa codes
+taxa_file = [data_path 'teeth_taxa_table.mat'];
+taxa_code = load(taxa_file);
+taxa_code = taxa_code.taxa_code;
+GroupSize = length(taxa_code);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

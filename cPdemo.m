@@ -19,7 +19,7 @@ options.GaussMinMatch = 'off';
 % options.Display = 'on';
 
 obj_path = [pwd '/obj/'];
-sample_path = [pwd '/sample/'];
+sample_path = [pwd '/samples/'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
 meshes_path = [data_path 'meshes/'];
 delete_command = 'rm -f ';
