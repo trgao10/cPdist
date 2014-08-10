@@ -11,7 +11,7 @@ DensityLocalWidth = getoptions(options,'DensityLocalWidth',5);
 ExcludeBoundary = getoptions(options,'ExcludeBoundary',1);
 
 [~,TriAreas] = G.ComputeSurfaceArea;
-G.Aux.VertArea = TriAreas'*G.F2V;
+G.Aux.VertArea = (TriAreas'*G.F2V)/3;
 %%% compute mid-edge mesh
 [mV,mF,M,E2Vmap] = G.ComputeMidEdge;
 

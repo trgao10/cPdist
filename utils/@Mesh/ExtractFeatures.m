@@ -15,11 +15,12 @@ Display = getoptions(options,'Display','off');
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % extract features (local maximum of conformal factors)
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-[~,~,Cmin,Cmax,Cmean,Cgauss] = GM.ComputeCurvature(options);
+[~,~,Cmin,Cmax,Cmean,Cgauss,~] = GM.ComputeCurvature(options);
 DNE = Cmin.^2+Cmax.^2;
 DNETruncInds = find(DNE>median(DNE));
 [GaussMaxInds,~] = GM.FindLocalMax(Cgauss,GaussMaxLocalWidth,ExcludeBoundary);
 [GaussMinInds,~] = GM.FindLocalMax(-Cgauss,GaussMinLocalWidth,ExcludeBoundary);
+
 BB = GM.GetBoundingBox;
 diam = sqrt(sum(abs(BB(:,2)-BB(:,1)).^2));
 r = 0.3*diam;
@@ -30,11 +31,6 @@ ADMaxInds(AD(ADMaxInds)>1) = [];
 Ring = GM.ComputeVertexRing;
 
 if isfield(GM.Aux,'Conf')
-    % KM = Mesh('VF',GM.Aux.UniformizationV/2,GM.F);
-    % [~,AG] = GM.ComputeSurfaceArea;
-    % [~,KG] = KM.ComputeSurfaceArea;
-    % ratio = AG./KG;
-    % GM.Aux.Conf = ratio'*KM.F2V/3;
     [ConfMaxInds,~] = GM.FindLocalMax(GM.Aux.Conf,ConfMaxLocalWidth,ExcludeBoundary);
     ToBeDelInds = [];
     for j=1:length(ConfMaxInds)
@@ -99,7 +95,9 @@ if strcmpi(Display, 'on')
     end
     GM.draw();hold on;
     set(gcf,'ToolBar','none');
-    scatter3(GM.V(1,ConfMaxInds),GM.V(2,ConfMaxInds),GM.V(3,ConfMaxInds),'g','filled');
+    if isfield(GM.Aux,'Conf')
+        scatter3(GM.V(1,ConfMaxInds),GM.V(2,ConfMaxInds),GM.V(3,ConfMaxInds),'g','filled');
+    end
     scatter3(GM.V(1,GaussMaxInds),GM.V(2,GaussMaxInds),GM.V(3,GaussMaxInds),'r','filled');
     scatter3(GM.V(1,GaussMinInds),GM.V(2,GaussMinInds),GM.V(3,GaussMinInds),'b','filled');
     scatter3(GM.V(1,ADMaxInds),GM.V(2,ADMaxInds),GM.V(3,ADMaxInds),'y','filled');
