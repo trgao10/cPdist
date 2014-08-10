@@ -8,7 +8,7 @@ addpath(path,genpath([pwd '/utils/']));
 base_path = [pwd '/'];
 data_path = '../DATA/PNAS/';
 meshes_path = [data_path 'meshes/'];
-samples_path = [base_path 'sample/'];
+samples_path = [base_path 'samples/'];
 cluster_path = [base_path 'cluster/'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];

@@ -1,3 +1,3 @@
 #!/bin/bash
 #$ -S /bin/bash
-matlab -nodesktop -nodisplay -nojvm -nosplash -r  "cd /home/grad/trgao10/Work/MATLAB/cPdist/; path(genpath('/home/grad/trgao10/Work/MATLAB/cPdist/utils/'), path); flatten_ongrid ../DATA/PNAS/meshes/w09_sas.off /home/grad/trgao10/Work/MATLAB/cPdist/sample/w09.mat; exit; "
+matlab -nodesktop -nodisplay -nojvm -nosplash -r  "cd /home/grad/trgao10/Work/MATLAB/cPdist/; path(genpath('/home/grad/trgao10/Work/MATLAB/cPdist/utils/'), path); flatten_ongrid ../DATA/PNAS/meshes/w09_sas.off /home/grad/trgao10/Work/MATLAB/cPdist/samples/w09.mat; exit; "
