@@ -104,7 +104,6 @@ setappdata(gcf, 'StoreTheLink', Link);
 
 set(gca, 'CameraUpVector', [0.8469,-0.5272,-0.0696]);
 set(gca, 'CameraPosition', [0.0425,0.5383,-3.7461]);
-% set(gca, 'CameraPosition', [0.0584,0.8255,-5.7263]);
 set(gca, 'CameraTarget', [0.0122,-0.0075,0.0173]);
 set(gca, 'CameraViewAngle', 10.5477);
 

@@ -1,4 +1,4 @@
-function [area E] = CORR_calculate_area(F,V1)
+function [area, E] = CORR_calculate_area(F,V1)
 % measure how much the triangles of midedge mesh have been distorted
 % in the mapping V1->V2
 

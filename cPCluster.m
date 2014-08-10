@@ -48,7 +48,7 @@ for k1=1:GroupSize
         if mod(cnt,chunk_size)==0
             if job_id>0 %%% not the first time
                 %%% close the script file (except the last one, see below)
-                fprintf(fid, 'exit; "\n', script_text);
+                fprintf(fid, '%s ', 'exit; "\n');
                 fclose(fid);
                 
                 %%% qsub
@@ -80,7 +80,9 @@ for k1=1:GroupSize
         script_text = [' cPdist_ongrid ' ...
             filename1 ' ' ...
             filename2  ' ' ...
-            [rslts_path 'rslt_mat_' num2str(job_id)] '; ' ];
+            [rslts_path 'rslt_mat_' num2str(job_id)] ' ' ...
+            num2str(k1) ' ' ...
+            num2str(k2) '; '];
         fprintf(fid, '%s ',script_text);
         
         cnt = cnt+1;
@@ -90,7 +92,7 @@ end
 
 if mod(cnt,chunk_size)~=0
     %%% close the last script file
-    fprintf(fid, 'exit; "\n',script_text);
+    fprintf(fid, '%s ', 'exit; "\n');
     fclose(fid);
     
     %%% qsub last script file

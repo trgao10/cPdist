@@ -52,7 +52,6 @@ for ref=0:1
     end
     V2 = [real(local_target);imag(local_target)];
     V2_kdtree = kdtree_build(V2');
-%     V2_kdtree = KDTreeSearcher(V2');
     
     for jj=1:length(FeaturesM)
         progressbar(jj,length(FeaturesM),10);
@@ -189,6 +188,10 @@ if ref12==1
     TextureCoords2(2,:) = -TextureCoords2(2,:);
 end
 
+if isfield(GM.Aux,'name') && isfield(GN.Aux,'name')
+    rslt.Gname1 = GM.Aux.name;
+    rslt.Gname2 = GN.Aux.name;
+end
 rslt.cPdist = cPdist;
 rslt.cPmap = cPmap;
 rslt.TextureCoords1 = TextureCoords1;

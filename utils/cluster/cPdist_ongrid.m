@@ -1,18 +1,17 @@
-%%% add: compute landmarkMSE
+%%% add: compute landmarkMSE to rslt
 
+function cPdist_ongrid(G1,G2,rslt_mat,TAXAind1,TAXAind2)
 
-function [rslt] = cPdist_ongrid(sample_file_1,sample_file_2,rslt_mat_filename)
-
-GM = load(sample_file_1);
+GM = load(G1);
 GM = GM.G;
-GN = load(sample_file_2);
+GN = load(G2);
 GN = GN.G;
 
-load(rslt_mat_filename);
+load(rslt_mat);
 
 rslt = GM.ComputeContinuousProcrustes(GN,options);
+rslt.lkMSE = ;
 
-%output results in the dist matrix and save it back
 cPrslt{TAXAind1,TAXAind2} = rslt;
-save(rslt_mat_filename,'cPrslt');
+save(rslt_mat,'cPrslt');
 

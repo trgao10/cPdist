@@ -9,7 +9,7 @@ function flatten_ongrid(mesh_file, sample_file)
 G = Mesh('off', mesh_file);
 revName = strtok(mesh_file(end:-1:1),'/');
 G.Aux.name = strtok(revName(end:-1:1),'_');
-G.Centralize('ScaleArea');
+[G.Aux.Area,G.Aux.Center] = G.Centralize('ScaleArea');
 G.ComputeMidEdgeUniformization; %%% default options
 
 G.Nf = G.ComputeFaceNormals;
