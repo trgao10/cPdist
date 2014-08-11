@@ -127,7 +127,7 @@ end
 [V,F] = read_off([options.MeshesPath GM.Aux.name '_sas.off']);
 V = V';
 F = F';
-area =  CORR_calculate_area(F,V);
+area = CORR_calculate_area(F,V);
 V = V*sqrt(1/area);
 tree = KDTreeSearcher(V);
 LandmarkVertInds = tree.knnsearch(Landmarks);

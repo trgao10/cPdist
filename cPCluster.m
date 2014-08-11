@@ -7,10 +7,11 @@ addpath(path,genpath([pwd '/utils/']));
 %%% setup paths
 base_path = [pwd '/'];
 data_path = '../DATA/PNAS/';
-meshes_path = [data_path 'meshes/'];
-samples_path = [base_path 'samples/'];
 rslts_path = [base_path 'rslts/'];
 cluster_path = [base_path 'cluster/'];
+samples_path = [base_path 'samples/'];
+meshes_path = [data_path 'meshes/'];
+landmarks_path = [data_path 'landmarks_teeth.mat'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];
 outputs_path = [cluster_path 'outputs/'];
@@ -82,7 +83,8 @@ for k1=1:GroupSize
             filename2  ' ' ...
             [rslts_path 'rslt_mat_' num2str(job_id)] ' ' ...
             num2str(k1) ' ' ...
-            num2str(k2) '; '];
+            num2str(k2) ' ' ...
+            landmarks_path '; '];
         fprintf(fid, '%s ',script_text);
         
         cnt = cnt+1;

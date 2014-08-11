@@ -1,6 +1,20 @@
 function [rslt] = ComputeContinuousProcrustes(GM,GN,options)
 %COMPUTECONTINUOUSPROCRUSTES Summary of this function goes here
-%   Detailed explanation goes here
+%   rslt.Gname1:            name of the first mesh
+%   rslt.Gname2:            name of the second mesh
+%   rslt.cPdist:            continuous Procrustes distance
+%   rslt.cPmap:             optimal map generating cP distance
+%   rslt.TextureCoords1:    texture coordinates for the first mesh
+%                           (deformed)
+%   rslt.TextureCoords2:    textrue coordinates for the second mesh
+%                           (not deformed)
+%   rslt.ref:               =1 if cP map is orientation-preserving
+%                           =0 otherwise
+%
+%   Tingran Gao, trgao10@math.duke.edu
+%   last modified: 10 Aug 2014
+%
+
 
 if nargin<3
     options = [];

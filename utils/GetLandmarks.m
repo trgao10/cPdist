@@ -9,7 +9,7 @@ Landmarks = zeros(size(rawLandmarks,2),3);
 for k=1:size(rawLandmarks,2)
     Landmarks(k,:) = [rawLandmarks(1,k,1), rawLandmarks(1,k,2), rawLandmarks(1,k,3)];
 end
-Landmarks = Landmarks-repmat(G.Aux.Center',NumLandmark,1);
+Landmarks = (Landmarks*sqrt(G.Aux.Area)-repmat(G.Aux.Center',NumLandmark,1))*sqrt(1/G.Aux.Area);
 tree = KDTreeSearcher(G.V');
 LandmarkInds = tree.knnsearch(Landmarks);
 

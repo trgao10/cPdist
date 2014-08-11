@@ -53,12 +53,21 @@ for j=1:2
 end
 
 %% compute continuous Procrustes distance
-tic;
 rslt12 = Gs{1}.ComputeContinuousProcrustes(Gs{2},options);
-toc;
 rslt21 = Gs{2}.ComputeContinuousProcrustes(Gs{1},options);
+
+lk2 = Gs{2}.V(:,GetLandmarks(Gs{2},[data_path 'landmarks_teeth.mat']));
+lk1 = Gs{2}.V(:,rslt12.cPmap(GetLandmarks(Gs{1},[data_path 'landmarks_teeth.mat'])));
+rslt12.lkMSE = mean(sqrt(sum((lk2-lk1).^2)));
+
+lk1 = Gs{1}.V(:,GetLandmarks(Gs{1},[data_path 'landmarks_teeth.mat']));
+lk2 = Gs{1}.V(:,rslt21.cPmap(GetLandmarks(Gs{2},[data_path 'landmarks_teeth.mat'])));
+rslt21.lkMSE = mean(sqrt(sum((lk1-lk2).^2)));
+
 disp(['rslt12.cPdist = ' num2str(rslt12.cPdist)]);
 disp(['rslt21.cPdist = ' num2str(rslt21.cPdist)]);
+disp(['rslt12.lkMSE = ' num2str(rslt12.lkMSE)]);
+disp(['rslt21.lkMSE = ' num2str(rslt21.lkMSE)]);
 
 %% print maps to texture coordinates
 obj_surf_1 = [obj_path '1.obj'];
@@ -86,61 +95,3 @@ options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
 options.MeshesPath = [data_path 'meshes/'];
 ViewTeethMapS(sGM, Gs{2}, {rslt12.cPmap,rslt21.cPmap}, options);
 
-% %% iterative update
-% [Dist12,proj_map12,VM12,VN12] = IterProjMoebius(Gs{1},Gs{2},rslt12.cPmap,rslt12.ref,options);
-% [Dist21,proj_map21,VN21,VM21] = IterProjMoebius(Gs{2},Gs{1},rslt21.cPmap,rslt21.ref,options);
-% 
-% while Dist12~=Dist21
-%     if Dist12<Dist21
-%         inv_map12 = knnsearch(VM12',VN12');
-%         [Dist21,proj_map21,VN21,VM21] = IterProjMoebius(Gs{2},Gs{1},inv_map12,rslt21.ref,options);
-%         if Dist12<Dist21
-%             break;
-%         end
-%     elseif Dist12>Dist21
-%         inv_map21 = knnsearch(VN21',VM21');
-%         [Dist12,proj_map12,VM12,VN12] = IterProjMoebius(Gs{1},G{2},inv_map21,rslt12.ref,options);
-%         if Dist12>Dist21
-%             break;
-%         end
-%     else
-%         break;
-%     end
-% end
-% 
-% options.GaussMinInds = 'on';
-% while Dist12~=Dist21
-%     if Dist12<Dist21
-%         inv_map12 = knnsearch(VM12',VN12');
-%         [Dist21,proj_map21,VN21,VM21] = IterProjMoebius(Gs{2},Gs{1},inv_map12,rslt21.ref,options);
-%         if Dist12<Dist21
-%             break;
-%         end
-%     elseif Dist12>Dist21
-%         inv_map21 = knnsearch(VN21',VM21');
-%         [Dist12,proj_map12,VM12,VN12] = IterProjMoebius(Gs{1},Gs{2},inv_map21,rslt12.ref,options);
-%         if Dist12>Dist21
-%             break;
-%         end
-%     else
-%         break;
-%     end
-% end
-% 
-% %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% % summary and visualization
-% %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% disp(['Final Dist(' Names{1} ',' Names{2} ') = ' num2str(Dist12)]);
-% disp(['Final Dist(' Names{2} ',' Names{1} ') = ' num2str(Dist21)]);
-% maps = {proj_map12,proj_map21};
-% 
-% [~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,proj_map12,Gs{1}.Aux.VertArea);
-% sGM = Mesh(Gs{1});
-% sGM.V = R*Gs{1}.V;
-% 
-% options.type = 'full';
-% options.landmarks = 'on';
-% options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
-% options.MeshesPath = [data_path 'meshes/'];
-% ViewTeethMapS(sGM, Gs{2}, maps, options);
-% 
