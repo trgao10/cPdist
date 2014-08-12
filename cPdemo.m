@@ -5,9 +5,9 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'Q18','Q19'};
+Names = {'B03','k15'};
 options.FeatureType = 'ConfMax';
-options.NumDensityPnts = 100;
+options.NumDensityPnts = 1000;
 options.AngleIncrement = 0.05;
 options.NumFeatureMatch = 4;
 options.GaussMinMatch = 'off';

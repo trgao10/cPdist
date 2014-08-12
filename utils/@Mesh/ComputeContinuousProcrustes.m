@@ -20,6 +20,8 @@ if nargin<3
     options = [];
 end
 
+ProgressBar = getoptions(options,'ProgressBar','on');
+
 %%% useful shortcuts
 compl = @(x) x(1,:)+1i*x(2,:);
 
@@ -68,7 +70,9 @@ for ref=0:1
     V2_kdtree = kdtree_build(V2');
     
     for jj=1:length(FeaturesM)
-        progressbar(jj,length(FeaturesM),10);
+        if strcmpi(ProgressBar,'on')
+            progressbar(jj,length(FeaturesM),10);
+        end
         for kk=1:length(FeaturesN)
             z_0 = FeaturesMCoords(jj);
             w_0 = FeaturesNCoords(kk);
@@ -130,6 +134,11 @@ for ref=0:1
                 %%% Record if best so far
                 if ~exist('best_err','var')
                     best_err = err;
+                    ref12 = ref;
+                    best_a = a;
+                    best_tet = tet;
+                    TPS_FEATURESM = TPS_DISC_VERTICES_FEATURESM;
+                    TPS_FEATURESN = TPS_DISC_VERTICES_FEATURESN;
                 else
                     if (err < best_err)
                         best_err = err;
