@@ -27,7 +27,6 @@ touch(rslts_path);
 command_text = ['!rm -f ' scripts_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' errors_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' outputs_path '*']; eval(command_text); disp(command_text);
-command_text = ['!rm -f ' samples_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text);
 
 %%% load taxa codes
@@ -68,7 +67,8 @@ for k1=1:GroupSize
             fprintf(fid, '#!/bin/bash\n');
             fprintf(fid, '#$ -S /bin/bash\n');
             script_text = ['matlab -nodesktop -nodisplay -nojvm -nosplash -r '...
-                '" cd ' base_path '; ' ];
+                '" cd ' base_path '; ' ...
+                'path(genpath(''' base_path 'utils/''), path); ' ];
             fprintf(fid, '%s ',script_text);
             
             %%% create new matrix

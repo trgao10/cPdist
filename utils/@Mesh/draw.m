@@ -1,24 +1,29 @@
 function h = draw(G,varargin)    
 
-if nargin>1
-    if isstruct(varargin{1})
-        options = varargin{1};
-    elseif ischar(varargin{1})
-        FeatureType = varargin{1};
-        if length(varargin)>1
-            MeshType = varargin{2};
-        else
-            MeshType = 'original';
-        end
-    end
+varlist = varargin;
+
+patch_option = find(cellfun(@(x) isstruct(x), varlist));
+if ~isempty(patch_option)
+    options = varlist{patch_option};
+    varlist(patch_option) = [];
+end
+
+
+if ~isempty(find(cellfun(@(x) strcmpi(x,'flat'), varlist), 1))
+    MeshType = 'flat';
+    varlist(cellfun(@(x) strcmpi(x,'flat'), varlist)) = [];
+else
+    MeshType = 'original';
+end
+
+if ~isempty(varlist)
+    FeatureType = varlist;
 end
 
 F = G.F;
 V = G.V;
-if exist('MeshType','var')
-    if strcmpi(MeshType,'flat')
-        V = G.Aux.UniformizationV;
-    end
+if strcmpi(MeshType,'flat')
+    V = G.Aux.UniformizationV;
 end
 
 if isempty(F) || isempty(V)
@@ -70,17 +75,19 @@ axis equal;
 
 if exist('FeatureType','var')
     hold on;
-    switch lower(FeatureType)
-        case 'confmax'
-            scatter3(V(1,G.Aux.ConfMaxInds),V(2,G.Aux.ConfMaxInds),V(3,G.Aux.ConfMaxInds),30,'g','filled');
-        case 'gaussmax'
-            scatter3(V(1,G.Aux.GaussMaxInds),V(2,G.Aux.GaussMaxInds),V(3,G.Aux.GaussMaxInds),30,'r','filled');
-        case 'gaussmin'
-            scatter3(V(1,G.Aux.GaussMinInds),V(2,G.Aux.GaussMinInds),V(3,G.Aux.GaussMinInds),30,'b','filled');
-        case 'admax'
-            scatter3(V(1,G.Aux.ADMaxInds),V(2,G.Aux.ADMaxInds),V(3,G.Aux.ADMaxInds),30,'y','filled');
-        otherwise
-            disp('Un-recognizable Feature Type');
+    for j=1:length(FeatureType)
+        switch lower(FeatureType{j})
+            case 'confmax'
+                scatter3(V(1,G.Aux.ConfMaxInds),V(2,G.Aux.ConfMaxInds),V(3,G.Aux.ConfMaxInds),30,'g','filled');
+            case 'gaussmax'
+                scatter3(V(1,G.Aux.GaussMaxInds),V(2,G.Aux.GaussMaxInds),V(3,G.Aux.GaussMaxInds),30,'r','filled');
+            case 'gaussmin'
+                scatter3(V(1,G.Aux.GaussMinInds),V(2,G.Aux.GaussMinInds),V(3,G.Aux.GaussMinInds),30,'b','filled');
+            case 'admax'
+                scatter3(V(1,G.Aux.ADMaxInds),V(2,G.Aux.ADMaxInds),V(3,G.Aux.ADMaxInds),30,'y','filled');
+            otherwise
+                disp('Un-recognizable Feature Type');
+        end
     end
 end
 

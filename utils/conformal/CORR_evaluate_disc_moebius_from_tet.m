@@ -1,4 +1,4 @@
-function [ca] = CORR_evaluate_disc_mobius_from_tet(ctet,z,w)
+function [ca] = CORR_evaluate_disc_moebius_from_tet(ctet,z,w)
 
 ca = zeros(size(ctet));
 for k=1:length(ctet)

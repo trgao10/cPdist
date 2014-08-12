@@ -8,7 +8,7 @@ addpath(path,genpath([pwd '/utils/']));
 Names = {'B03','J13'};
 
 options.FeatureType = 'ConfMax';
-options.NumDensityPnts = 100;
+options.NumDensityPnts = 1000;
 options.AngleIncrement = 0.05;
 options.NumFeatureMatch = 4;
 options.GaussMinMatch = 'off';
