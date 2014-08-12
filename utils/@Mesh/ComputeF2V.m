@@ -1,10 +1,5 @@
 function F2V = ComputeF2V(G)
 
-if ~isempty(G.F2V)
-    F2V = G.F2V;
-    return
-end
-
 nf = size(G.F,2);
 nv = size(G.V,2);
 I = [G.F(1,:),G.F(2,:),G.F(3,:)];
