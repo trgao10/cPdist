@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'B03','J13'};
+Names = {'H16','j18'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 1000;
@@ -20,7 +20,7 @@ options.GaussMinMatch = 'off';
 % options.Display = 'on';
 
 obj_path = [pwd '/obj/'];
-sample_path = [pwd '/samples/'];
+sample_path = [pwd '/samples/Teeth/'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
 meshes_path = [data_path 'meshes/'];
 delete_command = 'rm -f ';

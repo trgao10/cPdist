@@ -177,10 +177,6 @@ end
 
 TextureCoords2_kdtree = kdtree_build(TextureCoords2');
 cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
-% TextureCoords2_kdtree = KDTreeSearcher(TextureCoords2');
-% [~,map] = nrsearch(TextureCoords2,TextureCoords1,1,0);
-% cPmap = cell2mat(map);
-% cPmap = TextureCoords2_kdtree.knnsearch(TextureCoords1');
 
 if strcmpi(GaussMinMatch,'on')
     [~,InterpGaussMinInds2,preInterpGaussMinInds1] = FindMutuallyNearestNeighbors(GM,GN,cPmap,'GaussMin');
@@ -199,9 +195,8 @@ if strcmpi(GaussMinMatch,'on')
         pt = [A,b]*[tP';ones(1,size(tP,1))];
         TextureCoords1 = DISCtoPLANE(pt','p2d')';
     end
-    [~,map] = nrsearch(TextureCoords2,TextureCoords1,1,0);
-    cPmap = cell2mat(map);
-%     cPmap = TextureCoords2_kdtree.knnsearch(TextureCoords1');
+    TextureCoords2_kdtree = kdtree_build(TextureCoords2');
+    cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
 end
 
 cPdist = MapToDist(GM.V,GN.V,cPmap,GM.Aux.VertArea);

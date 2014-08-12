@@ -24,7 +24,7 @@ options.ExcludeBoundary = 1;
 options.Display = 'off';
 
 obj_path = [pwd '/obj/'];
-sample_path = [pwd '/samples_face/'];
+sample_path = [pwd '/samples/Faces/'];
 data_path = [pwd '/'];
 meshes_path = data_path;
 delete_command = 'rm -f ';
