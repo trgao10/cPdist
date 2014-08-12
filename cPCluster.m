@@ -27,7 +27,7 @@ touch(rslts_path);
 command_text = ['!rm -f ' scripts_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' errors_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' outputs_path '*']; eval(command_text); disp(command_text);
-command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text);
+% command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text);
 
 %%% load taxa codes
 taxa_file = [data_path 'teeth_taxa_table.mat'];
@@ -72,8 +72,10 @@ for k1=1:GroupSize
             fprintf(fid, '%s ',script_text);
             
             %%% create new matrix
-            cPrslt = cell(GroupSize,GroupSize);
-            save([rslts_path 'rslt_mat_' num2str(job_id)], 'cPrslt');
+            if ~exist([rslts_path 'rslt_mat_' num2str(job_id) '.mat'],'file')
+                cPrslt = cell(GroupSize,GroupSize);
+                save([rslts_path 'rslt_mat_' num2str(job_id)], 'cPrslt');
+            end
         end
         filename1 = [samples_path taxa_code{k1} '.mat'];
         filename2 = [samples_path taxa_code{k2} '.mat'];
@@ -104,5 +106,4 @@ if mod(cnt,chunk_size)~=0
     tosub = ['!qsub -N ' jobname ' -o ' sout ' -e ' serr ' ' script_name ];
     eval(tosub);
 end
-
 
