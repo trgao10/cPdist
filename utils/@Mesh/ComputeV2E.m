@@ -1,9 +1,5 @@
-function V2E = ComputeV2E(G,options)
+function V2E = ComputeV2E(G)
 % Based on Gabriel Peyre's code
-if ~isempty(G.V2E)
-    V2E=G.V2E;
-    return;
-end
 % imrpove - compute V2E directly
 A=G.ComputeAdjacencyMatrix;
 %% compute list of edges
