@@ -4,6 +4,7 @@ function [rslt] = ComputeContinuousProcrustes(GM,GN,options)
 %   rslt.Gname2:            name of the second mesh
 %   rslt.cPdist:            continuous Procrustes distance
 %   rslt.cPmap:             optimal map generating cP distance
+%   rslt.invcPmap:          inverse of rslt.cPmap
 %   rslt.TextureCoords1:    texture coordinates for the first mesh
 %                           (deformed)
 %   rslt.TextureCoords2:    textrue coordinates for the second mesh
@@ -199,6 +200,9 @@ if strcmpi(GaussMinMatch,'on')
     cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
 end
 
+TextureCoords1_kdtree = kdtree_build(TextureCoords1');
+invcPmap = kdtree_nearest_neighbor(TextureCoords1_kdtree, TextureCoords2');
+
 cPdist = MapToDist(GM.V,GN.V,cPmap,GM.Aux.VertArea);
 
 if ref12==1
@@ -212,6 +216,7 @@ if isfield(GM.Aux,'name') && isfield(GN.Aux,'name')
 end
 rslt.cPdist = cPdist;
 rslt.cPmap = cPmap;
+rslt.invcPmap = invcPmap;
 rslt.TextureCoords1 = TextureCoords1;
 rslt.TextureCoords2 = TextureCoords2;
 rslt.ref = ref12;
