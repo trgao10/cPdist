@@ -44,6 +44,7 @@ end
 
 %%% symmetrize
 for j=1:GroupSize
+    progressbar(j,GroupSize,20);
     for k=1:GroupSize
         if cPdistMatrix(j,k)<cPdistMatrix(k,j)
             lmkMSEMatrix(k,j) = lmkMSEMatrix(j,k);
