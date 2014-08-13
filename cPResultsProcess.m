@@ -19,9 +19,8 @@ chunk_size = 55;
 %%% read rslt matrices and separate distance and landmarkMSE's
 cPdistMatrix = zeros(GroupSize,GroupSize);
 cPmapsMatrix = cell(GroupSize,GroupSize);
+invcPmapsMatrix = cell(GroupSize,GroupSize);
 lmkMSEMatrix = zeros(GroupSize,GroupSize);
-TextureCoords1Matrix = cell(GroupSize,GroupSize);
-TextureCoords2Matrix = cell(GroupSize,GroupSize);
 
 cnt = 0;
 job_id = 0;
@@ -34,9 +33,8 @@ for k1=1:GroupSize
         end
         cPdistMatrix(k1,k2) = cPrslt{k1,k2}.cPdist;
         cPmapsMatrix{k1,k2} = cPrslt{k1,k2}.cPmap;
+        invcPmapsMatrix{k1,k2} = cPrslt{k1,k2}.invcPmap;
         lmkMSEMatrix(k1,k2) = cPrslt{k1,k2}.lkMSE;
-        TextureCoords1Matrix{k1,k2} = cPrslt{k1,k2}.TextureCoords1;
-        TextureCoords2Matrix{k1,k2} = cPrslt{k1,k2}.TextureCoords2;
         
         cnt = cnt+1;
     end
@@ -48,12 +46,10 @@ for j=1:GroupSize
     for k=1:GroupSize
         if cPdistMatrix(j,k)<cPdistMatrix(k,j)
             lmkMSEMatrix(k,j) = lmkMSEMatrix(j,k);
-            TextureCoords1_kdtree = kdtree_build(TextureCoords1Matrix{j,k}');
-            cPmapsMatrix{k,j} = kdtree_nearest_neighbor(TextureCoords1_kdtree, TextureCoords2Matrix{j,k}');
+            cPmapsMatrix{k,j} = invcPmapsMatrix(j,k);
         else
             lmkMSEMatrix(j,k) = lmkMSEMatrix(k,j);
-            TextureCoords1_kdtree = kdtree_build(TextureCoords1Matrix{k,j}');
-            cPmapsMatrix{j,k} = kdtree_nearest_neighbor(TextureCoords1_kdtree, TextureCoords2Matrix{k,j}');
+            cPmapsMatrix{j,k} = invcPmapsMatrix(k,j);
         end
     end
 end
@@ -74,6 +70,4 @@ axis([1,GroupSize,1,GroupSize]);
 save('cPdistMatrix','cPdistMatrix');
 save('lmkMSEMatrix','lmkMSEMatrix');
 save('cPmapsMatrix','cPmapsMatrix');
-save('TextureCoords1Matrix','TextureCoords1Matrix');
-save('TextureCoords2Matrix','TextureCoords2Matrix');
 
