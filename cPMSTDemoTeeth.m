@@ -9,6 +9,7 @@ Names = {'H16','j18'};
 
 obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Teeth/'];
+cPmaps_path = [pwd '/results/Teeth/cPdist/cPmapsMatrix.mat'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
 delete_command = 'rm -f ';
 
@@ -24,6 +25,11 @@ Gs = cell(2,1);
 taxa_code = load([data_path 'teeth_taxa_table.mat']);
 taxa_code = taxa_code.taxa_code;
 TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
+
+%% load all cPmaps (slow)
+disp('loading all cPmaps...');
+load(cPmaps_path);
+disp('loaded');
 
 %% load flattend meshes
 for j=1:2

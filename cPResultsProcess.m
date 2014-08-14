@@ -46,10 +46,10 @@ for j=1:GroupSize
     for k=1:GroupSize
         if cPdistMatrix(j,k)<cPdistMatrix(k,j)
             lmkMSEMatrix(k,j) = lmkMSEMatrix(j,k);
-            cPmapsMatrix{k,j} = invcPmapsMatrix(j,k);
+            cPmapsMatrix{k,j} = invcPmapsMatrix{j,k};
         else
             lmkMSEMatrix(j,k) = lmkMSEMatrix(k,j);
-            cPmapsMatrix{j,k} = invcPmapsMatrix(k,j);
+            cPmapsMatrix{j,k} = invcPmapsMatrix{k,j};
         end
     end
 end
