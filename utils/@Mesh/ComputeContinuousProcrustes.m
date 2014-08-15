@@ -1,5 +1,5 @@
 function [rslt] = ComputeContinuousProcrustes(GM,GN,options)
-%COMPUTECONTINUOUSPROCRUSTES Summary of this function goes here
+%COMPUTECONTINUOUSPROCRUSTES: Compute cP distance between GM and GN
 %   rslt.Gname1:            name of the first mesh
 %   rslt.Gname2:            name of the second mesh
 %   rslt.cPdist:            continuous Procrustes distance
@@ -9,8 +9,8 @@ function [rslt] = ComputeContinuousProcrustes(GM,GN,options)
 %                           (deformed)
 %   rslt.TextureCoords2:    textrue coordinates for the second mesh
 %                           (not deformed)
-%   rslt.ref:               =1 if cP map is orientation-preserving
-%                           =0 otherwise
+%   rslt.ref:               =0 if cP map is orientation-preserving
+%                           =1 if cP map is orientation-reversing
 %
 %   Tingran Gao, trgao10@math.duke.edu
 %   last modified: 10 Aug 2014
@@ -20,11 +20,7 @@ function [rslt] = ComputeContinuousProcrustes(GM,GN,options)
 if nargin<3
     options = [];
 end
-
 ProgressBar = getoptions(options,'ProgressBar','on');
-
-%%% useful shortcuts
-compl = @(x) x(1,:)+1i*x(2,:);
 
 %%% feature type for matching
 FeatureType = getoptions(options,'FeatureType','ConfMax');

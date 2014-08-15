@@ -21,6 +21,8 @@ cPdistMatrix = zeros(GroupSize,GroupSize);
 cPmapsMatrix = cell(GroupSize,GroupSize);
 invcPmapsMatrix = cell(GroupSize,GroupSize);
 lmkMSEMatrix = zeros(GroupSize,GroupSize);
+TextureCoords1Matrix = cell(GroupSize,GroupSize);
+TextureCoords2Matrix = cell(GroupSize,GroupSize);
 
 cnt = 0;
 job_id = 0;
@@ -35,6 +37,8 @@ for k1=1:GroupSize
         cPmapsMatrix{k1,k2} = cPrslt{k1,k2}.cPmap;
         invcPmapsMatrix{k1,k2} = cPrslt{k1,k2}.invcPmap;
         lmkMSEMatrix(k1,k2) = cPrslt{k1,k2}.lkMSE;
+        TextureCoords1Matrix{k1,k2} = cPrslt{k1,k2}.TextureCoords1;
+        TextureCoords2Matrix{k1,k2} = cPrslt{k1,k2}.TextureCoords2;
         
         cnt = cnt+1;
     end
@@ -70,4 +74,6 @@ axis([1,GroupSize,1,GroupSize]);
 save('cPdistMatrix','cPdistMatrix');
 save('lmkMSEMatrix','lmkMSEMatrix');
 save('cPmapsMatrix','cPmapsMatrix');
+save('TextureCoords1Matrix','TextureCoords1Matrix');
+save('TextureCoords2Matrix','TextureCoords2Matrix');
 

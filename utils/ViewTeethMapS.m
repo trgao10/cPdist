@@ -1,20 +1,27 @@
 function ViewTeethMapS(GM,GN,maps,options)
-%VIEWTEMPLATES Summary of this function goes here
-%   Detailed explanation goes here
+%VIEWTEMPLATES: visualize a pair of maps between GM and GN
+%   GM, GN:     Mesh objects
+%   maps:       1x2 cell array containing map12 (GM->GN) and map21 (GN->GM)
+%   options:
+%      Type:            {'full'} | 'sample'
+%      Landmarks:       {'on'}  | 'off'
+%      LandmarksPath:   path to landmarks_teeth.mat
+%      MeshesPath:      path to the folder containing all meshes
+%
+%   Tingran Gao, trgao10@math.duke.edu
+%   last modified: 15 Aug 2014
+%
 
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% parse parameters
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-if ~isfield(options,'type')
-    type= 'full';
-else
-    type = options.type;
+if nargin<4
+    options = [];
 end
+Type = getoptions(options,'Type','full');
+Landmarks = getoptions(options,'Landmarks','on');
 
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % teeth panel
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-if strcmpi(options.landmarks, 'on')
+if strcmpi(Landmarks, 'on')
     figure('Unit', 'pixel', 'Position', [0,0,1200,800], 'Tag', 'TEETH');
     NumRows = 2;
     NumCols = 2;
@@ -38,11 +45,11 @@ camlight('headlight');
 camlight(180,0);
 lighting phong;
 title(GM.Aux.name);
-if (strcmpi(type, 'sample'))
+if (strcmpi(Type, 'sample'))
     samples = GM.V(:,GM.Aux.VertSampInd);
     scatter3(samples(1,:),samples(2,:),samples(3,:),5,'k','filled');
 end
-if (strcmpi(options.landmarks, 'on'))
+if (strcmpi(Landmarks, 'on'))
     % extract landmarks
     [IndsOnSource, Coords] = ExtractLandmarks(GM,options);
     draw_landmarks(GM.V,Coords);
@@ -57,17 +64,17 @@ camlight('headlight');
 camlight(180,0);
 lighting phong;
 title(GN.Aux.name);
-if (strcmpi(type, 'sample'))
+if (strcmpi(Type, 'sample'))
     samples = GN.V(:,GN.Aux.VertSampInd);
     scatter3(samples(1,:),samples(2,:),samples(3,:),5,'k','filled');
 end
-if (strcmpi(options.landmarks, 'on'))
+if (strcmpi(Landmarks, 'on'))
     % extract landmarks
     [IndsOnTarget, Coords] = ExtractLandmarks(GN,options);
     draw_landmarks(GN.V,Coords);
 end
 
-if (strcmpi(options.landmarks, 'on'))
+if (strcmpi(Landmarks, 'on'))
     h(3) = subplot(NumRows,NumCols,3);
     GM.draw(struct('FaceColor',[0.9 0.9 0.8],'EdgeColor','none','FaceAlpha',1,'AmbientStrength',0.3,'SpecularStrength',0.0));
     set(gca,'Tag','PropagSource');
@@ -75,7 +82,7 @@ if (strcmpi(options.landmarks, 'on'))
     camlight('headlight');
     camlight(180,0);
     lighting phong;
-    if (strcmpi(type, 'sample'))
+    if (strcmpi(Type, 'sample'))
         samples = GM.V(:,GM.Aux.VertSampInd);
         scatter3(samples(1,:),samples(2,:),samples(3,:),5,'k','filled');
     end
@@ -90,7 +97,7 @@ if (strcmpi(options.landmarks, 'on'))
     camlight('headlight');
     camlight(180,0);
     lighting phong;
-    if (strcmpi(type, 'sample'))
+    if (strcmpi(Type, 'sample'))
         samples = GM.V(:,GM.Aux.VertSampInd);
         scatter3(samples(1,:),samples(2,:),samples(3,:),5,'k','filled');
     end
@@ -108,7 +115,7 @@ set(gca, 'CameraTarget', [0.0122,-0.0075,0.0173]);
 set(gca, 'CameraViewAngle', 10.5477);
 
 userdata.maps = maps;
-userdata.type = type;
+userdata.Type = Type;
 userdata.mesh_list = mesh_list;
 userdata.ToggleOnTeethSelect3DFlag = 'off';
 set(gcf, 'userdata', userdata);
@@ -117,6 +124,8 @@ set(gcf, 'KeyPressFcn', {@ToggleOnTeethSelect3D});
 end
 
 function [Inds, Coords] = ExtractLandmarks(GM, options)
+
+Type = getoptions(options,'Type','full');
 
 LandmarkFile = load(options.LandmarksPath);
 rawLandmarks = LandmarkFile.PP(strcmpi(LandmarkFile.names, GM.Aux.name),1:16,:);
@@ -132,7 +141,7 @@ V = V*sqrt(1/area);
 tree = KDTreeSearcher(V);
 LandmarkVertInds = tree.knnsearch(Landmarks);
 
-if strcmpi(options.type, 'sample')
+if strcmpi(Type, 'sample')
     LandmarkOnSampleInds = GM.Aux.V2S(LandmarkVertInds);
     LandmarkOnSamples = GM.V(:,LandmarkOnSampleInds);
     
@@ -142,7 +151,7 @@ if strcmpi(options.type, 'sample')
     end
     Inds = LandmarkToNearestSample;
     Coords = LandmarkOnSamples;
-elseif strcmpi(options.type, 'full')
+elseif strcmpi(Type, 'full')
     Inds = LandmarkVertInds;
     Coords = GM.V(:,Inds);
 end
@@ -173,7 +182,7 @@ if(strcmp(eventData.Key, 'space'))
     if strcmpi(userdata.ToggleOnTeethSelect3DFlag,'off')
         userdata.currentWindowButtonDownFcn = get(gcf, 'WindowButtonDownFcn');
         set(gcf, 'WindowButtonDownFcn',...
-            {@callbackOnTeethDataCursor, userdata.mesh_list, userdata.type, userdata.maps});
+            {@callbackOnTeethDataCursor, userdata.mesh_list, userdata.Type, userdata.maps});
         userdata.ToggleOnTeethSelect3DFlag = 'on';
         set(gcf, 'Name',...
             ['OnTeethSelect3D ' userdata.ToggleOnTeethSelect3DFlag]);
@@ -192,7 +201,7 @@ end
 
 end
 
-function callbackOnTeethDataCursor(hObject,eventData,mesh_list,type,maps)
+function callbackOnTeethDataCursor(hObject,eventData,mesh_list,Type,maps)
 
 MarkerSize = 30;
 
@@ -209,12 +218,12 @@ if strcmpi(get(gca,'Tag'),'Source')||strcmpi(get(gca,'Tag'),'PropagSource')
     map = maps{1};
     
     GM = mesh_list{1};
-    if (strcmpi(type, 'sample'))
+    if (strcmpi(Type, 'sample'))
         tree = KDTreeSearcher(GM.V(:,GM.Aux.VertSampInd)');
         pointInSourceSampleIndex = tree.knnsearch(selectedPoint');
         pointOnSourceIndex = GM.Aux.VertSampInd(pointInSourceSampleIndex);
         pointOnSource = GM.V(:,pointOnSourceIndex);
-    elseif (strcmpi(type, 'full'))
+    elseif (strcmpi(Type, 'full'))
         tree = KDTreeSearcher(GM.V');
         pointOnSourceIndex = tree.knnsearch(selectedPoint');
         pointOnSource = GM.V(:,pointOnSourceIndex);
@@ -230,14 +239,14 @@ if strcmpi(get(gca,'Tag'),'Source')||strcmpi(get(gca,'Tag'),'PropagSource')
     end
     
     GM = mesh_list{2};
-    if (strcmpi(type, 'sample'))
+    if (strcmpi(Type, 'sample'))
         tree = KDTreeSearcher(GM.V(:,GM.Aux.VertSampInd)');
         pointOnTargetIndex = map(pointOnSourceIndex);
         pointOnTarget = GM.V(:,pointOnTargetIndex);
         pointOnTargetSampleIndex = tree.knnsearch(pointOnTarget');
         pointOnTargetIndex = GM.Aux.VertSampInd(pointOnTargetSampleIndex);
         pointOnTarget = GM.V(:,pointOnTargetIndex);
-    elseif (strcmpi(type, 'full'))
+    elseif (strcmpi(Type, 'full'))
         pointOnTarget = GM.V(:,map(pointOnSourceIndex));
     end
     clear GM;
@@ -254,12 +263,12 @@ elseif strcmpi(get(gca,'Tag'),'Target')||strcmpi(get(gca,'Tag'),'PropagTarget')
     map = maps{2};
     
     GM = mesh_list{2};
-    if (strcmpi(type, 'sample'))
+    if (strcmpi(Type, 'sample'))
         tree = KDTreeSearcher(GM.V(:,GM.Aux.VertSampInd)');
         pointInSourceSampleIndex = tree.knnsearch(selectedPoint');
         pointOnSourceIndex = GM.Aux.VertSampInd(pointInSourceSampleIndex);
         pointOnSource = GM.V(:,pointOnSourceIndex);
-    elseif (strcmpi(type, 'full'))
+    elseif (strcmpi(Type, 'full'))
         tree = KDTreeSearcher(GM.V');
         pointOnSourceIndex = tree.knnsearch(selectedPoint');
         pointOnSource = GM.V(:,pointOnSourceIndex);
@@ -275,14 +284,14 @@ elseif strcmpi(get(gca,'Tag'),'Target')||strcmpi(get(gca,'Tag'),'PropagTarget')
     end
     
     GM = mesh_list{1};
-    if (strcmpi(type, 'sample'))
+    if (strcmpi(Type, 'sample'))
         tree = KDTreeSearcher(GM.V(:,GM.Aux.VertSampInd)');
         pointOnTargetIndex = map(pointOnSourceIndex);
         pointOnTarget = GM.V(:,pointOnTargetIndex);
         pointOnTargetSampleIndex = tree.knnsearch(pointOnTarget');
         pointOnTargetIndex = GM.Aux.VertSampInd(pointOnTargetSampleIndex);
         pointOnTarget = GM.V(:,pointOnTargetIndex);
-    elseif (strcmpi(type, 'full'))
+    elseif (strcmpi(Type, 'full'))
         pointOnTarget = GM.V(:,map(pointOnSourceIndex));
     end
     clear GM;

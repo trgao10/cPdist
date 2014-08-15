@@ -13,14 +13,11 @@ function [V1,V2,proj_map12] = ProjMoebius(GM,GN,map12,ref12,options)
 %   trgao10@math.duke.edu
 %
 
-debug = getoptions(options,'debug',0);
-
-compl = @(x) x(1,:)+1i*x(2,:);
-
 if nargin<5
     options = [];
 end
 GaussMinInds = getoptions(options,'GaussMinInds','off');
+debug = getoptions(options,'debug',0);
 
 %%% check for NaN's in the uniformization of GM
 ts = GM.Aux.UniformizationV(1,:)+1i*GM.Aux.UniformizationV(2,:);
@@ -36,6 +33,8 @@ if ref12==1
     V2(2,:) = -V2(2,:);
     ref_GM(2,:) = -ref_GM(2,:);
 end
+
+VertArea = GM.Aux.VertArea';
 
 FeaturesM = GM.Aux.ConfMaxInds;
 FeaturesN = GN.Aux.ConfMaxInds;
@@ -98,24 +97,17 @@ for jj=1:length(FeaturesM)
                 m = [exp(1i*tet) -a*exp(1i*tet); -conj(a) 1];%takes z_0 -> w_0
                 push_GM = CORR_apply_moebius_as_matrix(m,ts);
                 push_GM = [real(push_GM);imag(push_GM)];
-                err = sum(sum((push_GM-ref_GM).^2));
+                err = sum((push_GM-ref_GM).^2)*VertArea;
             end
             % Record if best so far
             if (err < best_err)
                 best_err = err;
                 best_a = a;
                 best_tet = tet;
-%                 best_jj = jj;
-%                 best_kk = kk;
             end
         end
     end
 end
-
-% figure;GM.draw();hold on;
-% scatter3(GM.V(1,FeaturesM(best_jj)),GM.V(2,FeaturesM(best_jj)),GM.V(3,FeaturesM(best_jj)),30,'g','filled');
-% figure;GN.draw();hold on;
-% scatter3(GN.V(1,FeaturesN(best_kk)),GN.V(2,FeaturesN(best_kk)),GN.V(3,FeaturesN(best_kk)),30,'g','filled');
 
 m = [exp(1i*best_tet) -best_a*exp(1i*best_tet); -conj(best_a) 1];
 ts = GM.Aux.UniformizationV(1,:)+1i*GM.Aux.UniformizationV(2,:);
@@ -161,9 +153,14 @@ if debug==1
 end
 
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% find mutually nearest maximal Conformal Factor points
+%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+[InterpConfMaxInds1,InterpConfMaxInds2] = FindMutuallyNearestNeighbors(GM,GN,proj_map12,'ConfMax');
+
+%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % find mutually nearest maximal Area Distortion points
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-[InterpADMaxInds1,InterpADMaxInds2] = FindMutuallyNearestNeighbors(GM,GN,proj_map12,'ADMax');
+% [InterpADMaxInds1,InterpADMaxInds2] = FindMutuallyNearestNeighbors(GM,GN,proj_map12,'ADMax');
 
 if debug==1
     GM_ADMaxInds = GM.Aux.ADMaxInds;
@@ -213,63 +210,22 @@ if debug==1
 end
 
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% find mutually nearest maximal Conformal Factor points
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % find mutually closest minimal Gaussian Curvature points
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 if strcmpi(GaussMinInds,'on')
     disp('Matching GaussMinInds.');
     [InterpGaussMinInds1,InterpGaussMinInds2] = FindMutuallyNearestNeighbors(GM,GN,proj_map12,'GaussMin');
-    
-    %     pfGM_MaxInds = InterpGaussMinInds1;
-    %     GN_MaxInds = InterpGaussMinInds2;
-    %
-    %     [D,~,~] = GN.PerformFastMarching(GN_MaxInds);
-    %     options.method = 'continuous';
-    %     Paths = compute_geodesic_mesh(D, GN.V, GN.F, pfGM_MaxInds, options);
-    %
-    %     colmap = [1,0,0;0,1,0;0,0,1;1,1,0;1,0,1;0,1,1];
-    %     colmap = [colmap;colmap*0.6;colmap*0.4;colmap*0.2];
-    %     h(1) = subplot(1,2,1);
-    %     GM.draw();
-    %     hold on;
-    %     for j=1:length(pfGM_MaxInds)
-    %         GM_MaxInds = find(proj_map12==pfGM_MaxInds(j));
-    %         scatter3(GM.V(1,GM_MaxInds),GM.V(2,GM_MaxInds),GM.V(3,GM_MaxInds),50,colmap(j,:),'filled');
-    %     end
-    %     h(2) = subplot(1,2,2);
-    %     GN.draw();
-    %     hold on;
-    %     for j=1:length(pfGM_MaxInds)
-    %         scatter3(GN.V(1,pfGM_MaxInds(j)),GN.V(2,pfGM_MaxInds(j)),GN.V(3,pfGM_MaxInds(j)),50,colmap(j,:),'filled');
-    %     end
-    %     scatter3(GN.V(1,GN_MaxInds),GN.V(2,GN_MaxInds),GN.V(3,GN_MaxInds),30,'w','filled');
-    %     for j=1:length(Paths)
-    %         geoPath = Paths{j};
-    %         plot3(geoPath(1,:),geoPath(2,:),geoPath(3,:),'Color','r','LineWidth',5);
-    %     end
-    %
-    %     Link = linkprop(h, {'CameraUpVector', 'CameraPosition', 'CameraTarget', 'CameraViewAngle'});
-    %     setappdata(gcf, 'StoreTheLink', Link);
-    %
-    %     set(gca, 'CameraUpVector', [0.8469,-0.5272,-0.0696]);
-    %     set(gca, 'CameraPosition', [0.0584,0.8255,-5.7263]);
-    %     set(gca, 'CameraTarget', [0.0122,-0.0075,0.0173]);
-    %     set(gca, 'CameraViewAngle', 10.5477);
 end
 
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % TPS: both InterpInds1, InterpInds2 are indices on GN
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 if strcmpi(GaussMinInds,'off')
-    InterpInds1 = InterpADMaxInds1;
-    InterpInds2 = InterpADMaxInds2;
+    InterpInds1 = InterpConfMaxInds1;
+    InterpInds2 = InterpConfMaxInds2;
 else
-    InterpInds1 = [InterpADMaxInds1;InterpGaussMinInds1];
-    InterpInds2 = [InterpADMaxInds2;InterpGaussMinInds2];
+    InterpInds1 = [InterpConfMaxInds1;InterpGaussMinInds1];
+    InterpInds2 = [InterpConfMaxInds2;InterpGaussMinInds2];
 end
 
 [~,NonRepInds,~] = unique(InterpInds1);
