@@ -27,7 +27,7 @@ touch(rslts_path);
 command_text = ['!rm -f ' scripts_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' errors_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' outputs_path '*']; eval(command_text); disp(command_text);
-% command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text);
+command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text);
 
 %%% load taxa codes
 taxa_file = [data_path 'teeth_taxa_table.mat'];
