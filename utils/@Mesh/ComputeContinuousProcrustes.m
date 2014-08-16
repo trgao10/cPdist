@@ -178,6 +178,12 @@ cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
 %%% match features in Euclidean space
 [~,TPS_EUC_FEATURESN,preTPS_EUC_FEATURESM] = FindEuclideanMutuallyNearestNeighbors(GM,GN,cPmap,FeatureType);
 
+% figure;GM.draw();hold on;
+% scatter3(GM.V(1,preTPS_EUC_FEATURESM),GM.V(2,preTPS_EUC_FEATURESM),GM.V(3,preTPS_EUC_FEATURESM),30,'g','filled');
+% figure;GN.draw();hold on;
+% scatter3(GN.V(1,TPS_EUC_FEATURESN),GN.V(2,TPS_EUC_FEATURESN),GN.V(3,TPS_EUC_FEATURESN),30,'g','filled');
+% pause();
+
 TPS_EUC_FEATURE_MATCH_M = DISCtoPLANE([real(pushGM(preTPS_EUC_FEATURESM));imag(pushGM(preTPS_EUC_FEATURESM))]','d2p');
 TPS_EUC_FEATURE_MATCH_N = DISCtoPLANE(TextureCoords2(:,TPS_EUC_FEATURESN)','d2p');
 
@@ -197,36 +203,8 @@ elseif (length(TPS_FEATURESM)==3) % Affine Transformation
 end
 cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
 
-% if ~all(TPS_EUC_FEATURESM==TPS_EUC_FEATURESN)
-%     TPS_EUC_FEATURE_MATCH_M = DISCtoPLANE([real(pushGM(preTPS_EUC_FEATURESM(TPS_EUC_FEATURESM~=TPS_EUC_FEATURESN)));imag(pushGM(preTPS_EUC_FEATURESM(TPS_EUC_FEATURESM~=TPS_EUC_FEATURESN)))]','d2p');
-%     TPS_EUC_FEATURE_MATCH_N = DISCtoPLANE(TextureCoords2(:,TPS_EUC_FEATURESN(TPS_EUC_FEATURESM~=TPS_EUC_FEATURESN))','d2p');
-%     
-%     ReptanceCheck_M = pdist2(TPS_EUC_FEATURE_MATCH_M,TPS_FEATURESM);
-%     ReptanceCheck_N = pdist2(TPS_EUC_FEATURE_MATCH_N,TPS_FEATURESN);
-%     [rM,~] = find(ReptanceCheck_M<1e-15);
-%     [rN,~] = find(ReptanceCheck_N<1e-15);
-%     TPS_EUC_FEATURE_MATCH_M(unique([rM;rN]),:) = [];
-%     TPS_EUC_FEATURE_MATCH_N(unique([rM;rN]),:) = [];
-%     
-%     if ~isempty(TPS_EUC_FEATURE_MATCH_M)
-%         TPS_FEATURESM = [TPS_FEATURESM;TPS_EUC_FEATURE_MATCH_M];
-%         TPS_FEATURESN = [TPS_FEATURESN;TPS_EUC_FEATURE_MATCH_N];
-%         if (length(TPS_FEATURESM)>3) % TPS (Thin Plate Spline)
-%             tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
-%             [ftps] = TEETH_calc_tps(TPS_FEATURESM,TPS_FEATURESN-TPS_FEATURESM);
-%             pt = tP + TEETH_eval_tps(ftps,tP);
-%             TextureCoords1 = DISCtoPLANE(pt,'p2d')';
-%         elseif (length(TPS_FEATURESM)==3) % Affine Transformation
-%             tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
-%             [A,b] = PlanarThreePtsDeform(TPS_FEATURESM,TPS_FEATURESN);
-%             pt = [A,b]*[tP';ones(1,size(tP,1))];
-%             TextureCoords1 = DISCtoPLANE(pt','p2d')';
-%         end
-%         cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
-%     end
-% end
-
 if strcmpi(GaussMinMatch,'on')
+    disp('Matching GaussMinINds');
     [~,InterpGaussMinInds2,preInterpGaussMinInds1] = FindEuclideanMutuallyNearestNeighbors(GM,GN,cPmap,'GaussMin');
     TPS_GaussMinCoords1 = DISCtoPLANE([real(pushGM(preInterpGaussMinInds1));imag(pushGM(preInterpGaussMinInds1))]','d2p');
     TPS_GaussMinCoords2 = DISCtoPLANE(TextureCoords2(:,InterpGaussMinInds2)','d2p');
@@ -269,84 +247,3 @@ rslt.TextureCoords2 = TextureCoords2;
 rslt.ref = ref12;
 
 end
-
-function [InterpInds1,InterpInds2,preInterpInds1] = FindMutuallyNearestNeighbors(GM,GN,map,Type)
-
-switch Type
-    case 'ADMax'
-        GM_MaxInds = GM.Aux.ADMaxInds;
-        GN_MaxInds = GN.Aux.ADMaxInds;
-    case 'ConfMax'
-        GM_MaxInds = GM.Aux.ConfMaxInds;
-        GN_MaxInds = GN.Aux.ConfMaxInds;
-    case 'GaussMax'
-        GM_MaxInds = GM.Aux.GaussMaxInds;
-        GN_MaxInds = GN.Aux.GaussMaxInds;
-    case 'GaussMin'
-        GM_MaxInds = GM.Aux.GaussMinInds;
-        GN_MaxInds = GN.Aux.GaussMinInds;
-end
-pfGM_MaxInds = map(GM_MaxInds);
-
-if ~isempty(GM_MaxInds)&&~isempty(GN_MaxInds)
-    [~,~,Q] = GN.PerformFastMarching(pfGM_MaxInds);
-    GN2pfGM = Q(GN_MaxInds);
-    tind1 = zeros(size(GN_MaxInds));
-    for j=1:length(tind1)
-        tind1(j) = find(pfGM_MaxInds==GN2pfGM(j));
-    end
-    
-    [~,~,Q] = GN.PerformFastMarching(GN_MaxInds);
-    pfGM2GN = Q(pfGM_MaxInds);
-    tind2 = zeros(size(pfGM_MaxInds));
-    for j=1:length(tind2)
-        tind2(j) = find(GN_MaxInds==pfGM2GN(j));
-    end
-    
-    InterpMaxInds2 = find(tind2(tind1)==(1:length(tind1))');
-    InterpMaxInds1 = tind1(InterpMaxInds2);
-    
-    InterpInds1 = pfGM_MaxInds(InterpMaxInds1);
-    InterpInds2 = GN_MaxInds(InterpMaxInds2);
-    preInterpInds1 = GM_MaxInds(InterpMaxInds1);
-end
-
-end
-
-function [InterpInds1,InterpInds2,preInterpInds1] = FindEuclideanMutuallyNearestNeighbors(GM,GN,map,Type)
-
-switch Type
-    case 'ADMax'
-        GM_MaxInds = GM.Aux.ADMaxInds;
-        GN_MaxInds = GN.Aux.ADMaxInds;
-    case 'ConfMax'
-        GM_MaxInds = GM.Aux.ConfMaxInds;
-        GN_MaxInds = GN.Aux.ConfMaxInds;
-    case 'GaussMax'
-        GM_MaxInds = GM.Aux.GaussMaxInds;
-        GN_MaxInds = GN.Aux.GaussMaxInds;
-    case 'GaussMin'
-        GM_MaxInds = GM.Aux.GaussMinInds;
-        GN_MaxInds = GN.Aux.GaussMinInds;
-end
-pfGM_MaxInds = map(GM_MaxInds);
-
-if ~isempty(GM_MaxInds)&&~isempty(GN_MaxInds)
-    [~,R,~] = MapToDist(GM.V,GN.V,map,GM.Aux.VertArea);
-    EucDistMatrix = pdist2((R*GM.V(:,GM_MaxInds))',GN.V(:,GN_MaxInds)')';
-%     EucDistMatrix = pdist2(GN.V(:,pfGM_MaxInds)',GN.V(:,GN_MaxInds)')';
-    
-    [~, tind1] = min(EucDistMatrix,[],2);
-    [~, tind2] = min(EucDistMatrix,[],1);
-    tind2 = tind2';
-    
-    InterpMaxInds2 = find(tind2(tind1)==(1:length(tind1))');
-    InterpMaxInds1 = tind1(InterpMaxInds2);
-    
-    InterpInds1 = pfGM_MaxInds(InterpMaxInds1);
-    InterpInds2 = GN_MaxInds(InterpMaxInds2);
-    preInterpInds1 = GM_MaxInds(InterpMaxInds1);
-end
-
-end
-

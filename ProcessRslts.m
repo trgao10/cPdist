@@ -51,9 +51,13 @@ for j=1:GroupSize
         if cPdistMatrix(j,k)<cPdistMatrix(k,j)
             lmkMSEMatrix(k,j) = lmkMSEMatrix(j,k);
             cPmapsMatrix{k,j} = invcPmapsMatrix{j,k};
+            TextureCoords1Matrix{k,j} = TextureCoords2Matrix{j,k};
+            TextureCoords2Matrix{k,j} = TextureCoords1Matrix{j,k};
         else
             lmkMSEMatrix(j,k) = lmkMSEMatrix(k,j);
             cPmapsMatrix{j,k} = invcPmapsMatrix{k,j};
+            TextureCoords1Matrix{j,k} = TextureCoords2Matrix{k,j};
+            TextureCoords2Matrix{j,k} = TextureCoords1Matrix{k,j};
         end
     end
 end
