@@ -15,12 +15,23 @@ function [Dist12,proj_map12,VM12,VN12] = IterProjMoebius(GM,GN,map12,ref12,optio
 
 [VM12,VN12,proj_map12] = ProjMoebius(GM,GN,map12,ref12,options);
 Dist12 = MapToDist(GM.V,GN.V,proj_map12,GM.Aux.VertArea);
-disp(['Vertex permutation with cP value ' num2str(MapToDist(GM.V,GN.V,map12,GM.Aux.VertArea))...
-      ' projected to Moebius transformation with cP value ' num2str(Dist12)]);
+disp(['Vertex permutation with cPValue ' num2str(MapToDist(GM.V,GN.V,map12,GM.Aux.VertArea))...
+      ' projected to a map cPValue ' num2str(Dist12)]);
 
 [VM_iter,VN_iter,proj_map12_iter] = ProjMoebius(GM,GN,proj_map12,ref12,options);
 while Dist12>MapToDist(GM.V,GN.V,proj_map12_iter,GM.Aux.VertArea)
-    disp(['cP value decreased from ' num2str(Dist12) ' to ' num2str(MapToDist(GM.V,GN.V,proj_map12_iter,GM.Aux.VertArea))]);
+    disp(['Decreased cPValue from ' num2str(Dist12) ' to ' num2str(MapToDist(GM.V,GN.V,proj_map12_iter,GM.Aux.VertArea))]);
+    Dist12 = MapToDist(GM.V,GN.V,proj_map12_iter,GM.Aux.VertArea);
+    proj_map12 = proj_map12_iter;
+    VM12 = VM_iter;
+    VN12 = VN_iter;
+    [VM_iter,VN_iter,proj_map12_iter] = ProjMoebius(GM,GN,proj_map12,ref12,options);
+end
+
+options.GaussMinMatch = 'on';
+[VM_iter,VN_iter,proj_map12_iter] = ProjMoebius(GM,GN,proj_map12,ref12,options);
+while Dist12>MapToDist(GM.V,GN.V,proj_map12_iter,GM.Aux.VertArea)
+    disp(['Matching GaussMinInds decreased cPValue from ' num2str(Dist12) ' to ' num2str(MapToDist(GM.V,GN.V,proj_map12_iter,GM.Aux.VertArea))]);
     Dist12 = MapToDist(GM.V,GN.V,proj_map12_iter,GM.Aux.VertArea);
     proj_map12 = proj_map12_iter;
     VM12 = VM_iter;

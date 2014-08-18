@@ -168,9 +168,7 @@ NumLandmarks = max(size(Landmarks));
 colmap =  [1,0,0;0,1,0;0,0,1;1,1,0;1,0,1;0,1,1];
 colmap = [colmap;colmap*0.5;colmap*0.25];
 
-BB = get_bbox_3d(V);
-diam = sqrt(sum(abs(BB(:,2)-BB(:,1)).^2));
-R = 0.025*diam;
+R = 0.015;
 CORR_draw_spheres(Landmarks',R,colmap(1:NumLandmarks,:));
 
 end

@@ -4,10 +4,10 @@ function [complX] = compl(X)
 %    complX:    complexified X
 %
 %   Tingran Gao, trgao10@math.duke.edu
-%   last modified: 15 Aug 2014
+%   last modified: 17 Aug 2014
 %
 
-if size(X,1)>size(X,2)
+if (size(X,1)>size(X,2)) || (size(X,1)==1)
     X = X';
 end
 

@@ -16,8 +16,7 @@ function [V1,V2,proj_map12] = ProjMoebius(GM,GN,map12,ref12,options)
 if nargin<5
     options = [];
 end
-GaussMinInds = getoptions(options,'GaussMinInds','off');
-debug = getoptions(options,'debug',0);
+GaussMinMatch = getoptions(options,'GaussMinMatch','off');
 
 %%% check for NaN's in the uniformization of GM
 ts = GM.Aux.UniformizationV(1,:)+1i*GM.Aux.UniformizationV(2,:);
@@ -38,42 +37,6 @@ VertArea = GM.Aux.VertArea';
 
 FeaturesM = GM.Aux.ConfMaxInds;
 FeaturesN = GN.Aux.ConfMaxInds;
-
-if debug==1
-    pfFeaturesM = map12(FeaturesM);
-    [D,~,~] = GN.PerformFastMarching(FeaturesN);
-    options.method = 'continuous';
-    Paths = compute_geodesic_mesh(D, GN.V, GN.F, pfFeaturesM, options);
-    
-    colmap = [1,0,0;0,1,0;0,0,1;1,1,0;1,0,1;0,1,1];
-    colmap = [colmap;colmap*0.6;colmap*0.4;colmap*0.2];
-    figure;
-    h(1) = subplot(1,2,1);
-    GM.draw();
-    hold on;
-    for j=1:length(FeaturesM)
-        scatter3(GM.V(1,FeaturesM(j)),GM.V(2,FeaturesM(j)),GM.V(3,FeaturesM(j)),50,colmap(j,:),'filled');
-    end
-    h(2) = subplot(1,2,2);
-    GN.draw();
-    hold on;
-    for j=1:length(pfFeaturesM)
-        scatter3(GN.V(1,pfFeaturesM(j)),GN.V(2,pfFeaturesM(j)),GN.V(3,pfFeaturesM(j)),50,colmap(j,:),'filled');
-    end
-    scatter3(GN.V(1,FeaturesN),GN.V(2,FeaturesN),GN.V(3,FeaturesN),30,'w','filled');
-    for j=1:length(Paths)
-        geoPath = Paths{j};
-        plot3(geoPath(1,:),geoPath(2,:),geoPath(3,:),'Color','r','LineWidth',5);
-    end
-    
-    Link = linkprop(h, {'CameraUpVector', 'CameraPosition', 'CameraTarget', 'CameraViewAngle'});
-    setappdata(gcf, 'StoreTheLink', Link);
-    
-    set(gca, 'CameraUpVector', [0.8469,-0.5272,-0.0696]);
-    set(gca, 'CameraPosition', [0.0584,0.8255,-5.7263]);
-    set(gca, 'CameraTarget', [0.0122,-0.0075,0.0173]);
-    set(gca, 'CameraViewAngle', 10.5477);
-end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% starts Moebius projection
@@ -110,214 +73,62 @@ for jj=1:length(FeaturesM)
 end
 
 m = [exp(1i*best_tet) -best_a*exp(1i*best_tet); -conj(best_a) 1];
-ts = GM.Aux.UniformizationV(1,:)+1i*GM.Aux.UniformizationV(2,:);
-push_GM = CORR_apply_moebius_as_matrix(m,ts);
-push_GM(isnan(push_GM)) = 1+1i;
-V1 = [real(push_GM);imag(push_GM)];
-
-proj_map12 = knnsearch(V2',V1');
-
-if debug==1
-    pfFeaturesM = proj_map12(FeaturesM);
-    options.method = 'continuous';
-    Paths = compute_geodesic_mesh(D, GN.V, GN.F, pfFeaturesM, options);
-    
-    colmap = [1,0,0;0,1,0;0,0,1;1,1,0;1,0,1;0,1,1];
-    colmap = [colmap;colmap*0.6;colmap*0.4;colmap*0.2];
-    figure;
-    h(1) = subplot(1,2,1);
-    GM.draw();
-    hold on;
-    for j=1:length(FeaturesM)
-        scatter3(GM.V(1,FeaturesM(j)),GM.V(2,FeaturesM(j)),GM.V(3,FeaturesM(j)),50,colmap(j,:),'filled');
-    end
-    h(2) = subplot(1,2,2);
-    GN.draw();
-    hold on;
-    for j=1:length(pfFeaturesM)
-        scatter3(GN.V(1,pfFeaturesM(j)),GN.V(2,pfFeaturesM(j)),GN.V(3,pfFeaturesM(j)),50,colmap(j,:),'filled');
-    end
-    scatter3(GN.V(1,FeaturesN),GN.V(2,FeaturesN),GN.V(3,FeaturesN),30,'w','filled');
-    for j=1:length(Paths)
-        geoPath = Paths{j};
-        plot3(geoPath(1,:),geoPath(2,:),geoPath(3,:),'Color','r','LineWidth',5);
-    end
-    
-    Link = linkprop(h, {'CameraUpVector', 'CameraPosition', 'CameraTarget', 'CameraViewAngle'});
-    setappdata(gcf, 'StoreTheLink', Link);
-    
-    set(gca, 'CameraUpVector', [0.8469,-0.5272,-0.0696]);
-    set(gca, 'CameraPosition', [0.0584,0.8255,-5.7263]);
-    set(gca, 'CameraTarget', [0.0122,-0.0075,0.0173]);
-    set(gca, 'CameraViewAngle', 10.5477);
+pushGM = CORR_apply_moebius_as_matrix(m,compl(GM.Aux.UniformizationV));
+pushGM(isnan(pushGM)) = 1+1i;
+V2 = GN.Aux.UniformizationV(1:2,:);
+V2(:,isnan(compl(V2))) = ones(2,sum(isnan(compl(V2))));
+if ref12==1
+    V2(2,:) = -V2(2,:);
 end
+TextureCoords2_kdtree = kdtree_build(V2');
 
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% find mutually nearest maximal Conformal Factor points
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-[InterpConfMaxInds1,InterpConfMaxInds2] = FindMutuallyNearestNeighbors(GM,GN,proj_map12,'ConfMax');
+%%% match features in Euclidean space
+[~,TPS_EUC_FEATURESN,preTPS_EUC_FEATURESM] = FindEuclideanMutuallyNearestNeighbors(GM,GN,map12,'ConfMax');
 
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% find mutually nearest maximal Area Distortion points
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% [InterpADMaxInds1,InterpADMaxInds2] = FindMutuallyNearestNeighbors(GM,GN,proj_map12,'ADMax');
+TPS_EUC_FEATURE_MATCH_M = DISCtoPLANE([real(pushGM(preTPS_EUC_FEATURESM));imag(pushGM(preTPS_EUC_FEATURESM))]','d2p');
+TPS_EUC_FEATURE_MATCH_N = DISCtoPLANE(V2(:,TPS_EUC_FEATURESN)','d2p');
 
-if debug==1
-    GM_ADMaxInds = GM.Aux.ADMaxInds;
-    pfGM_ADMaxInds = proj_map12(GM_ADMaxInds);
-    GN_ADMaxInds = GN.Aux.ADMaxInds;
-    [D,~,~] = GN.PerformFastMarching(GN_ADMaxInds);
-    options.method = 'continuous';
-    Paths = compute_geodesic_mesh(D, GN.V, GN.F, pfGM_ADMaxInds, options);
-    
-    colmap = [1,0,0;0,1,0;0,0,1;1,1,0;1,0,1;0,1,1];
-    colmap = [colmap;colmap*0.6;colmap*0.4;colmap*0.2];
-    figure;
-    h(1) = subplot(1,2,1);
-    GM.draw();
-    hold on;
-    for j=1:length(GM_ADMaxInds)
-        scatter3(GM.V(1,GM_ADMaxInds(j)),GM.V(2,GM_ADMaxInds(j)),GM.V(3,GM_ADMaxInds(j)),50,colmap(j,:),'filled');
-    end
-    h(2) = subplot(1,2,2);
-    GN.draw();
-    hold on;
-    for j=1:length(pfGM_ADMaxInds)
-        scatter3(GN.V(1,pfGM_ADMaxInds(j)),GN.V(2,pfGM_ADMaxInds(j)),GN.V(3,pfGM_ADMaxInds(j)),50,colmap(j,:),'filled');
-    end
-    scatter3(GN.V(1,GN_ADMaxInds),GN.V(2,GN_ADMaxInds),GN.V(3,GN_ADMaxInds),30,'w','filled');
-    for j=1:length(Paths)
-        geoPath = Paths{j};
-        plot3(geoPath(1,:),geoPath(2,:),geoPath(3,:),'Color','r','LineWidth',5);
-    end
-    
-    Link = linkprop(h, {'CameraUpVector', 'CameraPosition', 'CameraTarget', 'CameraViewAngle'});
-    setappdata(gcf, 'StoreTheLink', Link);
-    
-    set(gca, 'CameraUpVector', [0.8469,-0.5272,-0.0696]);
-    set(gca, 'CameraPosition', [0.0584,0.8255,-5.7263]);
-    set(gca, 'CameraTarget', [0.0122,-0.0075,0.0173]);
-    set(gca, 'CameraViewAngle', 10.5477);
-    
-    figure;
-    GN.draw();
-    hold on;
-    for j=1:length(InterpADMaxInds1)
-        scatter3(GN.V(1,InterpADMaxInds1(j)),GN.V(2,InterpADMaxInds1(j)),GN.V(3,InterpADMaxInds1(j)),50,colmap(j,:),'filled');
-        scatter3(GN.V(1,InterpADMaxInds2(j)),GN.V(2,InterpADMaxInds2(j)),GN.V(3,InterpADMaxInds2(j)),50,colmap(j,:),'filled');
-    end
-    
-end
+TPS_FEATURESM = TPS_EUC_FEATURE_MATCH_M;
+TPS_FEATURESN = TPS_EUC_FEATURE_MATCH_N;
 
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% find mutually closest minimal Gaussian Curvature points
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-if strcmpi(GaussMinInds,'on')
-    disp('Matching GaussMinInds.');
-    [InterpGaussMinInds1,InterpGaussMinInds2] = FindMutuallyNearestNeighbors(GM,GN,proj_map12,'GaussMin');
-end
-
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% TPS: both InterpInds1, InterpInds2 are indices on GN
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-if strcmpi(GaussMinInds,'off')
-    InterpInds1 = InterpConfMaxInds1;
-    InterpInds2 = InterpConfMaxInds2;
-else
-    InterpInds1 = [InterpConfMaxInds1;InterpGaussMinInds1];
-    InterpInds2 = [InterpConfMaxInds2;InterpGaussMinInds2];
-end
-
-[~,NonRepInds,~] = unique(InterpInds1);
-InterpInds1 = InterpInds1(NonRepInds);
-InterpInds2 = InterpInds2(NonRepInds);
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% colmap = [1,0,0;0,1,0;0,0,1;1,1,0;1,0,1;0,1,1];
-% colmap = [colmap;colmap*0.6;colmap*0.4;colmap*0.2];
-% figure;
-% h(1) = subplot(1,2,1);
-% GM.draw();
-% hold on;
-% for j=1:length(InterpInds1)
-%     preimg = find(proj_map12==InterpInds1(j));
-%     scatter3(GM.V(1,preimg),GM.V(2,preimg),GM.V(3,preimg),50,colmap(j,:),'filled');
-% end
-% h(2) = subplot(1,2,2);
-% GN.draw();
-% hold on;
-% for j=1:length(InterpInds1)
-%     scatter3(GN.V(1,InterpInds1(j)),GN.V(2,InterpInds1(j)),GN.V(3,InterpInds1(j)),50,colmap(j,:),'filled');
-%     scatter3(GN.V(1,InterpInds2(j)),GN.V(2,InterpInds2(j)),GN.V(3,InterpInds2(j)),30,colmap(j,:),'filled');
-% end
-% 
-% Link = linkprop(h, {'CameraUpVector', 'CameraPosition', 'CameraTarget', 'CameraViewAngle'});
-% setappdata(gcf, 'StoreTheLink', Link);
-% 
-% set(gca, 'CameraUpVector', [0.8469,-0.5272,-0.0696]);
-% set(gca, 'CameraPosition', [0.0584,0.8255,-5.7263]);
-% set(gca, 'CameraTarget', [0.0122,-0.0075,0.0173]);
-% set(gca, 'CameraViewAngle', 10.5477);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-if (length(InterpInds1)>3) % TPS (Thin Plate Spline)
-    TPS_DISC_VERTICES = DISCtoPLANE(V2','d2p');
-    tP = DISCtoPLANE(V1','d2p');
-    [ftps] = TEETH_calc_tps(TPS_DISC_VERTICES(InterpInds1,:),TPS_DISC_VERTICES(InterpInds2,:)-TPS_DISC_VERTICES(InterpInds1,:));
+if (length(TPS_FEATURESM)>3) % TPS (Thin Plate Spline)
+    tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
+    [ftps] = TEETH_calc_tps(TPS_FEATURESM,TPS_FEATURESN-TPS_FEATURESM);
     pt = tP + TEETH_eval_tps(ftps,tP);
     V1 = DISCtoPLANE(pt,'p2d')';
-elseif (length(InterpInds1)==3) % affine transformation
-    TPS_DISC_VERTICES = DISCtoPLANE(V2','d2p');
-    tP = (DISCtoPLANE(V1','d2p'))';
-    [A,b] = PlanarThreePtsDeform(TPS_DISC_VERTICES(InterpInds1,:),TPS_DISC_VERTICES(InterpInds2,:));
-    pt = [A,b]*[tP;ones(1,size(V1,2))];
+elseif (length(TPS_FEATURESM)==3) % Affine Transformation
+    tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
+    [A,b] = PlanarThreePtsDeform(TPS_FEATURESM,TPS_FEATURESN);
+    pt = [A,b]*[tP';ones(1,size(tP,1))];
     V1 = DISCtoPLANE(pt','p2d')';
-else % (length(InterpInds1)<3)
-    error('Not Enough Faithful Features to Initiate Deformation!');
 end
+proj_map12 = kdtree_nearest_neighbor(TextureCoords2_kdtree, V1');
 
-proj_map12 = knnsearch(V2',V1');
-
-end
-
-function [InterpInds1,InterpInds2] = FindMutuallyNearestNeighbors(GM,GN,map,Type)
-
-switch Type
-    case 'ADMax'
-        GM_MaxInds = GM.Aux.ADMaxInds;
-        GN_MaxInds = GN.Aux.ADMaxInds;
-    case 'ConfMax'
-        GM_MaxInds = GM.Aux.ConfMaxInds;
-        GN_MaxInds = GN.Aux.ConfMaxInds;
-    case 'GaussMax'
-        GM_MaxInds = GM.Aux.GaussMaxInds;
-        GN_MaxInds = GN.Aux.GaussMaxInds;
-    case 'GaussMin'
-        GM_MaxInds = GM.Aux.GaussMinInds;
-        GN_MaxInds = GN.Aux.GaussMinInds;
-end
-pfGM_MaxInds = map(GM_MaxInds);
-
-if ~isempty(GM_MaxInds)&&~isempty(GN_MaxInds)
-    [~,~,Q] = GN.PerformFastMarching(pfGM_MaxInds);
-    GN2pfGM = Q(GN_MaxInds);
-    tind1 = zeros(size(GN_MaxInds));
-    for j=1:length(tind1)
-        tind1(j) = find(pfGM_MaxInds==GN2pfGM(j));
+if strcmpi(GaussMinMatch,'on')
+    disp('Matching GaussMinInds');
+    [~,InterpGaussMinInds2,preInterpGaussMinInds1] = FindEuclideanMutuallyNearestNeighbors(GM,GN,proj_map12,'GaussMin');
+    TPS_GaussMinCoords1 = DISCtoPLANE([real(pushGM(preInterpGaussMinInds1));imag(pushGM(preInterpGaussMinInds1))]','d2p');
+    TPS_GaussMinCoords2 = DISCtoPLANE(V2(:,InterpGaussMinInds2)','d2p');
+    TPS_FEATURESM = [TPS_FEATURESM;TPS_GaussMinCoords1];
+    TPS_FEATURESN = [TPS_FEATURESN;TPS_GaussMinCoords2];
+    if (length(TPS_FEATURESM)>3) % TPS (Thin Plate Spline)
+        tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
+        [ftps] = TEETH_calc_tps(TPS_FEATURESM,TPS_FEATURESN-TPS_FEATURESM);
+        pt = tP + TEETH_eval_tps(ftps,tP);
+        V1 = DISCtoPLANE(pt,'p2d')';
+    elseif (length(TPS_FEATURESM)==3) % Affine Transformation
+        tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
+        [A,b] = PlanarThreePtsDeform(TPS_FEATURESM,TPS_FEATURESN);
+        pt = [A,b]*[tP';ones(1,size(tP,1))];
+        V1 = DISCtoPLANE(pt','p2d')';
     end
-    
-    [~,~,Q] = GN.PerformFastMarching(GN_MaxInds);
-    pfGM2GN = Q(pfGM_MaxInds);
-    tind2 = zeros(size(pfGM_MaxInds));
-    for j=1:length(tind2)
-        tind2(j) = find(GN_MaxInds==pfGM2GN(j));
-    end
-    
-    InterpMaxInds2 = find(tind2(tind1)==(1:length(tind1))');
-    InterpMaxInds1 = tind1(InterpMaxInds2);
-    
-    InterpInds1 = pfGM_MaxInds(InterpMaxInds1);
-    InterpInds2 = GN_MaxInds(InterpMaxInds2);
+    proj_map12 = kdtree_nearest_neighbor(TextureCoords2_kdtree, V1');
+    disp('Done.');
+end
+
+if ref12==1
+    V1(2,:) = -V1(2,:);
+    V2(2,:) = -V2(2,:);
 end
 
 end

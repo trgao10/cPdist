@@ -13,16 +13,19 @@ function [rslt] = ImproveMap(GM,GN,DistMatrix,MapMatrix,TaxaCode,options)
 %                           =1 if Improved map is orientation-reversing
 %
 %   Tingran Gao, trgao10@math.duke.edu
-%   last modified: 14 Aug 2014
+%   last modified: 17 Aug 2014
 %
 
 if nargin<6
     options = [];
 end
-
+ProgressBar = getoptions(options,'ProgressBar','on');
 ImprType = getoptions(options,'ImprType','MST');
-SmoothMap = getoptions(options,'SmoothMap',1);
-Iter = getoptions(options,'Iter','off');
+SmoothMap = getoptions(options,'SmoothMap',0);
+FeatureFix = getoptions(options,'FeatureFix','on');
+if (SmoothMap==1) && (~isfield(options,'TextureCoords1Matrix')||~isfield(options,'TextureCoords2Matrix'))
+    error('Need TextureCoords1Matrix and TextureCoords2Matrix provided in options fields!');
+end
 
 if ~isfield(GM.Aux,'name') && ~isfield(GN.Aux,'name')
     error('Either Mesh missing .Aux.name');
@@ -33,36 +36,82 @@ rslt.Gname2 = GN.Aux.name;
 
 TAXAind = cellfun(@(name) find(strcmpi(TaxaCode,name)),{GM.Aux.name,GN.Aux.name});
 
-switch lower(ImprType)
-    case 'mst'
-        OptimalPath = FindMSTPath(TAXAind(1),TAXAind(2),DistMatrix);
-    case 'spt'
-    case 'viterbi'
+if ~strcmpi(ImprType,'Viterbi') %%% MST or LAST
+    ST = ConstructGraph(DistMatrix,ImprType);
+    OptimalPath = FindGraphShortestPath(ST,TAXAind(1),TAXAind(2),TaxaCode,options);
+    if SmoothMap==0
+        %%% return vertex permutation map
+        rslt.ImprMap = ComposeMapsAlongPath(OptimalPath,MapMatrix);
+        [rslt.ImprDist,R] = MapToDist(GM.V,GN.V,rslt.ImprMap,GM.Aux.VertArea);
+        if det(R)>0
+            rslt.ref = 0;
+        else
+            rslt.ref = 1;
+        end
+        rslt.TextureCoords2 = GN.Aux.UniformizationV(1:2,:);
+        rslt.TextureCoords2(:,isnan(compl(rslt.TextureCoords2))) = 1;
+        if rslt.ref==1
+            rslt.TextureCoords2(2,:) = -rslt.TextureCoords2(2,:);
+        end
+        rslt.TextureCoords1 = rslt.TextureCoords2(:,rslt.ImprMap);
+    else
+        %%% return a smooth map via texture coordinates interpolation
+        [rslt.TextureCoords1,rslt.TextureCoords2] = ComposeTextureCoordsAlongPath(OptimalPath,options.TextureCoords1Matrix,options.TextureCoords2Matrix,ProgressBar);
+        rslt.ImprMap = knnsearch(rslt.TextureCoords2',rslt.TextureCoords1');
+        [rslt.ImprDist,R] = MapToDist(GM.V,GN.V,rslt.ImprMap,GM.Aux.VertArea);
+        if det(R)>0
+            rslt.ref = 0;
+        else
+            rslt.ref = 1;
+        end
+    end
+else %%% Viterbi
+    ST = ConstructGraph(DistMatrix,'MST'); %%% MST provides a quick and dirty upper bound for Viterbi
+    MSTPath = FindGraphShortestPath(ST,TAXAind(1),TAXAind(2),TaxaCode,options);
+    MSTMap = ComposeMapsAlongPath(MSTPath,MapMatrix);
+    [~,R] = MapToDist(GM.V,GN.V,MSTMap,GM.Aux.VertArea);
+    options.R = R;
+    options.T = length(MSTPath)-1;
+    options.distMatrix = DistMatrix;
+    options.mapMatrix = MapMatrix;
+    options.SmoothMap = SmoothMap;
+    [OptimalPath,rslt.ImprMap] = FindViterbiPath(GM,GN,DistMatrix,MapMatrix,TaxaCode,options);
+    if SmoothMap==0
+        %%% return vertex permutation map
+        [rslt.ImprDist,R] = MapToDist(GM.V,GN.V,rslt.ImprMap,GM.Aux.VertArea);
+        if det(R)>0
+            rslt.ref = 0;
+        else
+            rslt.ref = 1;
+        end
+        rslt.TextureCoords2 = GN.Aux.UniformizationV(1:2,:);
+        rslt.TextureCoords2(:,isnan(compl(rslt.TextureCoords2))) = 1;
+        if rslt.ref==1
+            rslt.TextureCoords2(2,:) = -rslt.TextureCoords2(2,:);
+        end
+        rslt.TextureCoords1 = rslt.TextureCoords2(:,rslt.ImprMap);
+    else
+        %%% return a smooth map via texture coordinates interpolation
+        [rslt.TextureCoords1,rslt.TextureCoords2] = ComposeTextureCoordsAlongPath(OptimalPath,options.TextureCoords1Matrix,options.TextureCoords2Matrix,ProgressBar);
+        rslt.ImprMap = knnsearch(rslt.TextureCoords2',rslt.TextureCoords1');
+        [rslt.ImprDist,R] = MapToDist(GM.V,GN.V,rslt.ImprMap,GM.Aux.VertArea);
+        if det(R)>0
+            rslt.ref = 0;
+        else
+            rslt.ref = 1;
+        end
+    end
 end
 
-rslt.ImprMap = ComposeMapsAlongPath(OptimalPath,MapMatrix);
-[rslt.ImprDist,R] = MapToDist(GM.V,GN.V,rslt.ImprMap,GM.Aux.VertArea);
-if det(R)>0
-    rslt.ref = 0;
-else
-    rslt.ref = 1;
+if strcmpi(FeatureFix,'on')
+    disp('Performing Feature Fixing...');
+    [rslt.TextureCoords1,rslt.ImprMap] = TPSDeformation(GM,GN,rslt.ImprMap,'ConfMax',rslt.TextureCoords1,rslt.TextureCoords2);
+    disp('Done.');
 end
-if SmoothMap==0
-    %%% return vertex permutation map
-    rslt.TextureCoords2 = GN.Aux.UniformizationV(1:2,:);
-    rslt.TextureCoords2(:,isnan(compl(rslt.TextureCoords2))) = ones(2,sum(isnan(compl(rslt.TextureCoords2))));
-    if rslt.ref==1
-        rslt.TextureCoords2(2,:) = -rslt.TextureCoords2(2,:);
-    end
-    rslt.TextureCoords1 = rslt.TextureCoords2(:,rslt.ImprMap);
-else
-    %%% project vertex permutation map to a smooth map
-    if strcmpi(Iter,'off')
-        [rslt.TextureCoords1,rslt.TextureCoords2,rslt.ImprMap] = ProjMoebius(GM,GN,rslt.ImprMap,rslt.ref,options);
-    else
-        [rslt.ImprDist,rslt.ImprMap,rslt.TextureCoords1,rslt.TextureCoords2] = IterProjMoebius(GM,GN,rslt.ImprMap,rslt.ref,options);
-    end
-end
+
+disp(['Optimal ' ImprType ' Path: ']);
+disp(TaxaCode(OptimalPath));
+rslt.invImprMap = knnsearch(rslt.TextureCoords1',rslt.TextureCoords2');
 
 end
 

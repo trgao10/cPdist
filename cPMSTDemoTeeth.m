@@ -4,20 +4,39 @@ clear vars;
 path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
-%% Set Parameters
-Names = {'Q19','b08'};
-% Names = {'H08','w01'};
-
-options.ImprType = 'MST';
-options.SmoothMap = 0;
-options.Iter = 'on';
-
+%% Set Path
 obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Teeth/'];
 cPmaps_path = [pwd '/results/Teeth/cPdist/cPmapsMatrix.mat'];
 cPdist_path = [pwd '/results/Teeth/cPdist/cPdistMatrix.mat'];
+TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1Matrix.mat'];
+TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2Matrix.mat'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
 delete_command = 'rm -f ';
+
+%% Set Parameters
+% Names = {'um-adcc181','w02'}; % Viterbi Path Search can't fix this without MST
+% Names = {'V09','x23'}; % how can these two teeth belong to the same genus??
+% Names = {'V09','V13'}; % good
+% Names = {'h08','H10'}; % good (because the original cP maps is already good)
+% Names = {'a19','P30'}; % good! originally unrecoverable peak now gained back
+% Names = {'T06','x17'}; % not too bad
+% Names = {'T06','V02'}; % not good--worth exploring
+% Names = {'T05','h08'}; % compare this pair with {'T06','h08'} to see how "a little bit extra feature" can already help dramastically
+% Names = {'T06','h08'}; % compare with {'T05','h08'}
+% Names = {'P35','Q02'}; % missed one peak, can't get back with MST or Viterbi
+% Names = {'k01','j01'}; % surprisingly good (cP value indicates it could be much worse)
+% Names = {'k15','a15'}; % makes a lot of sense--k15 is of low mesh quality
+% Names = {'h08','j14'}; % nightmare
+% Names = {'j01','j14'}; % MST vertex permutation looks better than projected Moebius transform
+% Names = {'a16','x14'}; % cP reverses orientation; MST fixes it
+Names = {'a16','x14'};
+
+options.ImprType = 'Viterbi';
+options.ShowTree = 'off';
+options.SmoothMap = 1;
+options.FeatureFix = 'on';
+options.ProgressBar = 'off';
 
 %%% options for ViewTeethMapS %%%
 options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
@@ -36,13 +55,25 @@ taxa_code = load([data_path 'teeth_taxa_table.mat']);
 taxa_code = taxa_code.taxa_code;
 TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
 
-%% Load All cPmaps and cPdists, View MST
+%% Load All cPmaps and cPdists
+disp('loading all cPdist...');
 load(cPdist_path);
-% ConstructMST(cPdistMatrix,taxa_code);
+disp('loaded');
 
 disp('loading all cPmaps...');
-load(cPmaps_path); % load cell arry "cPmapsMatrix"
+load(cPmaps_path); % load cell array "cPmapsMatrix"
 disp('loaded');
+
+if (options.SmoothMap==1) && (~isfield(options,'TextureCoords1Matrix')||~isfield(options,'TextureCoords2Matrix'))
+    disp('loading all texture coordinates...');
+    load(TextureCoords1_path);
+    load(TextureCoords2_path);
+    disp('loaded');
+    options.TextureCoords1Matrix = TextureCoords1Matrix;
+    clear TextureCoords1Matrix;
+    options.TextureCoords2Matrix = TextureCoords2Matrix;
+    clear TextureCoords2Matrix;
+end
 
 %% Load Flattend Meshes
 for j=1:2
@@ -51,6 +82,8 @@ for j=1:2
 end
 
 %% Visualize Landmark Propagation for Original Maps
+disp(['Original cP distance: ' num2str(cPdistMatrix(TAXAind(1),TAXAind(2)))]);
+
 [~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,cPmapsMatrix{TAXAind(1),TAXAind(2)},Gs{1}.Aux.VertArea);
 tGM = Mesh(Gs{1});
 tGM.V = R*Gs{1}.V;
@@ -59,12 +92,6 @@ ViewTeethMapS(tGM, Gs{2}, {cPmapsMatrix{TAXAind(1),TAXAind(2)},cPmapsMatrix{TAXA
 set(gcf,'Name','cP');
 
 %% Improve Maps
-if strcmpi(options.ImprType,'MST')
-    MSTpath = FindMSTPath(TAXAind(1),TAXAind(2),cPdistMatrix);
-    disp('MST Path: ');
-    disp(taxa_code(MSTpath));
-end
-
 rslt12 = Gs{1}.ImproveMap(Gs{2},cPdistMatrix,cPmapsMatrix,taxa_code,options);
 rslt21 = Gs{2}.ImproveMap(Gs{1},cPdistMatrix,cPmapsMatrix,taxa_code,options);
 
@@ -85,42 +112,14 @@ if rslt12.ImprDist<rslt21.ImprDist
     Gs{1}.Write(obj_surf_1,'obj',options);
     options.Texture.Coordinates = rslt12.TextureCoords2/2+0.5;
     Gs{2}.Write(obj_surf_2,'obj',options);
+    
+    disp(['Improve cP ' options.ImprType ' distance: ' num2str(rslt12.ImprDist)]);
 else
     options.Texture.Coordinates = rslt21.TextureCoords2/2+0.5;
     Gs{1}.Write(obj_surf_1,'obj',options);
     options.Texture.Coordinates = rslt21.TextureCoords1/2+0.5;
     Gs{2}.Write(obj_surf_2,'obj',options);
+    
+    disp(['Improve cP ' options.ImprType ' distance: ' num2str(rslt21.ImprDist)]);
 end
-
-% %% Pairly Improve Maps
-% [rslt] = PairlyImproveMaps(Gs{1},Gs{2},rslt12,rslt21,options);
-% 
-% %% Visualize Landmark Propagation for Pairly Improved Maps
-% [~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,rslt.ImprMap,Gs{1}.Aux.VertArea);
-% pGM = Mesh(Gs{1});
-% pGM.V = R*Gs{1}.V;
-% 
-% ViewTeethMapS(pGM, Gs{2}, {rslt.ImprMap,rslt.invImprMap}, options);
-% set(gcf,'Name',[options.ImprType ' Pairly Improved']);
-% 
-% %% Print Maps to Texture Coordinates
-% obj_surf_1 = [obj_path '1.obj'];
-% obj_surf_2 = [obj_path '2.obj'];
-% 
-% options.Texture.Coordinates = rslt.TextureCoords1/2+0.5;
-% Gs{1}.Write(obj_surf_1,'obj',options);
-% options.Texture.Coordinates = rslt.TextureCoords2/2+0.5;
-% Gs{2}.Write(obj_surf_2,'obj',options);
-
-% if rslt12.ImprDist<rslt21.ImprDist
-%     options.Texture.Coordinates = rslt12.TextureCoords1/2+0.5;
-%     Gs{1}.Write(obj_surf_1,'obj',options);
-%     options.Texture.Coordinates = rslt12.TextureCoords2/2+0.5;
-%     Gs{2}.Write(obj_surf_2,'obj',options);
-% else
-%     options.Texture.Coordinates = rslt21.TextureCoords2/2+0.5;
-%     Gs{1}.Write(obj_surf_1,'obj',options);
-%     options.Texture.Coordinates = rslt21.TextureCoords1/2+0.5;
-%     Gs{2}.Write(obj_surf_2,'obj',options);
-% end
 
