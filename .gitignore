@@ -1,5 +1,5 @@
-./rslts/
-./cluster/
-./results/Teeth/cPdist/cPmapsMatrix.mat
-./results/Teeth/cPdist/TextureCoords1Matrix.mat
-./results/Teeth/cPdist/TextureCoords2Matrix.mat
+rslts/
+cluster/
+results/Teeth/cPdist/cPmapsMatrix.mat
+results/Teeth/cPdist/TextureCoords1Matrix.mat
+results/Teeth/cPdist/TextureCoords2Matrix.mat
