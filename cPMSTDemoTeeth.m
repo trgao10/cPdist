@@ -30,9 +30,9 @@ delete_command = 'rm -f ';
 % Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % MST vertex permutation looks better than projected Moebius transform
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it
-Names = {'a16','x14'};
+Names = {'B03','B03'};
 
-options.ImprType = 'Viterbi';
+options.ImprType = 'MST';
 options.ShowTree = 'off';
 options.SmoothMap = 1;
 options.FeatureFix = 'on';

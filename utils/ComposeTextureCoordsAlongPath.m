@@ -2,6 +2,12 @@ function [TextureCoords1,TextureCoords2] = ComposeTextureCoordsAlongPath(InputPa
 %COMPOSETEXTURECOORDSALONGPATH Summary of this function goes here
 %   Detailed explanation goes here
 
+if length(InputPath)==1
+    TextureCoords1 = TextureCoords1Matrix{InputPath(1),InputPath(1)};
+    TextureCoords2 = TextureCoords2Matrix{InputPath(1),InputPath(1)};
+    return;
+end
+
 TextureCoords1 = TextureCoords1Matrix{InputPath(end-1),InputPath(end)};
 TextureCoords2 = TextureCoords2Matrix{InputPath(end-1),InputPath(end)};
 
