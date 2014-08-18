@@ -178,12 +178,6 @@ cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
 %%% match features in Euclidean space
 [~,TPS_EUC_FEATURESN,preTPS_EUC_FEATURESM] = FindEuclideanMutuallyNearestNeighbors(GM,GN,cPmap,FeatureType);
 
-% figure;GM.draw();hold on;
-% scatter3(GM.V(1,preTPS_EUC_FEATURESM),GM.V(2,preTPS_EUC_FEATURESM),GM.V(3,preTPS_EUC_FEATURESM),30,'g','filled');
-% figure;GN.draw();hold on;
-% scatter3(GN.V(1,TPS_EUC_FEATURESN),GN.V(2,TPS_EUC_FEATURESN),GN.V(3,TPS_EUC_FEATURESN),30,'g','filled');
-% pause();
-
 TPS_EUC_FEATURE_MATCH_M = DISCtoPLANE([real(pushGM(preTPS_EUC_FEATURESM));imag(pushGM(preTPS_EUC_FEATURESM))]','d2p');
 TPS_EUC_FEATURE_MATCH_N = DISCtoPLANE(TextureCoords2(:,TPS_EUC_FEATURESN)','d2p');
 

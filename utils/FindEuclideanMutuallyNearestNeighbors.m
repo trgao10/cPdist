@@ -21,7 +21,6 @@ pfGM_MaxInds = map(GM_MaxInds);
 if ~isempty(GM_MaxInds)&&~isempty(GN_MaxInds)
     [~,R,~] = MapToDist(GM.V,GN.V,map,GM.Aux.VertArea);
     EucDistMatrix = pdist2((R*GM.V(:,GM_MaxInds))',GN.V(:,GN_MaxInds)')';
-%     EucDistMatrix = pdist2(GN.V(:,pfGM_MaxInds)',GN.V(:,GN_MaxInds)')';
     
     [~, tind1] = min(EucDistMatrix,[],2);
     [~, tind2] = min(EucDistMatrix,[],1);
