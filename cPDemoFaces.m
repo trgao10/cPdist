@@ -5,8 +5,8 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'004','058'};
-threshold = 0.1;
+Names = {'Angry/044','Happy/052'};
+% threshold = 0.1;
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
@@ -25,8 +25,8 @@ options.Display = 'off';
 
 obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Faces/'];
-data_path = [pwd '/'];
-meshes_path = data_path;
+data_path = '/media/trgao10/Work/MATLAB/Faces/';
+meshes_path = [data_path 'F001/'];
 delete_command = 'rm -f ';
 
 %% parse parameters

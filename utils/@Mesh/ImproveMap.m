@@ -23,9 +23,10 @@ ProgressBar = getoptions(options,'ProgressBar','on');
 ImprType = getoptions(options,'ImprType','MST');
 SmoothMap = getoptions(options,'SmoothMap',0);
 FeatureFix = getoptions(options,'FeatureFix','on');
-if (SmoothMap==1) && (~isfield(options,'TextureCoords1Matrix')||~isfield(options,'TextureCoords2Matrix'))
-    error('Need TextureCoords1Matrix and TextureCoords2Matrix provided in options fields!');
+if (SmoothMap==1) && (~isfield(options,'TextureCoords1Path')||~isfield(options,'TextureCoords2Path'))
+    error('Need TextureCoords1Path and TextureCoords2Path provided in options fields!');
 end
+ChunkSize = getoptions(options,'ChunkSize',55);
 
 if ~isfield(GM.Aux,'name') && ~isfield(GN.Aux,'name')
     error('Either Mesh missing .Aux.name');
@@ -35,6 +36,7 @@ rslt.Gname1 = GM.Aux.name;
 rslt.Gname2 = GN.Aux.name;
 
 TAXAind = cellfun(@(name) find(strcmpi(TaxaCode,name)),{GM.Aux.name,GN.Aux.name});
+GroupSize = length(TaxaCode);
 
 if ~strcmpi(ImprType,'Viterbi') %%% MST or LAST
     ST = ConstructGraph(DistMatrix,ImprType);
@@ -56,7 +58,7 @@ if ~strcmpi(ImprType,'Viterbi') %%% MST or LAST
         rslt.TextureCoords1 = rslt.TextureCoords2(:,rslt.ImprMap);
     else
         %%% return a smooth map via texture coordinates interpolation
-        [rslt.TextureCoords1,rslt.TextureCoords2] = ComposeTextureCoordsAlongPath(OptimalPath,options.TextureCoords1Matrix,options.TextureCoords2Matrix,ProgressBar);
+        [rslt.TextureCoords1,rslt.TextureCoords2] = ComposeTextureCoordsAlongPath(OptimalPath,options.TextureCoords1Path,options.TextureCoords2Path,GroupSize,ChunkSize,ProgressBar);
         rslt.ImprMap = knnsearch(rslt.TextureCoords2',rslt.TextureCoords1');
         [rslt.ImprDist,R] = MapToDist(GM.V,GN.V,rslt.ImprMap,GM.Aux.VertArea);
         if det(R)>0
@@ -92,7 +94,7 @@ else %%% Viterbi
         rslt.TextureCoords1 = rslt.TextureCoords2(:,rslt.ImprMap);
     else
         %%% return a smooth map via texture coordinates interpolation
-        [rslt.TextureCoords1,rslt.TextureCoords2] = ComposeTextureCoordsAlongPath(OptimalPath,options.TextureCoords1Matrix,options.TextureCoords2Matrix,ProgressBar);
+        [rslt.TextureCoords1,rslt.TextureCoords2] = ComposeTextureCoordsAlongPath(OptimalPath,options.TextureCoords1Path,options.TextureCoords2Path,GroupSize,ChunkSize,ProgressBar);
         rslt.ImprMap = knnsearch(rslt.TextureCoords2',rslt.TextureCoords1');
         [rslt.ImprDist,R] = MapToDist(GM.V,GN.V,rslt.ImprMap,GM.Aux.VertArea);
         if det(R)>0
@@ -105,7 +107,8 @@ end
 
 if strcmpi(FeatureFix,'on')
     disp('Performing Feature Fixing...');
-    [rslt.TextureCoords1,rslt.ImprMap] = TPSDeformation(GM,GN,rslt.ImprMap,'ConfMax',rslt.TextureCoords1,rslt.TextureCoords2);
+    [rslt.TextureCoords1,rslt.ImprMap] = LaplacianDeformation(GM,GN,rslt.ImprMap,'ConfMax',rslt.TextureCoords1,rslt.TextureCoords2);
+%     [rslt.TextureCoords1,rslt.ImprMap] = TPSDeformation(GM,GN,rslt.ImprMap,'ConfMax',rslt.TextureCoords1,rslt.TextureCoords2);
     disp('Done.');
 end
 
