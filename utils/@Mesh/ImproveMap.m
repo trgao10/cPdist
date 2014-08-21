@@ -107,13 +107,10 @@ end
 
 if strcmpi(FeatureFix,'on')
     disp('Performing Feature Fixing...');
-    [rslt.TextureCoords1,rslt.ImprMap] = LaplacianDeformation(GM,GN,rslt.ImprMap,'ConfMax',rslt.TextureCoords1,rslt.TextureCoords2);
-%     [rslt.TextureCoords1,rslt.ImprMap] = TPSDeformation(GM,GN,rslt.ImprMap,'ConfMax',rslt.TextureCoords1,rslt.TextureCoords2);
+    [rslt.TextureCoords1,rslt.ImprMap] = TPSDeformation(GM,GN,rslt.ImprMap,'ConfMax',rslt.TextureCoords1,rslt.TextureCoords2);
     disp('Done.');
 end
 
-disp(['Optimal ' ImprType ' Path: ']);
-disp(TaxaCode(OptimalPath));
 rslt.invImprMap = knnsearch(rslt.TextureCoords1',rslt.TextureCoords2');
 
 end

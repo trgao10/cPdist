@@ -9,8 +9,6 @@ obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Teeth/'];
 cPmaps_path = [pwd '/results/Teeth/cPdist/cPmapsMatrix.mat'];
 cPdist_path = [pwd '/results/Teeth/cPdist/cPdistMatrix.mat'];
-% TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1Matrix/'];
-% TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2Matrix/'];
 TextureCoords1_path = '/media/trgao10/Work/MATLAB/cPdist/TextureCoords1Matrix/';
 TextureCoords2_path = '/media/trgao10/Work/MATLAB/cPdist/TextureCoords2Matrix/';
 data_path = '~/Work/MATLAB/DATA/PNAS/';
@@ -37,7 +35,7 @@ Names = {'S08','j06'};
 options.ImprType = 'MST';
 options.ShowTree = 'off';
 options.SmoothMap = 1;
-options.FeatureFix = 'on';
+options.FeatureFix = 'off';
 options.ProgressBar = 'on';
 options.TextureCoords1Path = TextureCoords1_path;
 options.TextureCoords2Path = TextureCoords2_path;
@@ -107,13 +105,13 @@ if rslt12.ImprDist<rslt21.ImprDist
     options.Texture.Coordinates = rslt12.TextureCoords2/2+0.5;
     Gs{2}.Write(obj_surf_2,'obj',options);
     
-    disp(['Improve cP ' options.ImprType ' distance: ' num2str(rslt12.ImprDist)]);
+    disp(['Improve cP' options.ImprType ' distance: ' num2str(rslt12.ImprDist)]);
 else
     options.Texture.Coordinates = rslt21.TextureCoords2/2+0.5;
     Gs{1}.Write(obj_surf_1,'obj',options);
     options.Texture.Coordinates = rslt21.TextureCoords1/2+0.5;
     Gs{2}.Write(obj_surf_2,'obj',options);
     
-    disp(['Improve cP ' options.ImprType ' distance: ' num2str(rslt21.ImprDist)]);
+    disp(['Improve cP' options.ImprType ' distance: ' num2str(rslt21.ImprDist)]);
 end
 
