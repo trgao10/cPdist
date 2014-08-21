@@ -1,7 +1,4 @@
 meshesPath = '../DATA/PNAS/meshes/';
-newMeshesPath = '../DATA/newMeshes/';
-
-touch(newMeshesPath);
 
 meshFiles = dir(meshesPath);
 meshFiles(1:2) = [];

@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'V08','V13'};
+Names = {'T12','j14'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
@@ -59,8 +59,8 @@ for j=1:2
 end
 
 %% compute continuous Procrustes distance
-rslt12 = Gs{1}.ComputeContinuousProcrustes(Gs{2},options);
-rslt21 = Gs{2}.ComputeContinuousProcrustes(Gs{1},options);
+tic;rslt12 = Gs{1}.ComputeContinuousProcrustes(Gs{2},options);toc;
+tic;rslt21 = Gs{2}.ComputeContinuousProcrustes(Gs{1},options);toc;
 
 lk2 = Gs{2}.V(:,GetLandmarks(Gs{2},[data_path 'landmarks_teeth.mat']));
 lk1 = Gs{2}.V(:,rslt12.cPmap(GetLandmarks(Gs{1},[data_path 'landmarks_teeth.mat'])));
