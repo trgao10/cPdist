@@ -11,13 +11,14 @@ FeatureFix = 'off';
 %%% setup paths
 base_path = [pwd '/'];
 data_path = '../DATA/PNAS/';
+TextureCoords_path = '/gtmp/trgao10/cPdist/rslts/cPdist/';
 rslts_path = [base_path 'rslts/'];
 cluster_path = [base_path 'cluster/'];
 samples_path = [base_path 'samples/Teeth/'];
 cPmaps_path = [base_path 'results/Teeth/cPdist/cPmapsMatrix.mat'];
 cPdist_path = [base_path 'results/Teeth/cPdist/cPdistMatrix.mat'];
-TextureCoords1_path = [base_path 'results/Teeth/cPdist/TextureCoords1Matrix.mat'];
-TextureCoords2_path = [base_path 'results/Teeth/cPdist/TextureCoords2Matrix.mat'];
+TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1Matrix/'];
+TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2Matrix/'];
 meshes_path = [data_path 'meshes/'];
 landmarks_path = [data_path 'landmarks_teeth.mat'];
 TaxaCode_path = [data_path 'teeth_taxa_table.mat'];
@@ -40,8 +41,7 @@ command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text
 %%% load taxa codes
 taxa_code = load(TaxaCode_path);
 taxa_code = taxa_code.taxa_code;
-GroupSize = 1;
-% GroupSize = length(taxa_code);
+GroupSize = length(taxa_code);
 chunk_size = 55;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,18 +79,17 @@ for k1=1:GroupSize
                 'path(genpath(''' base_path 'utils/''), path); ' ...
                 'load(''' cPdist_path ''');' ...
                 'load(''' cPmaps_path ''');' ...
-                'load(''' TextureCoords1_path ''');' ...
-                'load(''' TextureCoords2_path ''');' ...
-                'options.TextureCoords1Matrix = TextureCoords1Matrix;' ...
-                'options.TextureCoords2Matrix = TextureCoords2Matrix;' ...
+                'options.TextureCoords1Path = ''' TextureCoords1_path ''';' ...
+                'options.TextureCoords2Path = ''' TextureCoords2_path ''';' ...
                 'taxa_code = load(''' TaxaCode_path ''');' ...
-                'options.TaxaCode = taxa_code.taxa_code;' ];
+                'options.TaxaCode = taxa_code.taxa_code;' ...
+                'options.ChunkSize = ' num2str(chunk_size) ';' ];
             fprintf(fid, '%s ',script_text);
             
             %%% create new matrix
             if ~exist([rslts_path 'rslt_mat_' num2str(job_id) '.mat'],'file')
-                cPrslt = cell(GroupSize,GroupSize);
-                save([rslts_path 'rslt_mat_' num2str(job_id)], 'cPrslt');
+                Imprrslt = cell(GroupSize,GroupSize);
+                save([rslts_path 'rslt_mat_' num2str(job_id)], 'Imprrslt');
             end
         end
         filename1 = [samples_path taxa_code{k1} '.mat'];

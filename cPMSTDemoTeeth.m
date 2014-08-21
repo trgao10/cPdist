@@ -9,12 +9,8 @@ obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Teeth/'];
 cPmaps_path = [pwd '/results/Teeth/cPdist/cPmapsMatrix.mat'];
 cPdist_path = [pwd '/results/Teeth/cPdist/cPdistMatrix.mat'];
-TextureCoords1_path = '/media/trgao10/Work/MATLAB/cPdist/TextureCoords1Matrix/';
-TextureCoords2_path = '/media/trgao10/Work/MATLAB/cPdist/TextureCoords2Matrix/';
-% TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1Matrix.mat'];
-% TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2Matrix.mat'];
-% TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1Matrix.mat'];
-% TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2Matrix.mat'];
+TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1Matrix/'];
+TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2Matrix/'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
 delete_command = 'rm -f ';
 
@@ -36,7 +32,7 @@ delete_command = 'rm -f ';
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it
 Names = {'j01','j14'};
 
-options.ImprType = 'Viterbi';
+options.ImprType = 'MST';
 options.ShowTree = 'on';
 options.SmoothMap = 1;
 options.FeatureFix = 'on';

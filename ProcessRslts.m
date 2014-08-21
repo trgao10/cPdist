@@ -78,13 +78,9 @@ for j=1:GroupSize
             cPmapsMatrix{k,j} = invcPmapsMatrix{j,k};
             TextureCoords1Matrix{j,k} = tmpTextureCoords1Matrix{j,k};
             TextureCoords2Matrix{j,k} = tmpTextureCoords2Matrix{j,k};
-%             TextureCoords1Matrix{k,j} = tmpTextureCoords2Matrix{j,k};
-%             TextureCoords2Matrix{k,j} = tmpTextureCoords1Matrix{j,k};
         else
             lmkMSEMatrix(j,k) = lmkMSEMatrix(k,j);
             cPmapsMatrix{j,k} = invcPmapsMatrix{k,j};
-%             TextureCoords1Matrix{k,j} = tmpTextureCoords1Matrix{k,j};
-%             TextureCoords2Matrix{k,j} = tmpTextureCoords2Matrix{k,j};
             TextureCoords1Matrix{j,k} = tmpTextureCoords2Matrix{k,j};
             TextureCoords2Matrix{j,k} = tmpTextureCoords1Matrix{k,j};
         end
