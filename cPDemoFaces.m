@@ -48,14 +48,6 @@ for j=1:2
         Gs{j}.DeleteVertex(dVInds);
         Gs{j}.DeleteIsolatedVertex;
         
-%         dVInds = Gs{j}.FindBoundaries;
-%         Gs{j}.DeleteVertex(dVInds);
-%         Gs{j}.DeleteIsolatedVertex;
-%         
-%         dVInds = Gs{j}.FindBoundaries;
-%         Gs{j}.DeleteVertex(dVInds);
-%         Gs{j}.DeleteIsolatedVertex;
-        
         Gs{j}.Centralize('ScaleArea');
         Gs{j}.ComputeMidEdgeUniformization(options);
         G = Mesh(Gs{j});
