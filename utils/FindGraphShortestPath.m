@@ -9,6 +9,9 @@ ShowTree = getoptions(options,'ShowTree','off');
 
 [~,min_path,~] = graphshortestpath(ST,TAXAind1,TAXAind2,'directed',false);
 
+disp('Optimal Path: ');
+disp(TaxaCode(min_path));
+
 if strcmpi(ShowTree,'on')
     h = view(biograph(ST, TaxaCode, 'ShowArrows', 'off', 'ShowWeights', 'on'));
     set(h.Nodes(min_path),'Color',[1 0.4 0.4])

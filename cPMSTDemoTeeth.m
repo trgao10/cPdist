@@ -11,10 +11,6 @@ cPmaps_path = [pwd '/results/Teeth/cPdist/cPmapsMatrix.mat'];
 cPdist_path = [pwd '/results/Teeth/cPdist/cPdistMatrix.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1Matrix/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2Matrix/'];
-% =======
-% TextureCoords1_path = '/media/trgao10/Work/MATLAB/cPdist/TextureCoords1Matrix/';
-% TextureCoords2_path = '/media/trgao10/Work/MATLAB/cPdist/TextureCoords2Matrix/';
-% >>>>>>> 841191fd11dfb8bc43e20f74a06090e0e728ce7c
 data_path = '~/Work/MATLAB/DATA/PNAS/';
 delete_command = 'rm -f ';
 
@@ -34,12 +30,12 @@ delete_command = 'rm -f ';
 % Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it
-Names = {'B03','D09'};
+Names = {'S08','j06'};
 
-options.ImprType = 'Viterbi';
+options.ImprType = 'MST';
 options.ShowTree = 'off';
 options.SmoothMap = 1;
-options.FeatureFix = 'on';
+options.FeatureFix = 'off';
 options.ProgressBar = 'on';
 options.TextureCoords1Path = TextureCoords1_path;
 options.TextureCoords2Path = TextureCoords2_path;
@@ -109,13 +105,13 @@ if rslt12.ImprDist<rslt21.ImprDist
     options.Texture.Coordinates = rslt12.TextureCoords2/2+0.5;
     Gs{2}.Write(obj_surf_2,'obj',options);
     
-    disp(['Improve cP ' options.ImprType ' distance: ' num2str(rslt12.ImprDist)]);
+    disp(['Improve cP' options.ImprType ' distance: ' num2str(rslt12.ImprDist)]);
 else
     options.Texture.Coordinates = rslt21.TextureCoords2/2+0.5;
     Gs{1}.Write(obj_surf_1,'obj',options);
     options.Texture.Coordinates = rslt21.TextureCoords1/2+0.5;
     Gs{2}.Write(obj_surf_2,'obj',options);
     
-    disp(['Improve cP ' options.ImprType ' distance: ' num2str(rslt21.ImprDist)]);
+    disp(['Improve cP' options.ImprType ' distance: ' num2str(rslt21.ImprDist)]);
 end
 
