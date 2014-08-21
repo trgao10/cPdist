@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'D09','V13'};
+Names = {'V08','V13'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
@@ -44,8 +44,12 @@ for j=1:2
     if ~exist([sample_path taxa_code{TAXAind(j)} '.mat'],'file')
         Gs{j} = Mesh('off',[meshes_path taxa_code{TAXAind(j)} '_sas.off']);
         Gs{j}.Aux.name = taxa_code{TAXAind(j)};
-        Gs{j}.Centralize('ScaleArea');
+        [Gs{j}.Aux.Area,Gs{j}.Aux.Center] = Gs{j}.Centralize('ScaleArea');
         Gs{j}.ComputeMidEdgeUniformization(options);
+        Gs{j}.Nf = Gs{j}.ComputeFaceNormals;
+        Gs{j}.Nv = Gs{j}.F2V'*Gs{j}.Nf';
+        Gs{j}.Nv = Gs{j}.Nv'*diag(1./sqrt(sum((Gs{j}.Nv').^2,1)));
+        Gs{j}.Aux.LB = Gs{j}.ComputeCotanLaplacian;
         G = Mesh(Gs{j});
         save([sample_path taxa_code{TAXAind(j)} '.mat'], 'G');
     else

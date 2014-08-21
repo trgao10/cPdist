@@ -13,8 +13,8 @@ TextureCoords2_kdtree = getoptions(options,'TextureCoords2_kdtree',kdtree_build(
 GaussMinMatch = getoptions(options,'GaussMinMatch','on');
 
 %%% extract matching features
-[~,TPS_FEATURESN,preTPS_FEATURESM] = FindMutuallyNearestNeighbors(GM,GN,InputMap,FeatureType);
 [~,TPS_EUC_FEATURESN,preTPS_EUC_FEATURESM] = FindEuclideanMutuallyNearestNeighbors(GM,GN,InputMap,FeatureType);
+[~,TPS_FEATURESN,preTPS_FEATURESM] = FindMutuallyNearestNeighbors(GM,GN,InputMap,FeatureType);
 TPS_FEATURESM_INDS = [preTPS_FEATURESM;preTPS_EUC_FEATURESM];
 TPS_FEATURESN_INDS = [TPS_FEATURESN;TPS_EUC_FEATURESN];
 [TPS_FEATURESM_INDS,NoRepeatInds] = unique(TPS_FEATURESM_INDS);
