@@ -7,12 +7,12 @@ addpath(path,genpath([pwd '/utils/']));
 %%% setup paths
 base_path = [pwd '/'];
 data_path = '../DATA/PNAS/';
-rslts_path = '/media/trgao10/Work/MATLAB/cPdist/rslts/';
-% rslts_path = [base_path 'rslts/'];
-TextureCoords1Matrix_path = '/media/trgao10/Work/MATLAB/cPdist/TextureCoords1Matrix/';
-TextureCoords2Matrix_path = '/media/trgao10/Work/MATLAB/cPdist/TextureCoords2Matrix/';
+result_path = '/xtmp/MATLAB/cPdist/'; 
+rslts_path = [result_path 'rslts/'];
+TextureCoords1Matrix_path = [result_path 'TextureCoords1Matrix/'];
+TextureCoords2Matrix_path = [result_path 'TextureCoords2Matrix/'];
 
-%%% check if paths exist
+%%% check if texture paths exist
 touch(TextureCoords1Matrix_path);
 touch(TextureCoords2Matrix_path);
 
