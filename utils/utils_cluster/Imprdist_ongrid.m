@@ -12,17 +12,16 @@ options.FeatureFix = FeatureFix;
 options.SmoothMap = 1;
 options.ProgressBar = 'off';
 
+tic;
 disp(['Comparing ' GM.Aux.name ' vs ' GN.Aux.name '...']);
-
 rslt = GM.ImproveMap(GN,cPdistMatrix,cPmapsMatrix,options.TaxaCode,options);
 lk2 = GN.V(:,GetLandmarks(GN,LandmarksPath));
 lk1 = GN.V(:,rslt.ImprMap(GetLandmarks(GM,LandmarksPath)));
 rslt.lkMSE = mean(sqrt(sum((lk2-lk1).^2)));
-
-cPrslt{str2num(TAXAind1),str2num(TAXAind2)} = rslt;
-save(rslt_mat,'cPrslt');
-
+Imprrslt{TAXAind1,TAXAind2} = rslt;
+save(rslt_mat,'Imprrslt');
 disp([GM.Aux.name ' vs ' GN.Aux.name ' done.']);
+toc;
 
 end
 
