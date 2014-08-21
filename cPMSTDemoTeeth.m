@@ -30,7 +30,7 @@ delete_command = 'rm -f ';
 % Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it
-Names = {'ah13','B03'};
+Names = {'s17','B03'};
 
 options.ImprType = 'MST';
 options.ShowTree = 'on';
