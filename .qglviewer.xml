@@ -5,9 +5,9 @@
     <backgroundColor red="51" blue="51" green="51"/>
   </State>
   <Display axisIsDrawn="false" gridIsDrawn="false" FPSIsDisplayed="false" cameraIsEdited="false"/>
-  <Geometry fullScreen="false" width="600" posX="482" height="400" posY="192"/>
+  <Geometry fullScreen="false" width="600" posX="468" height="400" posY="192"/>
   <Camera>
-    <Parameters fieldOfView="0.785398" sceneRadius="0.647293" Type="PERSPECTIVE" zNearCoefficient="0.005" orthoCoef="0.409993" zClippingCoefficient="1.73205">
+    <Parameters fieldOfView="0.785398" sceneRadius="0.647293" Type="PERSPECTIVE" zNearCoefficient="0.005" orthoCoef="0.40168" zClippingCoefficient="1.73205">
       <SceneCenter x="-0.0685275" y="0.0489435" z="-0.0269025"/>
     </Parameters>
     <Stereo focusDistance="1.5627" physScreenWidth="0.5" IODist="0.062"/>

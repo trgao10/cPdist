@@ -27,7 +27,7 @@ FeatureType = getoptions(options,'FeatureType','ConfMax');
 NumDensityPnts = getoptions(options,'NumDensityPnts',100);
 AngleIncrement = getoptions(options,'AngleIncrement',0.05);
 NumFeatureMatch = getoptions(options,'NumFeatureMatch',3);
-GaussMinMatch = getoptions(options,'GaussMinMatch','on');
+FeatureMatchType = getoptions(options,'FeatureMatchType','TPS');
 switch FeatureType
     case 'ADMax'
         FeaturesM = GM.Aux.ADMaxInds;
@@ -176,46 +176,13 @@ TextureCoords2_kdtree = kdtree_build(TextureCoords2');
 cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
 
 %%% match features in Euclidean space
-[~,TPS_EUC_FEATURESN,preTPS_EUC_FEATURESM] = FindEuclideanMutuallyNearestNeighbors(GM,GN,cPmap,FeatureType);
-
-TPS_EUC_FEATURE_MATCH_M = DISCtoPLANE([real(pushGM(preTPS_EUC_FEATURESM));imag(pushGM(preTPS_EUC_FEATURESM))]','d2p');
-TPS_EUC_FEATURE_MATCH_N = DISCtoPLANE(TextureCoords2(:,TPS_EUC_FEATURESN)','d2p');
-
-TPS_FEATURESM = TPS_EUC_FEATURE_MATCH_M;
-TPS_FEATURESN = TPS_EUC_FEATURE_MATCH_N;
-
-if (length(TPS_FEATURESM)>3) % TPS (Thin Plate Spline)
-    tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
-    [ftps] = TEETH_calc_tps(TPS_FEATURESM,TPS_FEATURESN-TPS_FEATURESM);
-    pt = tP + TEETH_eval_tps(ftps,tP);
-    TextureCoords1 = DISCtoPLANE(pt,'p2d')';
-elseif (length(TPS_FEATURESM)==3) % Affine Transformation
-    tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
-    [A,b] = PlanarThreePtsDeform(TPS_FEATURESM,TPS_FEATURESN);
-    pt = [A,b]*[tP';ones(1,size(tP,1))];
-    TextureCoords1 = DISCtoPLANE(pt','p2d')';
-end
-cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
-
-if strcmpi(GaussMinMatch,'on')
-    disp('Matching GaussMinINds');
-    [~,InterpGaussMinInds2,preInterpGaussMinInds1] = FindEuclideanMutuallyNearestNeighbors(GM,GN,cPmap,'GaussMin');
-    TPS_GaussMinCoords1 = DISCtoPLANE([real(pushGM(preInterpGaussMinInds1));imag(pushGM(preInterpGaussMinInds1))]','d2p');
-    TPS_GaussMinCoords2 = DISCtoPLANE(TextureCoords2(:,InterpGaussMinInds2)','d2p');
-    TPS_FEATURESM = [TPS_FEATURESM;TPS_GaussMinCoords1];
-    TPS_FEATURESN = [TPS_FEATURESN;TPS_GaussMinCoords2];
-    if (length(TPS_FEATURESM)>3) % TPS (Thin Plate Spline)
-        tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
-        [ftps] = TEETH_calc_tps(TPS_FEATURESM,TPS_FEATURESN-TPS_FEATURESM);
-        pt = tP + TEETH_eval_tps(ftps,tP);
-        TextureCoords1 = DISCtoPLANE(pt,'p2d')';
-    elseif (length(TPS_FEATURESM)==3) % Affine Transformation
-        tP = DISCtoPLANE([real(pushGM);imag(pushGM)]','d2p');
-        [A,b] = PlanarThreePtsDeform(TPS_FEATURESM,TPS_FEATURESN);
-        pt = [A,b]*[tP';ones(1,size(tP,1))];
-        TextureCoords1 = DISCtoPLANE(pt','p2d')';
-    end
-    cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
+options.TextureCoords2_kdtree = TextureCoords2_kdtree;
+if strcmpi(FeatureMatchType,'TPS')
+    [TextureCoords1,cPmap] = TPSDeformation(GM,GN,cPmap,'ConfMax',[real(pushGM);imag(pushGM)],TextureCoords2,options);
+elseif strcmpi(FeatureMatchType,'Laplacian')
+    [TextureCoords1,cPmap] = LaplacianDeformation(GM,GN,cPmap,'ConfMax',[real(pushGM);imag(pushGM)],TextureCoords2,options);
+elseif strcmpi(FeatureMatchType,'BaryCentric')
+    [TextureCoords1,cPmap] = BaryCentricDeformation(GM,GN,cPmap,'ConfMax',TextureCoords1,TextureCoords2,options);
 end
 
 %%% construct inverse map

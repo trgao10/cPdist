@@ -11,10 +11,6 @@ cPmaps_path = [pwd '/results/Teeth/cPdist/cPmapsMatrix.mat'];
 cPdist_path = [pwd '/results/Teeth/cPdist/cPdistMatrix.mat'];
 TextureCoords1_path = '/media/trgao10/Work/MATLAB/cPdist/TextureCoords1Matrix/';
 TextureCoords2_path = '/media/trgao10/Work/MATLAB/cPdist/TextureCoords2Matrix/';
-% TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1Matrix.mat'];
-% TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2Matrix.mat'];
-% TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1Matrix.mat'];
-% TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2Matrix.mat'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
 delete_command = 'rm -f ';
 
@@ -34,10 +30,10 @@ delete_command = 'rm -f ';
 % Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it
-Names = {'j01','j14'};
+Names = {'B03','D09'};
 
 options.ImprType = 'Viterbi';
-options.ShowTree = 'on';
+options.ShowTree = 'off';
 options.SmoothMap = 1;
 options.FeatureFix = 'on';
 options.ProgressBar = 'on';
@@ -70,17 +66,6 @@ disp('loaded');
 disp('loading all cPmaps...');
 load(cPmaps_path); % load cell array "cPmapsMatrix"
 disp('loaded');
-
-% if (options.SmoothMap==1) && (~isfield(options,'TextureCoords1Matrix')||~isfield(options,'TextureCoords2Matrix'))
-%     disp('loading all texture coordinates...');
-%     load(TextureCoords1_path);
-%     load(TextureCoords2_path);
-%     disp('loaded');
-%     options.TextureCoords1Matrix = TextureCoords1Matrix;
-%     clear TextureCoords1Matrix;
-%     options.TextureCoords2Matrix = TextureCoords2Matrix;
-%     clear TextureCoords2Matrix;
-% end
 
 %% Load Flattend Meshes
 for j=1:2
