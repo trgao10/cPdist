@@ -23,14 +23,14 @@ if ~isempty(GM_MaxInds)&&~isempty(GN_MaxInds)
     GN2pfGM = Q(GN_MaxInds);
     tind1 = zeros(size(GN_MaxInds));
     for j=1:length(tind1)
-        tind1(j) = find(pfGM_MaxInds==GN2pfGM(j));
+        tind1(j) = find(pfGM_MaxInds==GN2pfGM(j),1);
     end
     
     [~,~,Q] = GN.PerformFastMarching(GN_MaxInds);
     pfGM2GN = Q(pfGM_MaxInds);
     tind2 = zeros(size(pfGM_MaxInds));
     for j=1:length(tind2)
-        tind2(j) = find(GN_MaxInds==pfGM2GN(j));
+        tind2(j) = find(GN_MaxInds==pfGM2GN(j),1);
     end
     
     InterpMaxInds2 = find(tind2(tind1)==(1:length(tind1))');
