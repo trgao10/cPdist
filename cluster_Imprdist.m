@@ -11,15 +11,13 @@ FeatureFix = 'off';
 %%% setup paths
 base_path = [pwd '/'];
 data_path = '../DATA/PNAS/';
-TextureCoords_path = '/gtmp/trgao10/cPdist/rslts/cPdist/';
 rslts_path = [base_path 'rslts/'];
 cluster_path = [base_path 'cluster/'];
 samples_path = [base_path 'samples/Teeth/'];
 cPmaps_path = [base_path 'results/Teeth/cPdist/cPmapsMatrix.mat'];
 cPdist_path = [base_path 'results/Teeth/cPdist/cPdistMatrix.mat'];
-TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1Matrix/'];
-TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2Matrix/'];
-meshes_path = [data_path 'meshes/'];
+TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
+TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 landmarks_path = [data_path 'landmarks_teeth.mat'];
 TaxaCode_path = [data_path 'teeth_taxa_table.mat'];
 scripts_path = [cluster_path 'scripts/'];

@@ -54,7 +54,8 @@ for k1=1:GroupSize
                 jobname = ['TCjob_' num2str(job_id)];
                 serr = [errors_path 'e_job_' num2str(job_id)];
                 sout = [outputs_path 'o_job_' num2str(job_id)];
-                tosub = ['!qsub -N ' jobname ' -o ' sout ' -e ' serr ' ' script_name ];
+                tosub = ['!qsub -N ' jobname ' -o ' sout ' -e ' serr ' ' ...
+                         script_name ];
                 eval(tosub);
             end
             

@@ -5,22 +5,22 @@ function [TextureCoords1,TextureCoords2] = ComposeTextureCoordsAlongPath(InputPa
 ChunkIdx = @(TAXAind1,TAXAind2) ceil(((TAXAind1-1)*GroupSize+TAXAind2)/ChunkSize);
 
 if length(InputPath)==1
-    load([TextureCoords1Path 'TextureCoords1Matrix_' num2str(ChunkIdx(InputPath(1),InputPath(1))) '.mat']);
-    load([TextureCoords2Path 'TextureCoords2Matrix_' num2str(ChunkIdx(InputPath(1),InputPath(1))) '.mat']);
+    load([TextureCoords1Path 'TextureCoords1_mat_' num2str(ChunkIdx(InputPath(1),InputPath(1))) '.mat']);
+    load([TextureCoords2Path 'TextureCoords2_mat_' num2str(ChunkIdx(InputPath(1),InputPath(1))) '.mat']);
     TextureCoords1 = TextureCoords1Matrix{InputPath(1),InputPath(1)};
     TextureCoords2 = TextureCoords2Matrix{InputPath(1),InputPath(1)};
     return;
 end
 
-load([TextureCoords1Path 'TextureCoords1Matrix_' num2str(ChunkIdx(InputPath(end-1),InputPath(end))) '.mat']);
-load([TextureCoords2Path 'TextureCoords2Matrix_' num2str(ChunkIdx(InputPath(end-1),InputPath(end))) '.mat']);
+load([TextureCoords1Path 'TextureCoords1_mat_' num2str(ChunkIdx(InputPath(end-1),InputPath(end))) '.mat']);
+load([TextureCoords2Path 'TextureCoords2_mat_' num2str(ChunkIdx(InputPath(end-1),InputPath(end))) '.mat']);
 TextureCoords1 = TextureCoords1Matrix{InputPath(end-1),InputPath(end)};
 TextureCoords2 = TextureCoords2Matrix{InputPath(end-1),InputPath(end)};
 
 if (length(InputPath)>2)
     for j=3:length(InputPath)
-        load([TextureCoords1Path 'TextureCoords1Matrix_' num2str(ChunkIdx(InputPath(end-j+1),InputPath(end-j+2))) '.mat']);
-        load([TextureCoords2Path 'TextureCoords2Matrix_' num2str(ChunkIdx(InputPath(end-j+1),InputPath(end-j+2))) '.mat']);
+        load([TextureCoords1Path 'TextureCoords1_mat_' num2str(ChunkIdx(InputPath(end-j+1),InputPath(end-j+2))) '.mat']);
+        load([TextureCoords2Path 'TextureCoords2_mat_' num2str(ChunkIdx(InputPath(end-j+1),InputPath(end-j+2))) '.mat']);
         NextNodeTextureCoords1 = TextureCoords1Matrix{InputPath(end-j+1),InputPath(end-j+2)};
         NextNodeTextureCoords2 = TextureCoords2Matrix{InputPath(end-j+1),InputPath(end-j+2)};
         TextureCoords1 = PropagateTextureCoords(TextureCoords1,NextNodeTextureCoords1,NextNodeTextureCoords2,ProgressBar);

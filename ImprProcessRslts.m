@@ -10,10 +10,10 @@ ImprType = 'MST';
 %%% setup paths
 base_path = [pwd '/'];
 data_path = '../DATA/PNAS/';
-result_path = '/xtmp/MATLAB/cPMST/'; 
+result_path = '/xtmp/ArchivedResults/cPMST/FeatureFixOff/'; 
 rslts_path = [result_path 'rslts/'];
-TextureCoords1Matrix_path = [result_path 'TextureCoords1Matrix/'];
-TextureCoords2Matrix_path = [result_path 'TextureCoords2Matrix/'];
+TextureCoords1Matrix_path = [result_path 'TextureCoords1/'];
+TextureCoords2Matrix_path = [result_path 'TextureCoords2/'];
 
 %%% check if paths exist
 touch(TextureCoords1Matrix_path);
@@ -68,8 +68,8 @@ for j=1:GroupSize
     for k=1:GroupSize
         if mod(cnt,chunk_size)==0
             if cnt>0
-                save([TextureCoords1Matrix_path 'TextureCoords1Matrix_' num2str(job_id) '.mat'],'TextureCoords1Matrix');
-                save([TextureCoords2Matrix_path 'TextureCoords2Matrix_' num2str(job_id) '.mat'],'TextureCoords2Matrix');
+                save([TextureCoords1Matrix_path 'TextureCoords1_mat_' num2str(job_id) '.mat'],'TextureCoords1Matrix');
+                save([TextureCoords2Matrix_path 'TextureCoords2_mat_' num2str(job_id) '.mat'],'TextureCoords2Matrix');
                 clear TextureCoords1Matrix TextureCoords2Matrix
             end
             job_id = job_id+1;
