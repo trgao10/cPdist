@@ -20,6 +20,7 @@ if nargin<5
     options = [];
 end
 ChunkSize = getoptions(options,'ChunkSize',55);
+GroupSize = getoptions(options,'GroupSize',116);
 if ~isfield(GM.Aux,'name') && ~isfield(GN.Aux,'name')
     error('Either Mesh missing .Aux.name!');
 end

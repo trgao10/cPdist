@@ -7,8 +7,6 @@ GN = GN.G;
 
 load(rslt_mat);
 
-options.ProgressBar = 'off';
-
 tic;
 disp(['Fixing features for ' GM.Aux.name ' vs ' GN.Aux.name '...']);
 rslt = FeatureFix(GM,GN,TAXAind1,TAXAind2,options);

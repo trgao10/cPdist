@@ -91,8 +91,8 @@ for j=1:GroupSize
     end
 end
 if mod(cnt,chunk_size)~=0
-    save([TextureCoords1Matrix_path 'TextureCoords1Matrix_' num2str(job_id) '.mat'],'TextureCoords1Matrix');
-    save([TextureCoords2Matrix_path 'TextureCoords2Matrix_' num2str(job_id) '.mat'],'TextureCoords2Matrix');
+    save([TextureCoords1Matrix_path 'TextureCoords1_mat_' num2str(job_id) '.mat'],'TextureCoords1Matrix');
+    save([TextureCoords2Matrix_path 'TextureCoords2_mat_' num2str(job_id) '.mat'],'TextureCoords2Matrix');
     clear TextureCoords1Matrix TextureCoords2Matrix
 end
 ImprDistMatrix = min(ImprDistMatrix,ImprDistMatrix');
