@@ -21,6 +21,12 @@ GroupSize = length(DistMatrix);
 TAXAind1 = find(strcmpi(TaxaCode,GM.Aux.name));
 TAXAind2 = find(strcmpi(TaxaCode,GN.Aux.name));
 
+if TAXAind1==TAXAind2
+    min_path = TAXAind1;
+    map12 = MapMatrix{TAXAind1,TAXAind2};
+    return;
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialization
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
