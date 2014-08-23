@@ -1,6 +1,6 @@
 .qglviewer.xml
 obj/
 rslts/
+results/
 cluster/
 samples/Faces/
-results/Teeth/cPdist/cPmapsMatrix.mat
