@@ -1,17 +1,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% clean up meshes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% G = Mesh('off','../DATA/PNAS/meshes/j14_sas.off');
-% NaNInds = 1780;
+% path(pathdef);
+% addpath(path,genpath([pwd '/utils/']));
 % 
-% G.DeleteVertex(1780);
+% G = Mesh('off','../DATA/PNAS/meshes/s17_sas.off');
+% NaNInds = 2466;
+% 
+% G.DeleteVertex(NaNInds);
 % 
 % figure;G.draw();
 % hold on;
 % scatter3(G.V(1,NaNInds),G.V(2,NaNInds),G.V(3,NaNInds),30,'g','filled');
-% % scatter3(G.V(1,NaNInds),G.V(2,NaNInds),G.V(3,NaNInds),30,'g','filled');
-% G.Write('./j14_sas.off','off',[]);
-% 
+% G.Write('./s17_sas.off','off',[]);
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% compare distances and landmark MSEs
@@ -62,6 +64,7 @@
 % plot([0,0.7],[0,0.7],'r');
 % axis([0,0.7,0,0.7]);
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% test FeatureFix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,40 +82,45 @@ cluster_path = [base_path 'cluster/'];
 samples_path = [base_path 'samples/Teeth/'];
 TextureCoords1_path = [pwd '/results/Teeth/cPMST/FeatureFixOff/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPMST/FeatureFixOff/TextureCoords2/'];
-landmarks_path = [data_path 'landmarks_teeth.mat'];
+LandmarksPath = [data_path 'landmarks_teeth.mat'];
+TaxaCode_path = [data_path 'teeth_taxa_table.mat'];
 
-% GroupSize = length(taxa_code);
-chunk_size = 55;
-rslt_mat = [rslts_path 'rslt_mat_' num2str(1)];
+%%% load taxa codes
+taxa_code = load(TaxaCode_path);
+TaxaCode = taxa_code.taxa_code;
+GroupSize = length(taxa_code);
+ChunkSize = 55;
 
-Names = {'D09','B03'};
+Names = {'b01','s17'};
 
 G1 = [samples_path Names{1} '.mat'];
 G2 = [samples_path Names{2} '.mat'];
 
 options.TextureCoords1Path = TextureCoords1_path;
 options.TextureCoords2Path = TextureCoords2_path;
-options.ChunkSize = chunk_size;
+options.ChunkSize = ChunkSize;
 
 GM = load(G1);
 GM = GM.G;
 GN = load(G2);
 GN = GN.G;
 
+TAXAind = cellfun(@(name) find(strcmpi(TaxaCode,name)),{GM.Aux.name,GN.Aux.name});
+TAXAind1 = TAXAind(1);
+TAXAind2 = TAXAind(2);
+
+ChunkIdx = @(TAXAind1,TAXAind2) ceil(((TAXAind1-1)*GroupSize+TAXAind2)/ChunkSize);
+rslt_mat = [rslts_path 'rslt_mat_' num2str(ChunkIdx(TAXAind1,TAXAind2))];
 load(rslt_mat);
 
 tic;
 disp(['Fixing features for ' GM.Aux.name ' vs ' GN.Aux.name '...']);
-rslt = FeatureFix(GM,GN,2,1,options);
+rslt = FeatureFix(GM,GN,TAXAind1,TAXAind2,options);
 lk2 = GN.V(:,GetLandmarks(GN,LandmarksPath));
 lk1 = GN.V(:,rslt.ImprMap(GetLandmarks(GM,LandmarksPath)));
 rslt.lkMSE = mean(sqrt(sum((lk2-lk1).^2)));
 save(rslt_mat,'Imprrslt');
 disp(['Feature Fixing for ' GM.Aux.name ' vs ' GN.Aux.name ' done.']);
 toc;
-
-
-
-
 
 
