@@ -7,8 +7,8 @@ addpath(path,genpath([pwd '/utils/']));
 %% Set Path
 obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Teeth/'];
-cPmaps_path = [pwd '/results/Teeth/cPdist/cPmapsMatrix.mat'];
-cPdist_path = [pwd '/results/Teeth/cPdist/cPdistMatrix.mat'];
+cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
+cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
@@ -29,9 +29,9 @@ delete_command = 'rm -f ';
 % Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it
-Names = {'V09','x23'};
+Names = {'j14','j18'};
 
-options.ImprType = 'MST';
+options.ImprType = 'Viterbi';
 options.ShowTree = 'off';
 options.SmoothMap = 0;
 options.FeatureFix = 'on';
@@ -59,11 +59,11 @@ TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
 
 %% Load All cPmaps and cPdists
 disp('loading all cPdist...');
-load(cPdist_path);
+load(cPDist_path);
 disp('loaded');
 
 disp('loading all cPmaps...');
-load(cPmaps_path); % load cell array "cPmapsMatrix"
+load(cPMaps_path); % load cell array "cPmapsMatrix"
 disp('loaded');
 
 %% Load Flattend Meshes
@@ -73,18 +73,18 @@ for j=1:2
 end
 
 %% Visualize Landmark Propagation for Original Maps
-disp(['Original cP distance: ' num2str(cPdistMatrix(TAXAind(1),TAXAind(2)))]);
+disp(['Original cP distance: ' num2str(cPDistMatrix(TAXAind(1),TAXAind(2)))]);
 
-[~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,cPmapsMatrix{TAXAind(1),TAXAind(2)},Gs{1}.Aux.VertArea);
+[~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,cPMapsMatrix{TAXAind(1),TAXAind(2)},Gs{1}.Aux.VertArea);
 tGM = Mesh(Gs{1});
 tGM.V = R*Gs{1}.V;
 
-ViewTeethMapS(tGM, Gs{2}, {cPmapsMatrix{TAXAind(1),TAXAind(2)},cPmapsMatrix{TAXAind(2),TAXAind(1)}}, options);
+ViewTeethMapS(tGM, Gs{2}, {cPMapsMatrix{TAXAind(1),TAXAind(2)},cPMapsMatrix{TAXAind(2),TAXAind(1)}}, options);
 set(gcf,'Name','cP');
 
 %% Improve Maps
-rslt12 = Gs{1}.ImproveMap(Gs{2},cPdistMatrix,cPmapsMatrix,taxa_code,options);
-rslt21 = Gs{2}.ImproveMap(Gs{1},cPdistMatrix,cPmapsMatrix,taxa_code,options);
+rslt12 = Gs{1}.ImproveMap(Gs{2},cPDistMatrix,cPMapsMatrix,taxa_code,options);
+rslt21 = Gs{2}.ImproveMap(Gs{1},cPDistMatrix,cPMapsMatrix,taxa_code,options);
 
 %% Visualize Landmark Propagation for Improved Maps
 [~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,rslt12.ImprMap,Gs{1}.Aux.VertArea);
