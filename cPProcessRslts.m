@@ -7,7 +7,7 @@ addpath(path,genpath([pwd '/utils/']));
 %%% setup paths
 base_path = [pwd '/'];
 data_path = '../DATA/PNAS/';
-result_path = '/xtmp/MATLAB/cPdist/'; 
+result_path = '/xtmp/ArchivedResults/cPdist/'; 
 rslts_path = [result_path 'rslts/'];
 TextureCoords1Matrix_path = [result_path 'TextureCoords1/'];
 TextureCoords2Matrix_path = [result_path 'TextureCoords2/'];
@@ -30,10 +30,10 @@ GroupSize = length(taxa_code);
 chunk_size = 55;
 
 %%% read rslt matrices and separate distance and landmarkMSE's
-cPdistMatrix = zeros(GroupSize,GroupSize);
-cPmapsMatrix = cell(GroupSize,GroupSize);
-invcPmapsMatrix = cell(GroupSize,GroupSize);
-lmkMSEMatrix = zeros(GroupSize,GroupSize);
+cPDistMatrix = zeros(GroupSize,GroupSize);
+cPMapsMatrix = cell(GroupSize,GroupSize);
+invcPMapsMatrix = cell(GroupSize,GroupSize);
+cPlmkMSEMatrix = zeros(GroupSize,GroupSize);
 tmpTextureCoords1Matrix = cell(GroupSize,GroupSize);
 tmpTextureCoords2Matrix = cell(GroupSize,GroupSize);
 
@@ -46,10 +46,10 @@ for k1=1:GroupSize
             job_id = job_id+1;
             load([rslts_path 'rslt_mat_' num2str(job_id)]);
         end
-        cPdistMatrix(k1,k2) = cPrslt{k1,k2}.cPdist;
-        cPmapsMatrix{k1,k2} = cPrslt{k1,k2}.cPmap;
-        invcPmapsMatrix{k1,k2} = cPrslt{k1,k2}.invcPmap;
-        lmkMSEMatrix(k1,k2) = cPrslt{k1,k2}.lkMSE;
+        cPDistMatrix(k1,k2) = cPrslt{k1,k2}.cPdist;
+        cPMapsMatrix{k1,k2} = cPrslt{k1,k2}.cPmap;
+        invcPMapsMatrix{k1,k2} = cPrslt{k1,k2}.invcPmap;
+        cPlmkMSEMatrix(k1,k2) = cPrslt{k1,k2}.lkMSE;
         tmpTextureCoords1Matrix{k1,k2} = cPrslt{k1,k2}.TextureCoords1;
         tmpTextureCoords2Matrix{k1,k2} = cPrslt{k1,k2}.TextureCoords2;
         
@@ -73,14 +73,14 @@ for j=1:GroupSize
             TextureCoords1Matrix = cell(GroupSize,GroupSize);
             TextureCoords2Matrix = cell(GroupSize,GroupSize);
         end
-        if cPdistMatrix(j,k)<cPdistMatrix(k,j)
-            lmkMSEMatrix(k,j) = lmkMSEMatrix(j,k);
-            cPmapsMatrix{k,j} = invcPmapsMatrix{j,k};
+        if cPDistMatrix(j,k)<cPDistMatrix(k,j)
+            cPlmkMSEMatrix(k,j) = cPlmkMSEMatrix(j,k);
+            cPMapsMatrix{k,j} = invcPMapsMatrix{j,k};
             TextureCoords1Matrix{j,k} = tmpTextureCoords1Matrix{j,k};
             TextureCoords2Matrix{j,k} = tmpTextureCoords2Matrix{j,k};
         else
-            lmkMSEMatrix(j,k) = lmkMSEMatrix(k,j);
-            cPmapsMatrix{j,k} = invcPmapsMatrix{k,j};
+            cPlmkMSEMatrix(j,k) = cPlmkMSEMatrix(k,j);
+            cPMapsMatrix{j,k} = invcPMapsMatrix{k,j};
             TextureCoords1Matrix{j,k} = tmpTextureCoords2Matrix{k,j};
             TextureCoords2Matrix{j,k} = tmpTextureCoords1Matrix{k,j};
         end
@@ -92,21 +92,21 @@ if mod(cnt,chunk_size)~=0
     save([TextureCoords2Matrix_path 'TextureCoords2_mat_' num2str(job_id) '.mat'],'TextureCoords2Matrix');
     clear TextureCoords1Matrix TextureCoords2Matrix
 end
-cPdistMatrix = min(cPdistMatrix,cPdistMatrix');
+cPDistMatrix = min(cPDistMatrix,cPDistMatrix');
 
 %%% visualize distance and landmarkMSE matrices
 figure;
-imagesc(cPdistMatrix./max(cPdistMatrix(:))*64);
+imagesc(cPDistMatrix./max(cPDistMatrix(:))*64);
 axis equal;
 axis([1,GroupSize,1,GroupSize]);
 
 figure;
-imagesc(lmkMSEMatrix./max(lmkMSEMatrix(:))*64);
+imagesc(cPlmkMSEMatrix./max(cPlmkMSEMatrix(:))*64);
 axis equal;
 axis([1,GroupSize,1,GroupSize]);
 
 %%% save results
-save('cPdistMatrix','cPdistMatrix');
-save('lmkMSEMatrix','lmkMSEMatrix');
-save('cPmapsMatrix','cPmapsMatrix');
+save([result_path 'cPDistMatrix.mat'],'cPDistMatrix');
+save([result_path 'cPlmkMSEMatrix.mat'],'cPlmkMSEMatrix');
+save([result_path 'cPMapsMatrix.mat'],'cPMapsMatrix');
 
