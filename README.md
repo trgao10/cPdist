@@ -1,8 +1,6 @@
 # WORKFLOW DESCRIPTION #
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-CONTINUOUS PROCRUSTES MINIMAL SPANNING TREE (CP-MST) DISTANCE
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+## CONTINUOUS PROCRUSTES MINIMAL SPANNING TREE (CP-MST) DISTANCE ##
 
 1. Run "cluster_flatten.m" to generate samples (saved under results/).
 
@@ -18,7 +16,7 @@ CONTINUOUS PROCRUSTES MINIMAL SPANNING TREE (CP-MST) DISTANCE
 
 7. As in Step 4, move rslts/, TextureCoords1/, TextureCoords2/ to other locations for future reference.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+---------------------------------
 Tingran Gao, Duke University
 Aug 23, 2014
 
