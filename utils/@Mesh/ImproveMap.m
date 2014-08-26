@@ -38,8 +38,8 @@ rslt.Gname2 = GN.Aux.name;
 TAXAind = cellfun(@(name) find(strcmpi(TaxaCode,name)),{GM.Aux.name,GN.Aux.name});
 GroupSize = length(TaxaCode);
 
-if ~strcmpi(ImprType,'Viterbi') %%% MST or LAST
-    ST = ConstructGraph(DistMatrix,ImprType);
+if ~strcmpi(ImprType,'Viterbi') && ~strcmpi(ImprType,'ComposedLAST') %%% MST or LAST
+    ST = ConstructGraph(DistMatrix,ImprType,options);
     OptimalPath = FindGraphShortestPath(ST,TAXAind(1),TAXAind(2),TaxaCode,options);
     if SmoothMap==0
         %%% return vertex permutation map
@@ -67,7 +67,41 @@ if ~strcmpi(ImprType,'Viterbi') %%% MST or LAST
             rslt.ref = 1;
         end
     end
-else %%% Viterbi
+elseif strcmpi(ImprType,'ComposedLAST') %%% cPLAST
+    if ~exist(options.cPLASTPath,'file')
+        ST = ConstructComposedLASTGraph(DistMatrix,MapMatrix,TaxaCode,options);
+        save(options.cPLASTPath,'ST');
+    else
+        load(options.cPLASTPath);
+    end
+    OptimalPath = FindGraphShortestPath(ST,TAXAind(1),TAXAind(2),TaxaCode,options);
+    if SmoothMap==0
+        %%% return vertex permutation map
+        rslt.ImprMap = ComposeMapsAlongPath(OptimalPath,MapMatrix);
+        [rslt.ImprDist,R] = MapToDist(GM.V,GN.V,rslt.ImprMap,GM.Aux.VertArea);
+        if det(R)>0
+            rslt.ref = 0;
+        else
+            rslt.ref = 1;
+        end
+        rslt.TextureCoords2 = GN.Aux.UniformizationV(1:2,:);
+        rslt.TextureCoords2(:,isnan(compl(rslt.TextureCoords2))) = 1;
+        if rslt.ref==1
+            rslt.TextureCoords2(2,:) = -rslt.TextureCoords2(2,:);
+        end
+        rslt.TextureCoords1 = rslt.TextureCoords2(:,rslt.ImprMap);
+    else
+        %%% return a smooth map via texture coordinates interpolation
+        [rslt.TextureCoords1,rslt.TextureCoords2] = ComposeTextureCoordsAlongPath(OptimalPath,options.TextureCoords1Path,options.TextureCoords2Path,GroupSize,ChunkSize,ProgressBar);
+        rslt.ImprMap = knnsearch(rslt.TextureCoords2',rslt.TextureCoords1');
+        [rslt.ImprDist,R] = MapToDist(GM.V,GN.V,rslt.ImprMap,GM.Aux.VertArea);
+        if det(R)>0
+            rslt.ref = 0;
+        else
+            rslt.ref = 1;
+        end
+    end
+elseif strcmpi(ImprType,'Viterbi') %%% Viterbi
     ST = ConstructGraph(DistMatrix,'MST'); %%% MST provides a quick and dirty upper bound for Viterbi
     MSTPath = FindGraphShortestPath(ST,TAXAind(1),TAXAind(2),TaxaCode,options);
     MSTMap = ComposeMapsAlongPath(MSTPath,MapMatrix);

@@ -9,6 +9,7 @@ obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Teeth/'];
 cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
 cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
+cPLAST_path = [pwd '/results/Teeth/cPdist/cPLASTGraph_meanminusstd.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
@@ -28,14 +29,16 @@ delete_command = 'rm -f ';
 % Names = {'k15','a15'}; % makes a lot of sense--k15 is of low mesh quality
 % Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % beautiful results from Viterbi
-% Names = {'a16','x14'}; % cP reverses orientation; MST fixes it
-Names = {'j14','j18'};
+% Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
+Names = {'a16','x14'};
 
-options.ImprType = 'Viterbi';
-options.ShowTree = 'off';
+options.ImprType = 'ComposedLAST';
 options.SmoothMap = 0;
 options.FeatureFix = 'on';
+options.alpha = 'auto'; % LAST/ComposedLAST; scalar>1 or 'auto'
 options.ProgressBar = 'on';
+options.SamplePath = sample_path;
+options.cPLASTPath = cPLAST_path; % ComposedLAST
 options.TextureCoords1Path = TextureCoords1_path;
 options.TextureCoords2Path = TextureCoords2_path;
 options.ChunkSize = 55;
@@ -83,7 +86,9 @@ ViewTeethMapS(tGM, Gs{2}, {cPMapsMatrix{TAXAind(1),TAXAind(2)},cPMapsMatrix{TAXA
 set(gcf,'Name','cP');
 
 %% Improve Maps
+options.ShowTree = 'on';
 rslt12 = Gs{1}.ImproveMap(Gs{2},cPDistMatrix,cPMapsMatrix,taxa_code,options);
+options.ShowTree = 'off';
 rslt21 = Gs{2}.ImproveMap(Gs{1},cPDistMatrix,cPMapsMatrix,taxa_code,options);
 
 %% Visualize Landmark Propagation for Improved Maps
