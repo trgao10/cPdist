@@ -79,8 +79,8 @@ data_path = '../DATA/PNAS/';
 rslts_path = [base_path 'rslts/'];
 cluster_path = [base_path 'cluster/'];
 samples_path = [base_path 'samples/Teeth/'];
-TextureCoords1_path = [pwd '/results/Teeth/cPMST/FeatureFixOff/TextureCoords1/'];
-TextureCoords2_path = [pwd '/results/Teeth/cPMST/FeatureFixOff/TextureCoords2/'];
+TextureCoords1_path = [pwd '/results/Teeth/cPViterbi/FeatureFixOff/TextureCoords1/'];
+TextureCoords2_path = [pwd '/results/Teeth/cPViterbi/FeatureFixOff/TextureCoords2/'];
 LandmarksPath = [data_path 'landmarks_teeth.mat'];
 TaxaCode_path = [data_path 'teeth_taxa_table.mat'];
 
@@ -90,7 +90,7 @@ TaxaCode = taxa_code.taxa_code;
 GroupSize = length(taxa_code);
 ChunkSize = 55;
 
-Names = {'b01','s17'};
+Names = {'s17','J12'};
 
 G1 = [samples_path Names{1} '.mat'];
 G2 = [samples_path Names{2} '.mat'];
@@ -118,7 +118,7 @@ rslt = FeatureFix(GM,GN,TAXAind1,TAXAind2,options);
 lk2 = GN.V(:,GetLandmarks(GN,LandmarksPath));
 lk1 = GN.V(:,rslt.ImprMap(GetLandmarks(GM,LandmarksPath)));
 rslt.lkMSE = mean(sqrt(sum((lk2-lk1).^2)));
-save(rslt_mat,'Imprrslt');
+% save(rslt_mat,'Imprrslt');
 disp(['Feature Fixing for ' GM.Aux.name ' vs ' GN.Aux.name ' done.']);
 toc;
 

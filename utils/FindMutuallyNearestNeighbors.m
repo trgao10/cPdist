@@ -30,7 +30,11 @@ if ~isempty(GM_MaxInds)&&~isempty(GN_MaxInds)
     pfGM2GN = Q(pfGM_MaxInds);
     tind2 = zeros(size(pfGM_MaxInds));
     for j=1:length(tind2)
-        tind2(j) = find(GN_MaxInds==pfGM2GN(j),1);
+        if ~isempty(find(GN_MaxInds==pfGM2GN(j),1))
+            tind2(j) = find(GN_MaxInds==pfGM2GN(j),1);
+        else
+            tind2(j) = NaN;
+        end
     end
     
     InterpMaxInds2 = find(tind2(tind1)==(1:length(tind1))');
