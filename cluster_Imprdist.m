@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %%% pick ImprType and FeatureFix
-ImprType = 'Viterbi';
+ImprType = 'LAST';
 FeatureFix = 'off';
 
 %%% setup paths

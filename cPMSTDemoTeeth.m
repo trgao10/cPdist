@@ -7,11 +7,11 @@ addpath(path,genpath([pwd '/utils/']));
 %% Set Path
 obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Teeth/'];
-cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
-cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
-cPLAST_path = [pwd '/results/Teeth/cPdist/cPLASTGraph_meanminusstd.mat'];
-TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
-TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
+cPMaps_path = [pwd '/results/Teeth/cPDist/cPMapsMatrix.mat'];
+cPDist_path = [pwd '/results/Teeth/cPDist/cPDistMatrix.mat'];
+cPLAST_path = [pwd '/results/Teeth/cPDist/cPLASTGraph_meanminusstd.mat'];
+TextureCoords1_path = [pwd '/results/Teeth/cPDist/TextureCoords1/'];
+TextureCoords2_path = [pwd '/results/Teeth/cPDist/TextureCoords2/'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
 delete_command = 'rm -f ';
 
@@ -32,7 +32,7 @@ delete_command = 'rm -f ';
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 Names = {'a16','x14'};
 
-options.ImprType = 'ComposedLAST';
+options.ImprType = 'LAST';
 options.SmoothMap = 0;
 options.FeatureFix = 'on';
 options.alpha = 'auto'; % LAST/ComposedLAST; scalar>1 or 'auto'
