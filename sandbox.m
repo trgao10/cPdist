@@ -67,59 +67,96 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% test FeatureFix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% preparation
-clear all;
-close all;
-path(pathdef);
-addpath(path,genpath([pwd '/utils/']));
+% %%% preparation
+% clear all;
+% close all;
+% path(pathdef);
+% addpath(path,genpath([pwd '/utils/']));
+% 
+% %%% setup paths
+% base_path = [pwd '/'];
+% data_path = '../DATA/PNAS/';
+% rslts_path = [base_path 'rslts/'];
+% cluster_path = [base_path 'cluster/'];
+% samples_path = [base_path 'samples/Teeth/'];
+% TextureCoords1_path = [pwd '/results/Teeth/cPViterbi/FeatureFixOff/TextureCoords1/'];
+% TextureCoords2_path = [pwd '/results/Teeth/cPViterbi/FeatureFixOff/TextureCoords2/'];
+% LandmarksPath = [data_path 'landmarks_teeth.mat'];
+% TaxaCode_path = [data_path 'teeth_taxa_table.mat'];
+% 
+% %%% load taxa codes
+% taxa_code = load(TaxaCode_path);
+% TaxaCode = taxa_code.taxa_code;
+% GroupSize = length(taxa_code);
+% ChunkSize = 55;
+% 
+% Names = {'s17','J12'};
+% 
+% G1 = [samples_path Names{1} '.mat'];
+% G2 = [samples_path Names{2} '.mat'];
+% 
+% options.TextureCoords1Path = TextureCoords1_path;
+% options.TextureCoords2Path = TextureCoords2_path;
+% options.ChunkSize = ChunkSize;
+% 
+% GM = load(G1);
+% GM = GM.G;
+% GN = load(G2);
+% GN = GN.G;
+% 
+% TAXAind = cellfun(@(name) find(strcmpi(TaxaCode,name)),{GM.Aux.name,GN.Aux.name});
+% TAXAind1 = TAXAind(1);
+% TAXAind2 = TAXAind(2);
+% 
+% ChunkIdx = @(TAXAind1,TAXAind2) ceil(((TAXAind1-1)*GroupSize+TAXAind2)/ChunkSize);
+% rslt_mat = [rslts_path 'rslt_mat_' num2str(ChunkIdx(TAXAind1,TAXAind2))];
+% load(rslt_mat);
+% 
+% tic;
+% disp(['Fixing features for ' GM.Aux.name ' vs ' GN.Aux.name '...']);
+% rslt = FeatureFix(GM,GN,TAXAind1,TAXAind2,options);
+% lk2 = GN.V(:,GetLandmarks(GN,LandmarksPath));
+% lk1 = GN.V(:,rslt.ImprMap(GetLandmarks(GM,LandmarksPath)));
+% rslt.lkMSE = mean(sqrt(sum((lk2-lk1).^2)));
+% % save(rslt_mat,'Imprrslt');
+% disp(['Feature Fixing for ' GM.Aux.name ' vs ' GN.Aux.name ' done.']);
+% toc;
 
-%%% setup paths
-base_path = [pwd '/'];
-data_path = '../DATA/PNAS/';
-rslts_path = [base_path 'rslts/'];
-cluster_path = [base_path 'cluster/'];
-samples_path = [base_path 'samples/Teeth/'];
-TextureCoords1_path = [pwd '/results/Teeth/cPViterbi/FeatureFixOff/TextureCoords1/'];
-TextureCoords2_path = [pwd '/results/Teeth/cPViterbi/FeatureFixOff/TextureCoords2/'];
-LandmarksPath = [data_path 'landmarks_teeth.mat'];
-TaxaCode_path = [data_path 'teeth_taxa_table.mat'];
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% compare face mesh downsamplings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SamplePath = [pwd '/samples/Faces/'];
+MeshName = 'original';
+G = Mesh('off',[SamplePath MeshName '.off']);
+[F,Inds] = unique(sort(G.F',2),'rows','first');
+if ~isempty(setdiff(1:G.nF,Inds))
+    disp('This mesh contains duplicate faces!');
+    V = G.V;
+    F(setdiff(1:G.nF,Inds),:) = [];
+    clear G;
+    G = Mesh('VF',V,F');
+end
+options.display = 'on';
+options.exclude_boundary = 1;
+dVInds = G.DeleteIsolatedVertex(options);
+if ~isempty(dVInds);
+    disp('This mesh contains non-boundary isolated vertex!');
+end
+dVInds = G.FindBoundaries;
+G.DeleteVertex(dVInds);
+G.DeleteIsolatedVertex;
 
-%%% load taxa codes
-taxa_code = load(TaxaCode_path);
-TaxaCode = taxa_code.taxa_code;
-GroupSize = length(taxa_code);
-ChunkSize = 55;
+G.Centralize('ScaleArea');
+options.SmoothCurvatureFields = 3;
+options.DensityLocalWidth = 3;
+options.ConfMaxLocalWidth = 3;
+options.GaussMaxLocalWidth = 3;
+options.GaussMinLocalWidth = 3;
+options.ADMaxLocalWidth = 3;
+options.ExcludeBoundary = 1;
+options.Display = 'off';
+G.ComputeMidEdgeUniformization(options);
 
-Names = {'s17','J12'};
-
-G1 = [samples_path Names{1} '.mat'];
-G2 = [samples_path Names{2} '.mat'];
-
-options.TextureCoords1Path = TextureCoords1_path;
-options.TextureCoords2Path = TextureCoords2_path;
-options.ChunkSize = ChunkSize;
-
-GM = load(G1);
-GM = GM.G;
-GN = load(G2);
-GN = GN.G;
-
-TAXAind = cellfun(@(name) find(strcmpi(TaxaCode,name)),{GM.Aux.name,GN.Aux.name});
-TAXAind1 = TAXAind(1);
-TAXAind2 = TAXAind(2);
-
-ChunkIdx = @(TAXAind1,TAXAind2) ceil(((TAXAind1-1)*GroupSize+TAXAind2)/ChunkSize);
-rslt_mat = [rslts_path 'rslt_mat_' num2str(ChunkIdx(TAXAind1,TAXAind2))];
-load(rslt_mat);
-
-tic;
-disp(['Fixing features for ' GM.Aux.name ' vs ' GN.Aux.name '...']);
-rslt = FeatureFix(GM,GN,TAXAind1,TAXAind2,options);
-lk2 = GN.V(:,GetLandmarks(GN,LandmarksPath));
-lk1 = GN.V(:,rslt.ImprMap(GetLandmarks(GM,LandmarksPath)));
-rslt.lkMSE = mean(sqrt(sum((lk2-lk1).^2)));
-% save(rslt_mat,'Imprrslt');
-disp(['Feature Fixing for ' GM.Aux.name ' vs ' GN.Aux.name ' done.']);
-toc;
+save([SamplePath MeshName '.mat'], 'G');
 
 

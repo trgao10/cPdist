@@ -30,9 +30,9 @@ delete_command = 'rm -f ';
 % Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
-Names = {'a16','x14'};
+Names = {'B03','D09'};
 
-options.ImprType = 'ComposedLAST';
+options.ImprType = 'Viterbi';
 options.SmoothMap = 0;
 options.FeatureFix = 'on';
 options.alpha = 'auto'; % LAST/ComposedLAST; scalar>1 or 'auto'
