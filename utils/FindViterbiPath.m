@@ -15,7 +15,6 @@ end
 R = getoptions(options,'R',eye(3));
 T = getoptions(options,'T',30);
 Angle = getoptions(options,'Angle','off');
-lambda = getoptions(options,'lambda',1); % balancing costs
 tGMV = R*GM.V;
 GroupSize = length(DistMatrix);
 TAXAind1 = find(strcmpi(TaxaCode,GM.Aux.name));
@@ -87,7 +86,8 @@ for j=1:T
                 ReverseDistCosts = max(ReverseDistCosts)-ReverseDistCosts;
                 ReverseDistCosts = ReverseDistCosts/sum(ReverseDistCosts);
                 
-                if strcmpi(Angle,'on')
+                if ~strcmpi(Angle,'off')
+                    disp('Adding Angle Costs.');
                     % AngleCosts: from kk to all other nodes in one step
                     % similar for ReverseAngleCosts
                     AngleCosts = zeros(size(DistCosts));
@@ -118,11 +118,11 @@ for j=1:T
                     ReverseAngleCosts = 1-ReverseAngleCosts;
                     ReverseAngleCosts = ReverseAngleCosts/sum(ReverseAngleCosts);
                     
-                    TransProbs = lambda*DistCosts+(1-lambda)*AngleCosts;
+                    TransProbs = Angle*DistCosts+(1-Angle)*AngleCosts;
                     TransProbs = TransProbs/sum(TransProbs);
                     IntermediateTempProbs(kk) = IntermediatePathProbs(kk)*TransProbs(k);
                     
-                    TransProbs = lambda*ReverseDistCosts+(1-lambda)*ReverseAngleCosts;
+                    TransProbs = Angle*ReverseDistCosts+(1-Angle)*ReverseAngleCosts;
                     TransProbs = TransProbs/sum(TransProbs);
                     ReverseIntermediateTempProbs(kk) = ReverseIntermediatePathProbs(kk)*TransProbs(k);
                 else

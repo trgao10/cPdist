@@ -9,7 +9,7 @@ obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Teeth/'];
 cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
 cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
-cPLAST_path = [pwd '/results/Teeth/cPdist/cPLASTGraph_meanminusstd.mat'];
+cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_mean.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
@@ -30,7 +30,7 @@ delete_command = 'rm -f ';
 % Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
-Names = {'B03','D09'};
+Names = {'B03','H10'};
 
 options.ImprType = 'Viterbi';
 options.SmoothMap = 0;
