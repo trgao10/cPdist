@@ -7,11 +7,13 @@ addpath(path,genpath([pwd '/utils/']));
 %% Set Path
 obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Teeth/'];
+
 cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
 cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
 cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_mean.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
+
 data_path = '~/Work/MATLAB/DATA/PNAS/';
 delete_command = 'rm -f ';
 

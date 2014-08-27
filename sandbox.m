@@ -18,37 +18,66 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% compare distances and landmark MSEs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% GroupSize = 116;
-% 
-% load('./results/Teeth/cPdist/cPDistMatrix.mat');
+GroupSize = 116;
+
+load('./results/Teeth/cPDist/cPDistMatrix.mat');
 % figure;
 % imagesc(cPDistMatrix./max(cPDistMatrix(:))*64);
 % axis equal;
 % axis([1,GroupSize,1,GroupSize]);
-% 
-% load('./results/Teeth/cPdist/cPlmkMSEMatrix.mat');
+
+load('./results/Teeth/cPDist/cPlmkMSEMatrix.mat');
 % figure;
 % imagesc(cPlmkMSEMatrix./max(cPlmkMSEMatrix(:))*64);
 % axis equal;
 % axis([1,GroupSize,1,GroupSize]);
 
-% load('./results/Teeth/cPMST/FeatureFixOff/cPMSTDistMatrix.mat');
-% figure;
-% imagesc(ImprDistMatrix./max(cPdistMatrix(:))*64);
-% axis equal;
-% axis([1,GroupSize,1,GroupSize]);
-% 
-% cPMSTlmkMSEMatrix = load('./results/Teeth/cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat');
-% cPMSTlmkMSEMatrix = cPMSTlmkMSEMatrix.lmkMSEMatrix;
-% figure;
-% imagesc(cPMSTlmkMSEMatrix./max(cPMSTlmkMSEMatrix(:))*64);
-% axis equal;
-% axis([1,GroupSize,1,GroupSize]);
-% 
+cPMSTFeatureFixOff = load('./results/Teeth/cPMST/FeatureFixOff/cPMSTDistMatrix.mat');
+cPMSTFeatureFixOff = cPMSTFeatureFixOff.ImprDistMatrix;
+cPMSTFFofflmkMSEMatrix = load('./results/Teeth/cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat');
+cPMSTFFofflmkMSEMatrix = cPMSTFFofflmkMSEMatrix.lmkMSEMatrix;
+cPMSTFeatureFixOn = load('./results/Teeth/cPMST/FeatureFixOn/cPMSTDistMatrix.mat');
+cPMSTFeatureFixOn = cPMSTFeatureFixOn.ImprDistMatrix;
+cPMSTFFonlmkMSEMatrix = load('./results/Teeth/cPMST/FeatureFixOn/cPMSTlmkMSEMatrix.mat');
+cPMSTFFonlmkMSEMatrix = cPMSTFFonlmkMSEMatrix.lmkMSEMatrix;
+
+cPViterbiFeatureFixOff = load('./results/Teeth/cPViterbi/FeatureFixOff/cPViterbiDistMatrix.mat');
+cPViterbiFeatureFixOff = cPViterbiFeatureFixOff.ImprDistMatrix;
+cPViterbiFFofflmkMSEMatrix = load('./results/Teeth/cPViterbi/FeatureFixOff/cPViterbilmkMSEMatrix.mat');
+cPViterbiFFofflmkMSEMatrix = cPViterbiFFofflmkMSEMatrix.lmkMSEMatrix;
+cPViterbiFeatureFixOn = load('./results/Teeth/cPViterbi/FeatureFixOn/cPViterbiDistMatrix.mat');
+cPViterbiFeatureFixOn = cPViterbiFeatureFixOn.ImprDistMatrix;
+cPViterbiFFonlmkMSEMatrix = load('./results/Teeth/cPViterbi/FeatureFixOn/cPViterbilmkMSEMatrix.mat');
+cPViterbiFFonlmkMSEMatrix = cPViterbiFFonlmkMSEMatrix.lmkMSEMatrix;
+
+cPLASTFeatureFixOff = load('./results/Teeth/cPLAST/FeatureFixOff/cPLASTDistMatrix.mat');
+cPLASTFeatureFixOff = cPLASTFeatureFixOff.ImprDistMatrix;
+cPLASTFFofflmkMSEMatrix = load('./results/Teeth/cPLAST/FeatureFixOff/cPLASTlmkMSEMatrix.mat');
+cPLASTFFofflmkMSEMatrix = cPLASTFFofflmkMSEMatrix.lmkMSEMatrix;
+cPLASTFeatureFixOn = load('./results/Teeth/cPLAST/FeatureFixOn/cPLASTDistMatrix.mat');
+cPLASTFeatureFixOn = cPLASTFeatureFixOn.ImprDistMatrix;
+cPLASTFFonlmkMSEMatrix = load('./results/Teeth/cPLAST/FeatureFixOn/cPLASTlmkMSEMatrix.mat');
+cPLASTFFonlmkMSEMatrix = cPLASTFFonlmkMSEMatrix.lmkMSEMatrix;
+
+figure;
+scatter(cPLASTFeatureFixOff(:),cPLASTFeatureFixOn(:),10,'g');
+axis equal;
+hold on;
+title('cPViterbi distances before/after FeatureFix');
+plot([0,0.2],[0,0.2],'r');
+axis([0,0.2,0,0.2]);
+
+figure;
+scatter(cPLASTFFofflmkMSEMatrix(:),cPLASTFFonlmkMSEMatrix(:),10,'b');
+axis equal;
+hold on;
+title('cPViterbi landmark MSEs before/after FeatureFix');
+plot([0,0.7],[0,0.7],'r');
+axis([0,0.7,0,0.7]);
+
 % close all;
-% 
 % figure;
-% scatter(cPdistMatrix(:),ImprDistMatrix(:),10,'g');
+% scatter(cPDistMatrix(:),ImprDistMatrix(:),10,'g');
 % axis equal;
 % hold on;
 % title('distances before/after MST improvement');

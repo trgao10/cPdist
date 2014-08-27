@@ -21,6 +21,7 @@ TextureCoords1_path = [pwd '/results/Teeth/cPDist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPDist/TextureCoords2/'];
 landmarks_path = [data_path 'landmarks_teeth.mat'];
 TaxaCode_path = [data_path 'teeth_taxa_table.mat'];
+cPLASTPath = [pwd '/results/Teeth/cPDist/cPComposedLASTGraph_meanminusstd.mat'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];
 outputs_path = [cluster_path 'outputs/'];
@@ -40,7 +41,8 @@ command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text
 %%% load taxa codes
 taxa_code = load(TaxaCode_path);
 taxa_code = taxa_code.taxa_code;
-GroupSize = length(taxa_code);
+GroupSize = 5;
+% GroupSize = length(taxa_code);
 chunk_size = 55;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +84,8 @@ for k1=1:GroupSize
                 'options.TextureCoords2Path = ''' TextureCoords2_path ''';' ...
                 'taxa_code = load(''' TaxaCode_path ''');' ...
                 'options.TaxaCode = taxa_code.taxa_code;' ...
-                'options.ChunkSize = ' num2str(chunk_size) ';' ];
+                'options.ChunkSize = ' num2str(chunk_size) ';' ...
+                'options.cPLASTPath = ''' cPLASTPath ''';'];
             fprintf(fid, '%s ',script_text);
             
             %%% create new matrix
