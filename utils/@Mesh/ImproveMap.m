@@ -38,7 +38,7 @@ rslt.Gname2 = GN.Aux.name;
 TAXAind = cellfun(@(name) find(strcmpi(TaxaCode,name)),{GM.Aux.name,GN.Aux.name});
 GroupSize = length(TaxaCode);
 
-if ~strcmpi(ImprType,'Viterbi') && ~strcmpi(ImprType,'ComposedLAST') %%% MST or LAST
+if ~strcmpi(ImprType,'Viterbi') && ~strcmpi(ImprType,'ComposedLAST') %%% MST or ComposedLAST
     ST = ConstructGraph(DistMatrix,ImprType,options);
     OptimalPath = FindGraphShortestPath(ST,TAXAind(1),TAXAind(2),TaxaCode,options);
     if SmoothMap==0

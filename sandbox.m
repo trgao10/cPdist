@@ -151,4 +151,41 @@ axis([0,0.7,0,0.7]);
 % disp(['Feature Fixing for ' GM.Aux.name ' vs ' GN.Aux.name ' done.']);
 % toc;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% compare face mesh downsamplings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SamplePath = [pwd '/samples/Faces/'];
+MeshName = 'original';
+G = Mesh('off',[SamplePath MeshName '.off']);
+[F,Inds] = unique(sort(G.F',2),'rows','first');
+if ~isempty(setdiff(1:G.nF,Inds))
+    disp('This mesh contains duplicate faces!');
+    V = G.V;
+    F(setdiff(1:G.nF,Inds),:) = [];
+    clear G;
+    G = Mesh('VF',V,F');
+end
+options.display = 'on';
+options.exclude_boundary = 1;
+dVInds = G.DeleteIsolatedVertex(options);
+if ~isempty(dVInds);
+    disp('This mesh contains non-boundary isolated vertex!');
+end
+dVInds = G.FindBoundaries;
+G.DeleteVertex(dVInds);
+G.DeleteIsolatedVertex;
+
+G.Centralize('ScaleArea');
+options.SmoothCurvatureFields = 3;
+options.DensityLocalWidth = 3;
+options.ConfMaxLocalWidth = 3;
+options.GaussMaxLocalWidth = 3;
+options.GaussMinLocalWidth = 3;
+options.ADMaxLocalWidth = 3;
+options.ExcludeBoundary = 1;
+options.Display = 'off';
+G.ComputeMidEdgeUniformization(options);
+
+save([SamplePath MeshName '.mat'], 'G');
+
 

@@ -25,8 +25,8 @@ options.Display = 'off';
 
 obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Faces/'];
-data_path = '/media/trgao10/Work/MATLAB/Faces/';
-meshes_path = [data_path 'F001/'];
+data_path = sample_path;
+meshes_path = data_path;
 delete_command = 'rm -f ';
 
 %% parse parameters
