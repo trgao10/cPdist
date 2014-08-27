@@ -5,8 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %%% pick ImprType and FeatureFix
-ImprType = 'Viterbi'; % if 'Viterbi', should also specify ViterbiAngle!
-ViterbiAngle = 0.5; 
+ImprType = 'Viterbi'; % if 'Viterbi', should also specify "ViterbiAngle"!
 FeatureFix = 'off';
 
 %%% setup paths

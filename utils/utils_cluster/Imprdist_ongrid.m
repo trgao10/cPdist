@@ -9,6 +9,7 @@ load(rslt_mat);
 
 options.ImprType = ImprType;
 options.FeatureFix = FeatureFix;
+options.Angle = 0.5; % ViterbiAngle
 options.alpha = 'auto'; % LAST/ComposedLAST; scalar>1 or 'auto'
 options.SmoothMap = 1;
 options.ProgressBar = 'off';

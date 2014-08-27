@@ -37,6 +37,7 @@ Names = {'B03','H10'};
 options.ImprType = 'Viterbi';
 options.SmoothMap = 0;
 options.FeatureFix = 'on';
+options.Angle = 0.5; % Viterbi with angle costs
 options.alpha = 'auto'; % LAST/ComposedLAST; scalar>1 or 'auto'
 options.ProgressBar = 'on';
 options.SamplePath = sample_path;

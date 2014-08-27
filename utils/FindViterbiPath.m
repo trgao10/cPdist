@@ -15,6 +15,9 @@ end
 R = getoptions(options,'R',eye(3));
 T = getoptions(options,'T',30);
 Angle = getoptions(options,'Angle','off');
+if ~strcmpi(Angle,'off')
+    disp('Angle Costs Added.');
+end
 tGMV = R*GM.V;
 GroupSize = length(DistMatrix);
 TAXAind1 = find(strcmpi(TaxaCode,GM.Aux.name));
@@ -87,7 +90,6 @@ for j=1:T
                 ReverseDistCosts = ReverseDistCosts/sum(ReverseDistCosts);
                 
                 if ~strcmpi(Angle,'off')
-                    disp('Adding Angle Costs.');
                     % AngleCosts: from kk to all other nodes in one step
                     % similar for ReverseAngleCosts
                     AngleCosts = zeros(size(DistCosts));
