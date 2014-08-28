@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %%% pick ImprType and FeatureFix
-ImprType = 'Viterbi'; % if 'Viterbi', should also specify "ViterbiAngle"!
+ImprType = 'ComposedLAST'; % if 'Viterbi', should also specify "ViterbiAngle"!
 FeatureFix = 'off';
 
 %%% setup paths
@@ -40,8 +40,7 @@ command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text
 %%% load taxa codes
 taxa_code = load(TaxaCode_path);
 taxa_code = taxa_code.taxa_code;
-GroupSize = 5;
-% GroupSize = length(taxa_code);
+GroupSize = length(taxa_code);
 chunk_size = 55;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

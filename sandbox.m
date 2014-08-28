@@ -50,6 +50,15 @@ cPViterbiFeatureFixOn = cPViterbiFeatureFixOn.ImprDistMatrix;
 cPViterbiFFonlmkMSEMatrix = load('./results/Teeth/cPViterbi/FeatureFixOn/cPViterbilmkMSEMatrix.mat');
 cPViterbiFFonlmkMSEMatrix = cPViterbiFFonlmkMSEMatrix.lmkMSEMatrix;
 
+cPViterbiAngleFeatureFixOff = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOff/cPViterbiDistMatrix.mat');
+cPViterbiAngleFeatureFixOff = cPViterbiAngleFeatureFixOff.ImprDistMatrix;
+cPViterbiAngleFFofflmkMSEMatrix = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOff/cPViterbilmkMSEMatrix.mat');
+cPViterbiAngleFFofflmkMSEMatrix = cPViterbiAngleFFofflmkMSEMatrix.lmkMSEMatrix;
+cPViterbiAngleFeatureFixOn = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOn/cPViterbiDistMatrix.mat');
+cPViterbiAngleFeatureFixOn = cPViterbiAngleFeatureFixOn.ImprDistMatrix;
+cPViterbiAngleFFonlmkMSEMatrix = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOn/cPViterbilmkMSEMatrix.mat');
+cPViterbiAngleFFonlmkMSEMatrix = cPViterbiAngleFFonlmkMSEMatrix.lmkMSEMatrix;
+
 cPLASTFeatureFixOff = load('./results/Teeth/cPLAST/FeatureFixOff/cPLASTDistMatrix.mat');
 cPLASTFeatureFixOff = cPLASTFeatureFixOff.ImprDistMatrix;
 cPLASTFFofflmkMSEMatrix = load('./results/Teeth/cPLAST/FeatureFixOff/cPLASTlmkMSEMatrix.mat');
@@ -60,7 +69,7 @@ cPLASTFFonlmkMSEMatrix = load('./results/Teeth/cPLAST/FeatureFixOn/cPLASTlmkMSEM
 cPLASTFFonlmkMSEMatrix = cPLASTFFonlmkMSEMatrix.lmkMSEMatrix;
 
 figure;
-scatter(cPLASTFeatureFixOff(:),cPLASTFeatureFixOn(:),10,'g');
+scatter(cPDistMatrix(:),cPViterbiAngleFeatureFixOff(:),10,'g');
 axis equal;
 hold on;
 title('cPViterbi distances before/after FeatureFix');
@@ -68,7 +77,7 @@ plot([0,0.2],[0,0.2],'r');
 axis([0,0.2,0,0.2]);
 
 figure;
-scatter(cPLASTFFofflmkMSEMatrix(:),cPLASTFFonlmkMSEMatrix(:),10,'b');
+scatter(cPlmkMSEMatrix(:),cPViterbiAngleFFofflmkMSEMatrix(:),10,'b');
 axis equal;
 hold on;
 title('cPViterbi landmark MSEs before/after FeatureFix');
@@ -154,38 +163,38 @@ axis([0,0.7,0,0.7]);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% compare face mesh downsamplings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SamplePath = [pwd '/samples/Faces/'];
-MeshName = 'original';
-G = Mesh('off',[SamplePath MeshName '.off']);
-[F,Inds] = unique(sort(G.F',2),'rows','first');
-if ~isempty(setdiff(1:G.nF,Inds))
-    disp('This mesh contains duplicate faces!');
-    V = G.V;
-    F(setdiff(1:G.nF,Inds),:) = [];
-    clear G;
-    G = Mesh('VF',V,F');
-end
-options.display = 'on';
-options.exclude_boundary = 1;
-dVInds = G.DeleteIsolatedVertex(options);
-if ~isempty(dVInds);
-    disp('This mesh contains non-boundary isolated vertex!');
-end
-dVInds = G.FindBoundaries;
-G.DeleteVertex(dVInds);
-G.DeleteIsolatedVertex;
-
-G.Centralize('ScaleArea');
-options.SmoothCurvatureFields = 3;
-options.DensityLocalWidth = 3;
-options.ConfMaxLocalWidth = 3;
-options.GaussMaxLocalWidth = 3;
-options.GaussMinLocalWidth = 3;
-options.ADMaxLocalWidth = 3;
-options.ExcludeBoundary = 1;
-options.Display = 'off';
-G.ComputeMidEdgeUniformization(options);
-
-save([SamplePath MeshName '.mat'], 'G');
+% SamplePath = [pwd '/samples/Faces/'];
+% MeshName = 'original';
+% G = Mesh('off',[SamplePath MeshName '.off']);
+% [F,Inds] = unique(sort(G.F',2),'rows','first');
+% if ~isempty(setdiff(1:G.nF,Inds))
+%     disp('This mesh contains duplicate faces!');
+%     V = G.V;
+%     F(setdiff(1:G.nF,Inds),:) = [];
+%     clear G;
+%     G = Mesh('VF',V,F');
+% end
+% options.display = 'on';
+% options.exclude_boundary = 1;
+% dVInds = G.DeleteIsolatedVertex(options);
+% if ~isempty(dVInds);
+%     disp('This mesh contains non-boundary isolated vertex!');
+% end
+% dVInds = G.FindBoundaries;
+% G.DeleteVertex(dVInds);
+% G.DeleteIsolatedVertex;
+% 
+% G.Centralize('ScaleArea');
+% options.SmoothCurvatureFields = 3;
+% options.DensityLocalWidth = 3;
+% options.ConfMaxLocalWidth = 3;
+% options.GaussMaxLocalWidth = 3;
+% options.GaussMinLocalWidth = 3;
+% options.ADMaxLocalWidth = 3;
+% options.ExcludeBoundary = 1;
+% options.Display = 'off';
+% G.ComputeMidEdgeUniformization(options);
+% 
+% save([SamplePath MeshName '.mat'], 'G');
 
 
