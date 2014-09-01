@@ -10,7 +10,7 @@ sample_path = [pwd '/samples/Teeth/'];
 
 cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
 cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
-cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_mean.mat'];
+cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_balanced.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 
@@ -33,13 +33,13 @@ delete_command = 'rm -f ';
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 % Names = {'x09','B03'}; % LAST fix a peak
-Names = {'x09','B03'};
+Names = {'B03','D09'};
 
-options.ImprType = 'LAST';
-options.SmoothMap = 0;
+options.ImprType = 'MST';
+options.SmoothMap = 1;
 options.FeatureFix = 'on';
 options.Angle = 0.5; % Viterbi with angle costs
-options.alpha = 2; % LAST/ComposedLAST; scalar>1 or 'auto'
+options.alpha = 1+sqrt(2); % LAST/ComposedLAST; scalar>1 or 'auto'
 options.ProgressBar = 'on';
 options.SamplePath = sample_path;
 options.cPLASTPath = cPLAST_path; % ComposedLAST
