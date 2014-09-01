@@ -18,89 +18,88 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% compare distances and landmark MSEs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-GroupSize = 116;
-
-load('./results/Teeth/cPDist/cPDistMatrix.mat');
+% GroupSize = 116;
+% 
+% load('./results/Teeth/cPDist/cPDistMatrix.mat');
+% % figure;
+% % imagesc(cPDistMatrix./max(cPDistMatrix(:))*64);
+% % axis equal;
+% % axis([1,GroupSize,1,GroupSize]);
+% 
+% load('./results/Teeth/cPDist/cPlmkMSEMatrix.mat');
+% % figure;
+% % imagesc(cPlmkMSEMatrix./max(cPlmkMSEMatrix(:))*64);
+% % axis equal;
+% % axis([1,GroupSize,1,GroupSize]);
+% 
+% cPMSTFeatureFixOff = load('./results/Teeth/cPMST/FeatureFixOff/cPMSTDistMatrix.mat');
+% cPMSTFeatureFixOff = cPMSTFeatureFixOff.ImprDistMatrix;
+% cPMSTFFofflmkMSEMatrix = load('./results/Teeth/cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat');
+% cPMSTFFofflmkMSEMatrix = cPMSTFFofflmkMSEMatrix.lmkMSEMatrix;
+% cPMSTFeatureFixOn = load('./results/Teeth/cPMST/FeatureFixOn/cPMSTDistMatrix.mat');
+% cPMSTFeatureFixOn = cPMSTFeatureFixOn.ImprDistMatrix;
+% cPMSTFFonlmkMSEMatrix = load('./results/Teeth/cPMST/FeatureFixOn/cPMSTlmkMSEMatrix.mat');
+% cPMSTFFonlmkMSEMatrix = cPMSTFFonlmkMSEMatrix.lmkMSEMatrix;
+% 
+% cPViterbiFeatureFixOff = load('./results/Teeth/cPViterbi/FeatureFixOff/cPViterbiDistMatrix.mat');
+% cPViterbiFeatureFixOff = cPViterbiFeatureFixOff.ImprDistMatrix;
+% cPViterbiFFofflmkMSEMatrix = load('./results/Teeth/cPViterbi/FeatureFixOff/cPViterbilmkMSEMatrix.mat');
+% cPViterbiFFofflmkMSEMatrix = cPViterbiFFofflmkMSEMatrix.lmkMSEMatrix;
+% cPViterbiFeatureFixOn = load('./results/Teeth/cPViterbi/FeatureFixOn/cPViterbiDistMatrix.mat');
+% cPViterbiFeatureFixOn = cPViterbiFeatureFixOn.ImprDistMatrix;
+% cPViterbiFFonlmkMSEMatrix = load('./results/Teeth/cPViterbi/FeatureFixOn/cPViterbilmkMSEMatrix.mat');
+% cPViterbiFFonlmkMSEMatrix = cPViterbiFFonlmkMSEMatrix.lmkMSEMatrix;
+% 
+% cPViterbiAngleFeatureFixOff = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOff/cPViterbiDistMatrix.mat');
+% cPViterbiAngleFeatureFixOff = cPViterbiAngleFeatureFixOff.ImprDistMatrix;
+% cPViterbiAngleFFofflmkMSEMatrix = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOff/cPViterbilmkMSEMatrix.mat');
+% cPViterbiAngleFFofflmkMSEMatrix = cPViterbiAngleFFofflmkMSEMatrix.lmkMSEMatrix;
+% cPViterbiAngleFeatureFixOn = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOn/cPViterbiDistMatrix.mat');
+% cPViterbiAngleFeatureFixOn = cPViterbiAngleFeatureFixOn.ImprDistMatrix;
+% cPViterbiAngleFFonlmkMSEMatrix = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOn/cPViterbilmkMSEMatrix.mat');
+% cPViterbiAngleFFonlmkMSEMatrix = cPViterbiAngleFFonlmkMSEMatrix.lmkMSEMatrix;
+% 
+% cPLASTFeatureFixOff = load('./results/Teeth/cPLAST/FeatureFixOff/cPLASTDistMatrix.mat');
+% cPLASTFeatureFixOff = cPLASTFeatureFixOff.ImprDistMatrix;
+% cPLASTFFofflmkMSEMatrix = load('./results/Teeth/cPLAST/FeatureFixOff/cPLASTlmkMSEMatrix.mat');
+% cPLASTFFofflmkMSEMatrix = cPLASTFFofflmkMSEMatrix.lmkMSEMatrix;
+% cPLASTFeatureFixOn = load('./results/Teeth/cPLAST/FeatureFixOn/cPLASTDistMatrix.mat');
+% cPLASTFeatureFixOn = cPLASTFeatureFixOn.ImprDistMatrix;
+% cPLASTFFonlmkMSEMatrix = load('./results/Teeth/cPLAST/FeatureFixOn/cPLASTlmkMSEMatrix.mat');
+% cPLASTFFonlmkMSEMatrix = cPLASTFFonlmkMSEMatrix.lmkMSEMatrix;
+% 
 % figure;
-% imagesc(cPDistMatrix./max(cPDistMatrix(:))*64);
-% axis equal;
-% axis([1,GroupSize,1,GroupSize]);
-
-load('./results/Teeth/cPDist/cPlmkMSEMatrix.mat');
-% figure;
-% imagesc(cPlmkMSEMatrix./max(cPlmkMSEMatrix(:))*64);
-% axis equal;
-% axis([1,GroupSize,1,GroupSize]);
-
-cPMSTFeatureFixOff = load('./results/Teeth/cPMST/FeatureFixOff/cPMSTDistMatrix.mat');
-cPMSTFeatureFixOff = cPMSTFeatureFixOff.ImprDistMatrix;
-cPMSTFFofflmkMSEMatrix = load('./results/Teeth/cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat');
-cPMSTFFofflmkMSEMatrix = cPMSTFFofflmkMSEMatrix.lmkMSEMatrix;
-cPMSTFeatureFixOn = load('./results/Teeth/cPMST/FeatureFixOn/cPMSTDistMatrix.mat');
-cPMSTFeatureFixOn = cPMSTFeatureFixOn.ImprDistMatrix;
-cPMSTFFonlmkMSEMatrix = load('./results/Teeth/cPMST/FeatureFixOn/cPMSTlmkMSEMatrix.mat');
-cPMSTFFonlmkMSEMatrix = cPMSTFFonlmkMSEMatrix.lmkMSEMatrix;
-
-cPViterbiFeatureFixOff = load('./results/Teeth/cPViterbi/FeatureFixOff/cPViterbiDistMatrix.mat');
-cPViterbiFeatureFixOff = cPViterbiFeatureFixOff.ImprDistMatrix;
-cPViterbiFFofflmkMSEMatrix = load('./results/Teeth/cPViterbi/FeatureFixOff/cPViterbilmkMSEMatrix.mat');
-cPViterbiFFofflmkMSEMatrix = cPViterbiFFofflmkMSEMatrix.lmkMSEMatrix;
-cPViterbiFeatureFixOn = load('./results/Teeth/cPViterbi/FeatureFixOn/cPViterbiDistMatrix.mat');
-cPViterbiFeatureFixOn = cPViterbiFeatureFixOn.ImprDistMatrix;
-cPViterbiFFonlmkMSEMatrix = load('./results/Teeth/cPViterbi/FeatureFixOn/cPViterbilmkMSEMatrix.mat');
-cPViterbiFFonlmkMSEMatrix = cPViterbiFFonlmkMSEMatrix.lmkMSEMatrix;
-
-cPViterbiAngleFeatureFixOff = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOff/cPViterbiDistMatrix.mat');
-cPViterbiAngleFeatureFixOff = cPViterbiAngleFeatureFixOff.ImprDistMatrix;
-cPViterbiAngleFFofflmkMSEMatrix = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOff/cPViterbilmkMSEMatrix.mat');
-cPViterbiAngleFFofflmkMSEMatrix = cPViterbiAngleFFofflmkMSEMatrix.lmkMSEMatrix;
-cPViterbiAngleFeatureFixOn = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOn/cPViterbiDistMatrix.mat');
-cPViterbiAngleFeatureFixOn = cPViterbiAngleFeatureFixOn.ImprDistMatrix;
-cPViterbiAngleFFonlmkMSEMatrix = load('./results/Teeth/cPViterbiAngle0.5/FeatureFixOn/cPViterbilmkMSEMatrix.mat');
-cPViterbiAngleFFonlmkMSEMatrix = cPViterbiAngleFFonlmkMSEMatrix.lmkMSEMatrix;
-
-cPLASTFeatureFixOff = load('./results/Teeth/cPLAST/FeatureFixOff/cPLASTDistMatrix.mat');
-cPLASTFeatureFixOff = cPLASTFeatureFixOff.ImprDistMatrix;
-cPLASTFFofflmkMSEMatrix = load('./results/Teeth/cPLAST/FeatureFixOff/cPLASTlmkMSEMatrix.mat');
-cPLASTFFofflmkMSEMatrix = cPLASTFFofflmkMSEMatrix.lmkMSEMatrix;
-cPLASTFeatureFixOn = load('./results/Teeth/cPLAST/FeatureFixOn/cPLASTDistMatrix.mat');
-cPLASTFeatureFixOn = cPLASTFeatureFixOn.ImprDistMatrix;
-cPLASTFFonlmkMSEMatrix = load('./results/Teeth/cPLAST/FeatureFixOn/cPLASTlmkMSEMatrix.mat');
-cPLASTFFonlmkMSEMatrix = cPLASTFFonlmkMSEMatrix.lmkMSEMatrix;
-
-figure;
-scatter(cPDistMatrix(:),cPViterbiAngleFeatureFixOff(:),10,'g');
-axis equal;
-hold on;
-title('cPViterbi distances before/after FeatureFix');
-plot([0,0.2],[0,0.2],'r');
-axis([0,0.2,0,0.2]);
-
-figure;
-scatter(cPlmkMSEMatrix(:),cPViterbiAngleFFofflmkMSEMatrix(:),10,'b');
-axis equal;
-hold on;
-title('cPViterbi landmark MSEs before/after FeatureFix');
-plot([0,0.7],[0,0.7],'r');
-axis([0,0.7,0,0.7]);
-
-% close all;
-% figure;
-% scatter(cPDistMatrix(:),ImprDistMatrix(:),10,'g');
+% scatter(cPDistMatrix(:),cPViterbiAngleFeatureFixOff(:),10,'g');
 % axis equal;
 % hold on;
-% title('distances before/after MST improvement');
+% title('cPViterbi distances before/after FeatureFix');
 % plot([0,0.2],[0,0.2],'r');
 % axis([0,0.2,0,0.2]);
 % 
 % figure;
-% scatter(cPlmkMSEMatrix(:),cPMSTlmkMSEMatrix(:),10,'b');
+% scatter(cPlmkMSEMatrix(:),cPViterbiAngleFFofflmkMSEMatrix(:),10,'b');
 % axis equal;
 % hold on;
-% title('landmark MSEs before/after MST improvement');
+% title('cPViterbi landmark MSEs before/after FeatureFix');
 % plot([0,0.7],[0,0.7],'r');
 % axis([0,0.7,0,0.7]);
-
+% 
+% % close all;
+% % figure;
+% % scatter(cPDistMatrix(:),ImprDistMatrix(:),10,'g');
+% % axis equal;
+% % hold on;
+% % title('distances before/after MST improvement');
+% % plot([0,0.2],[0,0.2],'r');
+% % axis([0,0.2,0,0.2]);
+% % 
+% % figure;
+% % scatter(cPlmkMSEMatrix(:),cPMSTlmkMSEMatrix(:),10,'b');
+% % axis equal;
+% % hold on;
+% % title('landmark MSEs before/after MST improvement');
+% % plot([0,0.7],[0,0.7],'r');
+% % axis([0,0.7,0,0.7]);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% test FeatureFix
@@ -164,7 +163,7 @@ axis([0,0.7,0,0.7]);
 %%% compare face mesh downsamplings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SamplePath = [pwd '/samples/Faces/'];
-% MeshName = 'original';
+% MeshName = 'quadraticEdgeCollapseDownsampled';
 % G = Mesh('off',[SamplePath MeshName '.off']);
 % [F,Inds] = unique(sort(G.F',2),'rows','first');
 % if ~isempty(setdiff(1:G.nF,Inds))
@@ -185,16 +184,38 @@ axis([0,0.7,0,0.7]);
 % G.DeleteIsolatedVertex;
 % 
 % G.Centralize('ScaleArea');
-% options.SmoothCurvatureFields = 3;
-% options.DensityLocalWidth = 3;
-% options.ConfMaxLocalWidth = 3;
-% options.GaussMaxLocalWidth = 3;
-% options.GaussMinLocalWidth = 3;
-% options.ADMaxLocalWidth = 3;
-% options.ExcludeBoundary = 1;
-% options.Display = 'off';
+% % options.SmoothCurvatureFields = 3;
+% % options.DensityLocalWidth = 3;
+% % options.ConfMaxLocalWidth = 3;
+% % options.GaussMaxLocalWidth = 3;
+% % options.GaussMinLocalWidth = 3;
+% % options.ADMaxLocalWidth = 3;
+% % options.ExcludeBoundary = 1;
+% % options.Display = 'off';
 % G.ComputeMidEdgeUniformization(options);
 % 
 % save([SamplePath MeshName '.mat'], 'G');
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% explore different effects of local max width
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SamplePath = [pwd '/samples/Faces/'];
+MeshName = 'furthestPointDownsampled';
+% MeshName = 'quadraticEdgeCollapseDownsampled';
+load([SamplePath MeshName '.mat']);
+
+options.SmoothCurvatureFields = 2;
+options.ConfMaxLocalWidth = 4;
+options.GaussMaxLocalWidth = 6;
+options.GaussMinLocalWidth = 6;
+options.ADMaxLocalWidth = 3;
+options.ExcludeBoundary = 1;
+options.Display = 'off';
+
+G.ExtractFeatures(options);
+
+figure;G.draw('ConfMax');
+figure;G.draw('GaussMax');
+figure;G.draw('GaussMin');
 
