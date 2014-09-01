@@ -10,7 +10,11 @@ load(rslt_mat);
 options.ImprType = ImprType;
 options.FeatureFix = FeatureFix;
 options.Angle = 0.25; % ViterbiAngle
-options.alpha = 1+sqrt(2); % LAST/ComposedLAST; scalar>1 or 'auto'
+options.alpha = 'auto';    % actually this doesn't matter for
+                           % cPComposedLAST; for setting it up
+                           % on grid, it suffices if one
+                           % specifie"cPLASTPath" in "options".
+% options.alpha = 1+sqrt(2); % LAST/ComposedLAST; scalar>1 or 'auto'
 options.SmoothMap = 1;
 options.ProgressBar = 'off';
 
