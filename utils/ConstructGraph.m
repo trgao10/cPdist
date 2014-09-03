@@ -1,4 +1,4 @@
-function [ST] = ConstructGraph(DistMatrix,Type,options)
+function [ST,PRED] = ConstructGraph(DistMatrix,Type,options)
 %CONSTRUCTGRAPH Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -9,7 +9,7 @@ end
 if strcmpi(Type,'MST')
     DistMatrix = sparse(DistMatrix);
     DistMatrix = tril(DistMatrix,-1);
-    [ST, ~] = graphminspantree(DistMatrix,'Method','Kruskal');
+    [ST, PRED] = graphminspantree(DistMatrix,'Method','Kruskal');
 elseif strcmpi(Type,'LAST')
     DistMatrix = sparse(DistMatrix);
     TrilDistMatrix = tril(DistMatrix, -1);
@@ -52,6 +52,7 @@ elseif strcmpi(Type,'LAST')
     SPT = sparse(RowNodes,OPT_PRED,OPT_Weights,size(DistMatrix,1),size(DistMatrix,2));
     ST = max(SPT,SPT');
     ST = tril(ST, -1);
+    PRED = OPT_PRED;
 else
     error('Unidefined Graph Type!');
 end
