@@ -6,7 +6,7 @@ if nargin<2
     options = [];
 end
 
-SmoothCurvatureFields = getoptions(options,'SmoothCurvatureFields',10);
+% SmoothCurvatureFields = getoptions(options,'SmoothCurvatureFields',10);
 DensityLocalWidth = getoptions(options,'DensityLocalWidth',5);
 ExcludeBoundary = getoptions(options,'ExcludeBoundary',1);
 
@@ -68,16 +68,16 @@ end
 % 6) spread density points on mesh
 disp('Spreading density points on mesh...');
 Cgauss = G.ExtractFeatures(options);
-Conf = G.Aux.Conf;
-for j=1:SmoothCurvatureFields
-    WeightMatrix = repmat(TriAreas,1,G.nV).*G.F2V.*repmat(1./G.Aux.VertArea,G.nF,1);
-    
-    CgaussFace = mean(Cgauss(G.F));
-    Cgauss = CgaussFace*WeightMatrix;
-    
-    ConfFace = mean(Conf(G.F));
-    Conf = ConfFace*WeightMatrix;
-end
+% Conf = G.Aux.Conf;
+% for j=1:SmoothCurvatureFields
+%     WeightMatrix = repmat(TriAreas,1,G.nV).*G.F2V.*repmat(1./G.Aux.VertArea,G.nF,1);
+%     
+%     CgaussFace = mean(Cgauss(G.F));
+%     Cgauss = CgaussFace*WeightMatrix;
+%     
+%     ConfFace = mean(Conf(G.F));
+%     Conf = ConfFace*WeightMatrix;
+% end
 [G.Aux.GaussMaxInds,~] = G.FindLocalMax(Cgauss',DensityLocalWidth,ExcludeBoundary);
 [G.Aux.GaussMinInds,~] = G.FindLocalMax(-Cgauss',DensityLocalWidth,ExcludeBoundary);
 [G.Aux.ConfMaxInds,~] = G.FindLocalMax(Conf',DensityLocalWidth,ExcludeBoundary);

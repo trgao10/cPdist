@@ -10,7 +10,7 @@ sample_path = [pwd '/samples/Teeth/'];
 
 cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
 cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
-cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_mean.mat'];
+cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_balanced.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 
@@ -32,13 +32,14 @@ delete_command = 'rm -f ';
 % Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
-Names = {'B03','H10'};
+% Names = {'x09','B03'}; % LAST fix a peak
+Names = {'B03','D09'};
 
-options.ImprType = 'Viterbi';
-options.SmoothMap = 0;
+options.ImprType = 'MST';
+options.SmoothMap = 1;
 options.FeatureFix = 'on';
 options.Angle = 0.5; % Viterbi with angle costs
-options.alpha = 'auto'; % LAST/ComposedLAST; scalar>1 or 'auto'
+options.alpha = 1+sqrt(2); % LAST/ComposedLAST; scalar>1 or 'auto'
 options.ProgressBar = 'on';
 options.SamplePath = sample_path;
 options.cPLASTPath = cPLAST_path; % ComposedLAST
@@ -89,7 +90,7 @@ ViewTeethMapS(tGM, Gs{2}, {cPMapsMatrix{TAXAind(1),TAXAind(2)},cPMapsMatrix{TAXA
 set(gcf,'Name','cP');
 
 %% Improve Maps
-options.ShowTree = 'on';
+options.ShowTree = 'off';
 rslt12 = Gs{1}.ImproveMap(Gs{2},cPDistMatrix,cPMapsMatrix,taxa_code,options);
 options.ShowTree = 'off';
 rslt21 = Gs{2}.ImproveMap(Gs{1},cPDistMatrix,cPMapsMatrix,taxa_code,options);

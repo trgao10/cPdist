@@ -5,6 +5,7 @@ function [Cgauss,Cmean,Cmin,Cmax] = ExtractFeatures(GM,options)
 if nargin < 2
     options = struct();
 end
+SmoothCurvatureFields = getoptions(options,'SmoothCurvatureFields',3);
 ConfMaxLocalWidth = getoptions(options,'ConfMaxLocalWidth',8);
 GaussMaxLocalWidth = getoptions(options,'GaussMaxLocalWidth',10);
 GaussMinLocalWidth = getoptions(options,'GaussMinLocalWidth',6);
@@ -16,8 +17,23 @@ Display = getoptions(options,'Display','off');
 % extract features (local maximum of conformal factors)
 %++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 [~,~,Cmin,Cmax,Cmean,Cgauss,~] = GM.ComputeCurvature(options);
+Conf = GM.Aux.Conf;
+[~,TriAreas] = GM.ComputeSurfaceArea;
+for j=1:SmoothCurvatureFields
+    WeightMatrix = repmat(TriAreas,1,GM.nV).*GM.F2V.*repmat(1./GM.Aux.VertArea,GM.nF,1);
+    
+    CgaussFace = mean(Cgauss(GM.F));
+    Cgauss = CgaussFace*WeightMatrix;
+    
+    ConfFace = mean(Conf(GM.F));
+    Conf = ConfFace*WeightMatrix;
+end
+Cgauss = Cgauss';
+GM.Aux.Conf = Conf';
+
 DNE = Cmin.^2+Cmax.^2;
 DNETruncInds = find(DNE>median(DNE));
+
 [GaussMaxInds,~] = GM.FindLocalMax(Cgauss,GaussMaxLocalWidth,ExcludeBoundary);
 [GaussMinInds,~] = GM.FindLocalMax(-Cgauss,GaussMinLocalWidth,ExcludeBoundary);
 
