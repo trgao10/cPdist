@@ -20,7 +20,7 @@ TextureCoords1_path = [pwd '/results/Teeth/cPDist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPDist/TextureCoords2/'];
 landmarks_path = [data_path 'landmarks_teeth.mat'];
 TaxaCode_path = [data_path 'teeth_taxa_table.mat'];
-cPLASTPath = [pwd '/results/Teeth/cPDist/cPComposedLASTGraph_meanminusstd.mat'];
+cPLASTPath = [pwd '/results/Teeth/cPDist/cPComposedLASTGraph_median.mat'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];
 outputs_path = [cluster_path 'outputs/'];
@@ -62,7 +62,8 @@ for k1=1:GroupSize
                 jobname = ['TCjob_' num2str(job_id)];
                 serr = [errors_path 'e_job_' num2str(job_id)];
                 sout = [outputs_path 'o_job_' num2str(job_id)];
-                tosub = ['!qsub -N ' jobname ' -o ' sout ' -e ' serr ' ' script_name ];
+                tosub = ['!qsub -N ' jobname ' -o ' sout ' -e ' serr ' ' ...
+                         script_name ];
                 eval(tosub);
             end
             

@@ -5,12 +5,12 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %%% set ImprType
-ImprType = 'Viterbi';
+ImprType = 'ComposedLAST';
 
 %%% setup paths
 base_path = [pwd '/'];
 data_path = '../DATA/PNAS/';
-result_path = '/xtmp/ArchivedResults/cPLASTbalance/FeatureFixOn/'; 
+result_path = '/xtmp/ArchivedResults/cPComposedLASTmedian/FeatureFixOn/';
 rslts_path = [result_path 'rslts/'];
 TextureCoords1Matrix_path = [result_path 'TextureCoords1/'];
 TextureCoords2Matrix_path = [result_path 'TextureCoords2/'];
