@@ -19,26 +19,27 @@
 %%% compare distances and landmark MSEs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % GroupSize = 116;
+% ResultPath = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/';
 % 
-% load('./results/Teeth/cPDist/cPDistMatrix.mat');
+% load([ResultPath 'cPDist/cPDistMatrix.mat']);
 % % figure;
 % % imagesc(cPDistMatrix./max(cPDistMatrix(:))*64);
 % % axis equal;
 % % axis([1,GroupSize,1,GroupSize]);
 % 
-% load('./results/Teeth/cPDist/cPlmkMSEMatrix.mat');
+% load([ResultPath 'cPDist/cPlmkMSEMatrix.mat']);
 % % figure;
 % % imagesc(cPlmkMSEMatrix./max(cPlmkMSEMatrix(:))*64);
 % % axis equal;
 % % axis([1,GroupSize,1,GroupSize]);
-% 
-% cPMSTFeatureFixOff = load('./results/Teeth/cPMST/FeatureFixOff/cPMSTDistMatrix.mat');
+% % 
+% cPMSTFeatureFixOff = load([ResultPath 'cPMST/FeatureFixOff/cPMSTDistMatrix.mat']);
 % cPMSTFeatureFixOff = cPMSTFeatureFixOff.ImprDistMatrix;
-% cPMSTFFofflmkMSEMatrix = load('./results/Teeth/cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat');
+% cPMSTFFofflmkMSEMatrix = load([ResultPath 'cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat']);
 % cPMSTFFofflmkMSEMatrix = cPMSTFFofflmkMSEMatrix.lmkMSEMatrix;
-% cPMSTFeatureFixOn = load('./results/Teeth/cPMST/FeatureFixOn/cPMSTDistMatrix.mat');
+% cPMSTFeatureFixOn = load([ResultPath 'cPMST/FeatureFixOn/cPMSTDistMatrix.mat']);
 % cPMSTFeatureFixOn = cPMSTFeatureFixOn.ImprDistMatrix;
-% cPMSTFFonlmkMSEMatrix = load('./results/Teeth/cPMST/FeatureFixOn/cPMSTlmkMSEMatrix.mat');
+% cPMSTFFonlmkMSEMatrix = load([ResultPath 'cPMST/FeatureFixOn/cPMSTlmkMSEMatrix.mat']);
 % cPMSTFFonlmkMSEMatrix = cPMSTFFonlmkMSEMatrix.lmkMSEMatrix;
 % 
 % cPViterbiFeatureFixOff = load('./results/Teeth/cPViterbi/FeatureFixOff/cPViterbiDistMatrix.mat');
@@ -69,21 +70,24 @@
 % cPLASTFFonlmkMSEMatrix = cPLASTFFonlmkMSEMatrix.lmkMSEMatrix;
 % 
 % figure;
-% scatter(cPDistMatrix(:),cPViterbiAngleFeatureFixOff(:),10,'g');
+% scatter(cPDistMatrix(:),cPMSTFeatureFixOff(:),10,'g');
 % axis equal;
 % hold on;
-% title('cPViterbi distances before/after FeatureFix');
+% title('cP distances vs cPMST distances');
 % plot([0,0.2],[0,0.2],'r');
 % axis([0,0.2,0,0.2]);
 % 
 % figure;
-% scatter(cPlmkMSEMatrix(:),cPViterbiAngleFFofflmkMSEMatrix(:),10,'b');
+% scatter(cPlmkMSEMatrix(:),cPMSTFFofflmkMSEMatrix(:),10,'b');
 % axis equal;
 % hold on;
-% title('cPViterbi landmark MSEs before/after FeatureFix');
+% title('cP landmark MSEs vs cPMST landmark MSEs');
 % plot([0,0.7],[0,0.7],'r');
 % axis([0,0.7,0,0.7]);
 % 
+% [~,colIdx] = max(max(cPlmkMSEMatrix-cPMSTFFofflmkMSEMatrix));
+% [~,rowIdx] = max(cPlmkMSEMatrix(:,colIdx)-cPMSTFFofflmkMSEMatrix(:,colIdx));
+
 % % close all;
 % % figure;
 % % scatter(cPDistMatrix(:),ImprDistMatrix(:),10,'g');
@@ -200,22 +204,79 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% explore different effects of local max width
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SamplePath = [pwd '/samples/Faces/'];
-MeshName = 'furthestPointDownsampled';
-% MeshName = 'quadraticEdgeCollapseDownsampled';
-load([SamplePath MeshName '.mat']);
+% SamplePath = [pwd '/samples/Faces/'];
+% MeshName = 'furthestPointDownsampled';
+% % MeshName = 'quadraticEdgeCollapseDownsampled';
+% load([SamplePath MeshName '.mat']);
+% 
+% options.SmoothCurvatureFields = 2;
+% options.ConfMaxLocalWidth = 4;
+% options.GaussMaxLocalWidth = 6;
+% options.GaussMinLocalWidth = 6;
+% options.ADMaxLocalWidth = 3;
+% options.ExcludeBoundary = 1;
+% options.Display = 'off';
+% 
+% G.ExtractFeatures(options);
+% 
+% figure;G.draw('ConfMax');
+% figure;G.draw('GaussMax');
+% figure;G.draw('GaussMin');
 
-options.SmoothCurvatureFields = 2;
-options.ConfMaxLocalWidth = 4;
-options.GaussMaxLocalWidth = 6;
-options.GaussMinLocalWidth = 6;
-options.ADMaxLocalWidth = 3;
-options.ExcludeBoundary = 1;
-options.Display = 'off';
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Compare cP with cPMST and cPMST_FeatureFixing
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+Names = {'B03','w02'};
+SamplePath = [pwd '/samples/Teeth/'];
+cPMaps_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPMapsMatrix.mat';
+cPDist_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPDistMatrix.mat';
+cPMSTMaps_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPMST/FeatureFixOff/cPMSTMapsMatrix.mat';
+cPMSTFeatureFixMaps_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPMST/FeatureFixOn/cPMSTMapsMatrix.mat';
+data_path = '~/Work/MATLAB/DATA/PNAS/';
 
-G.ExtractFeatures(options);
+taxa_code = load([data_path 'teeth_taxa_table.mat']);
+taxa_code = taxa_code.taxa_code;
+TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
 
-figure;G.draw('ConfMax');
-figure;G.draw('GaussMax');
-figure;G.draw('GaussMin');
+disp('loading all cPdist...');
+load(cPDist_path);
+disp('loaded');
+
+disp('loading all cPmaps...');
+load(cPMaps_path); % load cell array "cPmapsMatrix"
+cPmaps = {cPMapsMatrix{TAXAind(1),TAXAind(2)},cPMapsMatrix{TAXAind(2),TAXAind(1)}};
+disp('loaded');
+
+disp('loading all cPMSTmaps...');
+load(cPMSTMaps_path); % load cell array "ImprMapsMatrix"
+cPMSTmaps = {ImprMapsMatrix{TAXAind(1),TAXAind(2)},ImprMapsMatrix{TAXAind(2),TAXAind(1)}};
+disp('loaded');
+
+disp('loading all cPMSTFeatureFixmaps...');
+load(cPMSTFeatureFixMaps_path); % load cell array "ImprMapsMatrix"
+FeatCPMSTmaps = {ImprMapsMatrix{TAXAind(1),TAXAind(2)},ImprMapsMatrix{TAXAind(2),TAXAind(1)}};
+disp('loaded');
+
+
+GM = load([SamplePath Names{1} '.mat']);
+GM = GM.G;
+GN = load([SamplePath Names{2} '.mat']);
+GN = GN.G;
+
+%%% original cP maps
+options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
+options.MeshesPath = [data_path 'meshes/'];
+options.landmarks = 'on';
+options.type = 'full';
+options.ShowCPValue = 'on';
+
+[~,R,~] = MapToDist(GM.V,GN.V,cPMapsMatrix{TAXAind(1),TAXAind(2)},GM.Aux.VertArea);
+tGM = Mesh(GM);
+tGM.V = R*GM.V;
+
+ViewTeethCPvsCPMSTvsFeatCPMST(tGM,GN,cPmaps,cPMSTmaps,FeatCPMSTmaps,options);
+
+
+
 

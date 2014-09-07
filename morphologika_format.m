@@ -6,9 +6,9 @@ addpath(path,genpath([pwd '/utils/']));
 
 %% Set Parameters
 ImprType = 'MST';
-FeatureFix = 'On';
-NumFeatPts = 256;
-output_filename = [pwd '/morphologika/cP' ImprType '_morphologika.txt'];
+FeatureFix = 'Off';
+NumFeatPts = 32;
+output_filename = [pwd '/morphologika/cP' ImprType '_FeatureFix' uplow(FeatureFix) '_morphologika_' num2str(NumFeatPts) '.txt'];
 delete_command = 'rm -f ';
 
 %% Set Path

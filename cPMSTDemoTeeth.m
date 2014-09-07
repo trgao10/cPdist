@@ -33,11 +33,12 @@ delete_command = 'rm -f ';
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 % Names = {'x09','B03'}; % LAST fix a peak
-Names = {'B03','D09'};
+Names = {'B03','u14'};
 
 options.ImprType = 'MST';
-options.SmoothMap = 1;
+options.SmoothMap = 0;
 options.FeatureFix = 'on';
+options.GaussMinMatch = 'off';
 options.Angle = 0.5; % Viterbi with angle costs
 options.alpha = 1+sqrt(2); % LAST/ComposedLAST; scalar>1 or 'auto'
 options.ProgressBar = 'on';

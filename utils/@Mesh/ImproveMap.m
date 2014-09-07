@@ -141,7 +141,7 @@ end
 
 if strcmpi(FeatureFix,'on')
     disp('Performing Feature Fixing...');
-    [rslt.TextureCoords1,rslt.ImprMap] = TPSDeformation(GM,GN,rslt.ImprMap,'ConfMax',rslt.TextureCoords1,rslt.TextureCoords2);
+    [rslt.TextureCoords1,rslt.ImprMap] = TPSDeformation(GM,GN,rslt.ImprMap,'ConfMax',rslt.TextureCoords1,rslt.TextureCoords2,options);
     disp('Done.');
 end
 
