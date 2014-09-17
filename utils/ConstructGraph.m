@@ -46,13 +46,13 @@ elseif strcmpi(Type,'LAST')
             OPT_Weights = Weights;
         end
     end
+    PRED = OPT_PRED;
     RowNodes(OPT_RootNode) = [];
     OPT_PRED(OPT_RootNode) = [];
     OPT_Weights(OPT_RootNode) = [];
     SPT = sparse(RowNodes,OPT_PRED,OPT_Weights,size(DistMatrix,1),size(DistMatrix,2));
     ST = max(SPT,SPT');
     ST = tril(ST, -1);
-    PRED = OPT_PRED;
 else
     error('Unidefined Graph Type!');
 end

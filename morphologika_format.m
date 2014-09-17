@@ -5,25 +5,27 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% Set Parameters
-ImprType = 'MST';
-FeatureFix = 'Off';
-NumFeatPts = 32;
-output_filename = [pwd '/morphologika/cP' ImprType '_FeatureFix' uplow(FeatureFix) '_morphologika_' num2str(NumFeatPts) '.txt'];
-delete_command = 'rm -f ';
+ImprType = 'ComposedLAST';
+subImprType = [ImprType 'balance'];
+FeatureFix = 'On';
+NumFeatPts = 64;
+output_filename = [pwd '\morphologika\cP' subImprType '_FeatureFix' uplow(FeatureFix) '_morphologika_' num2str(NumFeatPts) '.txt'];
+delete_command = 'del ';
 
 %% Set Path
-ResultPath = ['/media/trgao10/Work/MATLAB/ArchivedResults/cP' ImprType '/'];
-DistPath = [ResultPath 'FeatureFix' uplow(FeatureFix) '/cP' ImprType 'DistMatrix'];
+ResultPath = ['D:/Work/MATLAB/ArchivedResults/Teeth/cP' subImprType '/'];
+ImprDistPath = [ResultPath 'FeatureFix' uplow(FeatureFix) '/cP' subImprType 'DistMatrix'];
 MapsPath = [ResultPath 'FeatureFix' uplow(FeatureFix) '/cP' ImprType 'MapsMatrix'];
 SamplePath = [pwd '/samples/Teeth/'];
-DataPath = '~/Work/MATLAB/DATA/PNAS/';
+DataPath = 'D:/Work/MATLAB/ArchivedData/PNAS/';
 TaxaPath = [DataPath 'teeth_taxa_table.mat'];
-cPDistPath = './results/Teeth/cPdist/cPDistMatrix.mat';
+cPDistPath = 'D:/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPDistMatrix.mat';
 
 %% load results
 load(TaxaPath);
+load(DistPath);
 load(cPDistPath);
-disp('loading maps...');
+disp(['loading maps from ' MapsPath '...']);
 load(MapsPath);
 disp('loaded.');
 
@@ -32,10 +34,19 @@ TaxaCode = load(TaxaPath);
 TaxaCode = TaxaCode.taxa_code;
 GroupSize = length(TaxaCode);
 
+
 if strcmpi(ImprType,'Viterbi')
-elseif strcmpi(ImprType,'ComposedLAST')
+    ImprDistMatrix = sparse(ImprDistMatrix);
+    TrilDistMatrix = tril(ImprDistMatrix,-1);
+    [~, PRED] = graphminspantree(TrilDistMatrix,'Method','Kruskal');
+    RootNode = find(PRED==0);
+elseif strcmpi(ImprType,'ComposedLAST') || strcmpi(ImprType,'Dist')
+    [~,RootNode] = min(sum(ImprDistMatrix));
 else %%% MST or LAST
-    [~,PRED] = ConstructGraph(cPDistMatrix,ImprType);
+    if strcmpi(subImprType,'cPLASTbalance')
+        options.alpha = 1+sqrt(2);
+    end
+    [~,PRED] = ConstructGraph(cPDistMatrix,ImprType,options);
     RootNode = find(PRED==0);
 end
 
