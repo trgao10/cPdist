@@ -6,7 +6,7 @@ addpath(path,genpath([pwd '/utils/']));
 
 %% set path
 % meshesPath = '/media/trgao10/Work/MATLAB/DATA/PNAS/meshes/';
-meshesPath = '/media/trgao10/Work/MATLAB/DATA/PNAS/newMeshes/';
+meshesPath = '../DATA/Clement/meshes/new/';
 
 %% read all meshes from meshesPath
 meshFiles = dir(meshesPath);
@@ -31,7 +31,7 @@ for j=1:length(meshFiles)
     if ~isempty(dVInds);
         disp([meshFiles(j).name ' contains non-boundary isolated vertex!']);
     end
-%     G.Write([newMeshesPath meshFiles(j).name],'off',[]);
+%     G.Write([meshesPath meshFiles(j).name],'off',[]);
     clear G;
 end
 

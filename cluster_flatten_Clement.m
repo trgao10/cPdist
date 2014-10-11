@@ -24,11 +24,13 @@ touch(outputs_path);
 command_text = ['!rm -f ' scripts_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' errors_path '*']; eval(command_text); disp(command_text);
 command_text = ['!rm -f ' outputs_path '*']; eval(command_text); disp(command_text);
-command_text = ['!rm -f ' samples_path '*']; eval(command_text); ...
-    disp(command_text);
+command_text = ['!rm -f ' samples_path '*']; eval(command_text); disp(command_text);
 
 %%% load taxa information
 GroupSize = 40;
+
+meshFiles = dir(meshes_path);
+meshFiles(1:2) = [];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -38,15 +40,15 @@ disp(['Submitting jobs for sampling mesh files in' meshes_path '...' ]);
 for k = 1:GroupSize
     job_id = k;
     
-    if (exist([samples_path num2str(k) '.mat'], 'file'))
+    if (exist([samples_path meshFiles(k).name(1:end-4) '.mat'], 'file'))
         job_id = job_id+1;
         continue;
     end
     
     script_name = [scripts_path 'script_' num2str(job_id)];
     
-    mesh_file= [meshes_path num2str(k) '.off'];
-    sample_file= [samples_path num2str(k) '.mat'];
+    mesh_file= [meshes_path meshFiles(k).name(1:end-4) '.off'];
+    sample_file= [samples_path meshFiles(k).name(1:end-4) '.mat'];
     
     fid = fopen(script_name,'w');
     fprintf(fid, '#!/bin/bash\n');

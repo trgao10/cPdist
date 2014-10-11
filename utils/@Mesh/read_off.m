@@ -7,7 +7,8 @@ if( fid==-1 )
 end
 
 str = fgets(fid);   % -1 if eof
-if ~strcmp(str(1:3), 'OFF')
+% if ~strcmp(str(end-3:end), 'OFF')
+if ~findstr(str,'OFF')
     error('The file is not a valid OFF one.');    
 end
 
