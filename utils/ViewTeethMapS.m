@@ -128,12 +128,12 @@ function [Inds, Coords] = ExtractLandmarks(GM, options)
 Type = getoptions(options,'Type','full');
 
 LandmarkFile = load(options.LandmarksPath);
-rawLandmarks = LandmarkFile.PP(strcmpi(LandmarkFile.names, GM.Aux.name),1:16,:);
+rawLandmarks = LandmarkFile.PP(strcmpi(LandmarkFile.names, GM.Aux.name),1:options.NumLandmark,:);
 Landmarks = zeros(size(rawLandmarks,2),3);
 for k=1:size(rawLandmarks,2)
     Landmarks(k,:) = [rawLandmarks(1,k,1), rawLandmarks(1,k,2), rawLandmarks(1,k,3)];
 end
-[V,F] = read_off([options.MeshesPath GM.Aux.name '_sas.off']);
+[V,F] = read_off([options.MeshesPath GM.Aux.name options.MeshSuffix]);
 V = V';
 F = F';
 area = CORR_calculate_area(F,V);

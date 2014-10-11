@@ -62,6 +62,8 @@ end
 tic;rslt12 = Gs{1}.ComputeContinuousProcrustes(Gs{2},options);toc;
 tic;rslt21 = Gs{2}.ComputeContinuousProcrustes(Gs{1},options);toc;
 
+options.NumLandmark = 16;
+
 lk2 = Gs{2}.V(:,GetLandmarks(Gs{2},[data_path 'landmarks_teeth.mat']));
 lk1 = Gs{2}.V(:,rslt12.cPmap(GetLandmarks(Gs{1},[data_path 'landmarks_teeth.mat'])));
 rslt12.lkMSE = mean(sqrt(sum((lk2-lk1).^2)));
@@ -99,5 +101,6 @@ options.type = 'full';
 options.landmarks = 'on';
 options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
 options.MeshesPath = [data_path 'meshes/'];
+options.MeshSuffix = '_sas.off';
 ViewTeethMapS(sGM, Gs{2}, {rslt12.cPmap,rslt21.cPmap}, options);
 

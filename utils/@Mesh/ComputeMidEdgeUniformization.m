@@ -80,7 +80,7 @@ Cgauss = G.ExtractFeatures(options);
 % end
 [G.Aux.GaussMaxInds,~] = G.FindLocalMax(Cgauss',DensityLocalWidth,ExcludeBoundary);
 [G.Aux.GaussMinInds,~] = G.FindLocalMax(-Cgauss',DensityLocalWidth,ExcludeBoundary);
-[G.Aux.ConfMaxInds,~] = G.FindLocalMax(Conf',DensityLocalWidth,ExcludeBoundary);
+[G.Aux.ConfMaxInds,~] = G.FindLocalMax(G.Aux.Conf',DensityLocalWidth,ExcludeBoundary);
 minds = [G.Aux.GaussMaxInds;G.Aux.GaussMinInds;G.Aux.ConfMaxInds];
 minds = unique(minds);
 
