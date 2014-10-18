@@ -1,4 +1,4 @@
-samples_path = [pwd '/Teeth/'];
+samples_path = [pwd '/Clement/'];
 
 sampleFiles = dir(samples_path);
 sampleFiles(1:2) = [];

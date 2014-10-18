@@ -8,7 +8,7 @@ end
 NumLandmark = getoptions(options,'NumLandmark',16);
 
 LandmarkFile = load(LandmarksPath);
-rawLandmarks = LandmarkFile.PP(strcmpi(LandmarkFile.names,G.Aux.name),1:NumLandmark,:);
+rawLandmarks = LandmarkFile.PP(strcmpi(LandmarkFile.names,G.Aux.name(1:end-4)),1:NumLandmark,:);
 Landmarks = zeros(size(rawLandmarks,2),3);
 for k=1:size(rawLandmarks,2)
     Landmarks(k,:) = [rawLandmarks(1,k,1), rawLandmarks(1,k,2), rawLandmarks(1,k,3)];
