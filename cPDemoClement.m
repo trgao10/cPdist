@@ -5,17 +5,17 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'39','11'};
+Names = {'25','37'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
-options.AngleIncrement = 0.05;
-options.NumFeatureMatch = 4;
+options.AngleIncrement = 0.03;
+options.NumFeatureMatch = 6;
 options.GaussMinMatch = 'on';
 % options.FeatureMatchType = 'Laplacian';
 % options.ConfMaxLocalWidth = 5;
-% options.GaussMaxLocalWidth = 5;
-% options.GaussMinLocalWidth = 5;
+options.GaussMaxLocalWidth = 12;
+options.GaussMinLocalWidth = 8;
 % options.ADMaxLocalWidth = 5;
 % options.ExcludeBoundary = 1;
 % options.Display = 'on';

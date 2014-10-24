@@ -51,8 +51,8 @@ if (strcmpi(Type, 'sample'))
 end
 if (strcmpi(Landmarks, 'on'))
     % extract landmarks
-    [IndsOnSource, Coords] = ExtractLandmarks(GM,options);
-    draw_landmarks(GM.V,Coords);
+    [IndsOnSource, Coords] = GetLandmarks(GM,options.LandmarksPath,options);
+    draw_landmarks(GM.V,Coords');
 end
 
 mesh_list{2} = GN;
@@ -70,8 +70,8 @@ if (strcmpi(Type, 'sample'))
 end
 if (strcmpi(Landmarks, 'on'))
     % extract landmarks
-    [IndsOnTarget, Coords] = ExtractLandmarks(GN,options);
-    draw_landmarks(GN.V,Coords);
+    [IndsOnTarget, Coords] = GetLandmarks(GN,options.LandmarksPath,options);
+    draw_landmarks(GN.V,Coords');
 end
 
 if (strcmpi(Landmarks, 'on'))
@@ -123,40 +123,40 @@ set(gcf, 'KeyPressFcn', {@ToggleOnTeethSelect3D});
 
 end
 
-function [Inds, Coords] = ExtractLandmarks(GM, options)
-
-Type = getoptions(options,'Type','full');
-
-LandmarkFile = load(options.LandmarksPath);
-rawLandmarks = LandmarkFile.PP(strcmpi(LandmarkFile.names, GM.Aux.name),1:options.NumLandmark,:);
-Landmarks = zeros(size(rawLandmarks,2),3);
-for k=1:size(rawLandmarks,2)
-    Landmarks(k,:) = [rawLandmarks(1,k,1), rawLandmarks(1,k,2), rawLandmarks(1,k,3)];
-end
-[V,F] = read_off([options.MeshesPath GM.Aux.name options.MeshSuffix]);
-V = V';
-F = F';
-area = CORR_calculate_area(F,V);
-V = V*sqrt(1/area);
-tree = KDTreeSearcher(V);
-LandmarkVertInds = tree.knnsearch(Landmarks);
-
-if strcmpi(Type, 'sample')
-    LandmarkOnSampleInds = GM.Aux.V2S(LandmarkVertInds);
-    LandmarkOnSamples = GM.V(:,LandmarkOnSampleInds);
-    
-    LandmarkToNearestSample = zeros(size(LandmarkOnSampleInds));
-    for k=1:length(LandmarkToNearestSample)
-        LandmarkToNearestSample(k) = find(GM.Aux.VertSampInd==LandmarkOnSampleInds(k));
-    end
-    Inds = LandmarkToNearestSample;
-    Coords = LandmarkOnSamples;
-elseif strcmpi(Type, 'full')
-    Inds = LandmarkVertInds;
-    Coords = GM.V(:,Inds);
-end
-
-end
+% function [Inds, Coords] = ExtractLandmarks(GM, options)
+% 
+% Type = getoptions(options,'Type','full');
+% 
+% LandmarkFile = load(options.LandmarksPath);
+% rawLandmarks = LandmarkFile.PP(strcmpi(LandmarkFile.names, GM.Aux.name),1:options.NumLandmark,:);
+% Landmarks = zeros(size(rawLandmarks,2),3);
+% for k=1:size(rawLandmarks,2)
+%     Landmarks(k,:) = [rawLandmarks(1,k,1), rawLandmarks(1,k,2), rawLandmarks(1,k,3)];
+% end
+% [V,F] = read_off([options.MeshesPath GM.Aux.name options.MeshSuffix]);
+% V = V';
+% F = F';
+% area = CORR_calculate_area(F,V);
+% V = V*sqrt(1/area);
+% tree = KDTreeSearcher(V);
+% LandmarkVertInds = tree.knnsearch(Landmarks);
+% 
+% if strcmpi(Type, 'sample')
+%     LandmarkOnSampleInds = GM.Aux.V2S(LandmarkVertInds);
+%     LandmarkOnSamples = GM.V(:,LandmarkOnSampleInds);
+%     
+%     LandmarkToNearestSample = zeros(size(LandmarkOnSampleInds));
+%     for k=1:length(LandmarkToNearestSample)
+%         LandmarkToNearestSample(k) = find(GM.Aux.VertSampInd==LandmarkOnSampleInds(k));
+%     end
+%     Inds = LandmarkToNearestSample;
+%     Coords = LandmarkOnSamples;
+% elseif strcmpi(Type, 'full')
+%     Inds = LandmarkVertInds;
+%     Coords = GM.V(:,Inds);
+% end
+%
+% end
 
 function draw_landmarks(V,Landmarks)
 

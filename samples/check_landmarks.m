@@ -1,8 +1,8 @@
-Name = '04';
+Name = '23';
 
-A = Mesh('off','~/Work/MATLAB/DATA/Clement/meshes/01.off');
+A = Mesh('off',['~/Work/MATLAB/DATA/Clement/meshes/' Name '.off']);
 load('~/Work/MATLAB/DATA/Clement/landmarks_clement.mat');
-landmarks = squeeze(PP(4,:,:));
+landmarks = squeeze(PP(str2double(Name),:,:));
 
 A.draw();
 hold on;
