@@ -2,7 +2,7 @@ function [LandmarkInds,Landmarks] = GetLandmarks(Name,LandmarksPath,MeshPath,opt
 %GETLANDMARKS Summary of this function goes here
 %   Detailed explanation goes here
 
-if nargin<3
+if nargin<4
     options = [];
 end
 NumLandmark = getoptions(options,'NumLandmark',16);
