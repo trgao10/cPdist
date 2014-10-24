@@ -11,7 +11,7 @@ revName = strtok(mesh_file(end:-1:1),'/');
 G.Aux.name = strtok(revName(end:-1:1),'_.');
 [G.Aux.Area,G.Aux.Center] = G.Centralize('ScaleArea');
 options.GaussMaxLocalWidth = 12; %% for Clement data set
-options.GaussMinLocalWidth = 8; %% for Clement data set
+options.GaussMinLocalWidth = 7; %% for Clement data set
 G.ComputeMidEdgeUniformization(options); %%% default options only for PNAS
 
 G.Nf = G.ComputeFaceNormals;
