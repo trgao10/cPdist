@@ -5,12 +5,12 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'25','37'};
+Names = {'5','32'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
-options.AngleIncrement = 0.03;
-options.NumFeatureMatch = 6;
+options.AngleIncrement = 0.05;
+options.NumFeatureMatch = 4;
 options.GaussMinMatch = 'on';
 % options.FeatureMatchType = 'Laplacian';
 % options.ConfMaxLocalWidth = 5;
@@ -60,12 +60,12 @@ tic;rslt21 = Gs{2}.ComputeContinuousProcrustes(Gs{1},options);toc;
 
 options.NumLandmark = 7;
 
-lk2 = Gs{2}.V(:,GetLandmarks(Gs{2},[data_path 'landmarks_clement.mat'],options));
-lk1 = Gs{2}.V(:,rslt12.cPmap(GetLandmarks(Gs{1},[data_path 'landmarks_clement.mat'],options)));
+lk2 = Gs{2}.V(:,GetLandmarks(Gs{2}.Aux.name,[data_path 'landmarks_clement.mat'],[meshes_path Gs{2}.Aux.name '.off'],options));
+lk1 = Gs{2}.V(:,rslt12.cPmap(GetLandmarks(Gs{1}.Aux.name,[data_path 'landmarks_clement.mat'],[meshes_path Gs{1}.Aux.name '.off'],options)));
 rslt12.lkMSE = mean(sqrt(sum((lk2-lk1).^2)));
 
-lk1 = Gs{1}.V(:,GetLandmarks(Gs{1},[data_path 'landmarks_clement.mat'],options));
-lk2 = Gs{1}.V(:,rslt21.cPmap(GetLandmarks(Gs{2},[data_path 'landmarks_clement.mat'],options)));
+lk1 = Gs{1}.V(:,GetLandmarks(Gs{1}.Aux.name,[data_path 'landmarks_clement.mat'],[meshes_path Gs{1}.Aux.name '.off'],options));
+lk2 = Gs{1}.V(:,rslt21.cPmap(GetLandmarks(Gs{2}.Aux.name,[data_path 'landmarks_clement.mat'],[meshes_path Gs{2}.Aux.name '.off'],options)));
 rslt21.lkMSE = mean(sqrt(sum((lk1-lk2).^2)));
 
 disp(['rslt12.cPdist = ' num2str(rslt12.cPdist)]);

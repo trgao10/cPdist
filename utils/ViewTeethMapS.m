@@ -51,8 +51,8 @@ if (strcmpi(Type, 'sample'))
 end
 if (strcmpi(Landmarks, 'on'))
     % extract landmarks
-    [IndsOnSource, Coords] = GetLandmarks(GM,options.LandmarksPath,options);
-    draw_landmarks(GM.V,Coords');
+    [IndsOnSource, ~] = GetLandmarks(GM.Aux.name,options.LandmarksPath,[options.MeshesPath GM.Aux.name options.MeshSuffix],options);
+    draw_landmarks(GM.V,IndsOnSource);
 end
 
 mesh_list{2} = GN;
@@ -70,8 +70,8 @@ if (strcmpi(Type, 'sample'))
 end
 if (strcmpi(Landmarks, 'on'))
     % extract landmarks
-    [IndsOnTarget, Coords] = GetLandmarks(GN,options.LandmarksPath,options);
-    draw_landmarks(GN.V,Coords');
+    [IndsOnTarget, ~] = GetLandmarks(GN.Aux.name,options.LandmarksPath,[options.MeshesPath GN.Aux.name options.MeshSuffix],options);
+    draw_landmarks(GN.V,IndsOnTarget);
 end
 
 if (strcmpi(Landmarks, 'on'))
@@ -88,7 +88,7 @@ if (strcmpi(Landmarks, 'on'))
     end
     map = maps{2};
     PropagLandmarkCoords = GM.V(:,map(IndsOnTarget));
-    draw_landmarks(GM.V,PropagLandmarkCoords);
+    draw_landmarks(GM.V,PropagLandmarkCoords,'Coords');
 
     h(4) = subplot(NumRows,NumCols,4);
     GN.draw(struct('FaceColor',[0.9 0.9 0.8],'EdgeColor','none','FaceAlpha',1,'AmbientStrength',0.3,'SpecularStrength',0.0));
@@ -103,7 +103,7 @@ if (strcmpi(Landmarks, 'on'))
     end
     map = maps{1};
     PropagLandmarkCoords = GN.V(:,map(IndsOnSource));
-    draw_landmarks(GN.V,PropagLandmarkCoords);
+    draw_landmarks(GN.V,PropagLandmarkCoords,'Coords');
 end
 
 Link = linkprop(h, {'CameraUpVector', 'CameraPosition', 'CameraTarget', 'CameraViewAngle'});
@@ -158,11 +158,21 @@ end
 %
 % end
 
-function draw_landmarks(V,Landmarks)
+function draw_landmarks(V,IndsOnSource,Type)
 
-if (size(V,1)==3)
-    V = V';
+if nargin<3
+    Type = 'Inds';
 end
+
+if strcmpi(Type,'Coords')
+    Landmarks = IndsOnSource;
+else
+    if (size(V,1)==3)
+        V = V';
+    end
+    Landmarks = V(IndsOnSource,:)';
+end
+
 NumLandmarks = max(size(Landmarks));
     
 colmap =  [1,0,0;0,1,0;0,0,1;1,1,0;1,0,1;0,1,1];
