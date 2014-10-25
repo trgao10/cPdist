@@ -6,15 +6,15 @@ addpath(path,genpath([pwd '/utils/']));
 
 %% Set Path
 obj_path = [pwd '/obj/'];
-sample_path = [pwd '/samples/Teeth/'];
+sample_path = [pwd '/samples/Clement/'];
 
-cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
-cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
-cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_balanced.mat'];
+cPMaps_path = [pwd '/results/Clement/cPDist/cPMapsMatrix.mat'];
+cPDist_path = [pwd '/results/Clement/cPDist/cPDistMatrix.mat'];
+cPLAST_path = [pwd '/results/Clement/cPDist/cPLASTGraph_alpha1.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 
-data_path = '~/Work/MATLAB/DATA/PNAS/';
+data_path = '~/Work/MATLAB/DATA/Clement/';
 delete_command = 'rm -f ';
 
 %% Set Parameters
@@ -33,23 +33,28 @@ delete_command = 'rm -f ';
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 % Names = {'x09','B03'}; % LAST fix a peak
-Names = {'B03','u14'};
+Names = {'11','12'};
 
-options.ImprType = 'MST';
+options.ImprType = 'ComposedLAST';
 options.SmoothMap = 0;
 options.FeatureFix = 'on';
-options.GaussMinMatch = 'off';
-options.Angle = 0.5; % Viterbi with angle costs
-options.alpha = 1+sqrt(2); % LAST/ComposedLAST; scalar>1 or 'auto'
+options.GaussMinMatch = 'on';
+options.Angle = 0; % Viterbi with angle costs
+options.alpha = 1; % LAST/ComposedLAST; scalar>1 or 'auto'
 options.ProgressBar = 'on';
 options.SamplePath = sample_path;
 options.cPLASTPath = cPLAST_path; % ComposedLAST
 options.TextureCoords1Path = TextureCoords1_path;
 options.TextureCoords2Path = TextureCoords2_path;
-options.ChunkSize = 55;
+% options.ChunkSize = 55; %% PNAS
+% options.NumLandmark = 16; %% PNAS
+% options.MeshSuffix = '_sas.off'; %% PNAS
+options.ChunkSize = 20; %% Clement
+options.NumLandmark = 7; %% Clement
+options.MeshSuffix = '.off'; %% Clement
 
 %%% options for ViewTeethMapS %%%
-options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
+options.LandmarksPath = [data_path 'landmarks_clement.mat'];
 options.MeshesPath = [data_path 'meshes/'];
 
 %% Parse Parameters
@@ -61,7 +66,7 @@ disp(command_text);
 
 Gs = cell(2,1);
 
-taxa_code = load([data_path 'teeth_taxa_table.mat']);
+taxa_code = load([data_path 'clement_taxa_table.mat']);
 taxa_code = taxa_code.taxa_code;
 TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
 
@@ -91,7 +96,7 @@ ViewTeethMapS(tGM, Gs{2}, {cPMapsMatrix{TAXAind(1),TAXAind(2)},cPMapsMatrix{TAXA
 set(gcf,'Name','cP');
 
 %% Improve Maps
-options.ShowTree = 'off';
+options.ShowTree = 'on';
 rslt12 = Gs{1}.ImproveMap(Gs{2},cPDistMatrix,cPMapsMatrix,taxa_code,options);
 options.ShowTree = 'off';
 rslt21 = Gs{2}.ImproveMap(Gs{1},cPDistMatrix,cPMapsMatrix,taxa_code,options);

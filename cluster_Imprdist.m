@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %%% pick ImprType and FeatureFix
-ImprType = 'MST'; % if 'Viterbi', should also specify "ViterbiAngle"!
+ImprType = 'ComposedLAST'; % if 'Viterbi', should also specify "ViterbiAngle"!
 FeatureFix = 'off'; %% remain 'off', since 'on' can be run with cluster_FeatureFix.m
 
 %%% setup paths
@@ -21,7 +21,7 @@ cPMaps_path = [base_path 'results/Clement/cPDist/cPMapsMatrix.mat'];
 cPDist_path = [base_path 'results/Clement/cPDist/cPDistMatrix.mat'];
 TextureCoords1_path = [pwd '/results/Clement/cPDist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Clement/cPDist/TextureCoords2/'];
-cPLASTPath = [pwd '/results/Clement/cPDist/cPComposedLASTGraph_median.mat'];
+cPLASTPath = [pwd '/results/Clement/cPDist/cPComposedLASTGraph_alpha1.mat'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];
 outputs_path = [cluster_path 'outputs/'];

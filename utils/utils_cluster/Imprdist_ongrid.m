@@ -20,7 +20,7 @@ options.SmoothMap = 1;
 options.ProgressBar = 'off';
 
 tic;
-disp(['Comparing ' GM.Aux.name ' vs ' GN.Aux.name '...']);
+disp(['Improving ' GM.Aux.name ' vs ' GN.Aux.name ' using ' ImprType '...']);
 rslt = GM.ImproveMap(GN,cPdistMatrix,cPmapsMatrix,options.TaxaCode,options);
 lk2 = GN.V(:,GetLandmarks(GN.Aux.name,LandmarksPath,[MeshesPath GN.Aux.name MeshSuffix],options));
 lk1 = GN.V(:,rslt.ImprMap(GetLandmarks(GM.Aux.name,LandmarksPath,[MeshesPath GM.Aux.name MeshSuffix],options)));
