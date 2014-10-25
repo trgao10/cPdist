@@ -1,4 +1,56 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% compare & contrast distances
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+result_path = '/xtmp/ArchivedResults/Clement/';
+cPDistPath = [result_path 'cPdist/cPlmkMSEMatrix.mat'];
+cPMSTDistOffPath = [result_path 'cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat'];
+cPMSTDistOnPath = [result_path 'cPMST/FeatureFixOn/cPMSTlmkMSEMatrix.mat'];
+GroupSize = 40;
+
+A = load(cPDistPath);
+A = A.cPlmkMSEMatrix;
+B = load(cPMSTDistOffPath);
+B = B.lmkMSEMatrix;
+C = load(cPMSTDistOnPath);
+C = C.lmkMSEMatrix;
+
+figure;
+subplot(1,3,1);
+imagesc(A./max(A(:))*64);
+axis equal;
+axis([1,GroupSize,1,GroupSize]);
+title('cPDist');
+subplot(1,3,2);
+imagesc(B./max(B(:))*64);
+axis equal;
+axis([1,GroupSize,1,GroupSize]);
+title('cPMST Feature Fix Off');
+subplot(1,3,3);
+imagesc(C./max(C(:))*64);
+axis equal;
+axis([1,GroupSize,1,GroupSize]);
+title('cPMST Feature Fix On');
+
+DistanceMatrices = {A,B,C};
+TitleTexts = {'cPDist','cPMST Feature Fix Off', 'cPMST Feature Fix On'};
+figure;
+count = 0;
+for i=1:3
+    for j=i+1:3
+        count = count+1;
+        subplot(1,3,count);
+        plot(DistanceMatrices{i}(:),DistanceMatrices{j}(:),'b.');
+        axis equal;
+        hold on;
+        axis([0,max(DistanceMatrices{i}(:)),0,max(DistanceMatrices{j}(:))]);
+        minLabel = min(max(DistanceMatrices{i}(:)),max(DistanceMatrices{j}(:)));
+        plot([0,minLabel],[0,minLabel],'r-');
+        title([TitleTexts{i} ' vs ' TitleTexts{j}]);
+    end
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% clean up meshes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % path(pathdef);
@@ -227,55 +279,55 @@
 %%% Compare cP with cPMST and cPMST_FeatureFixing
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-Names = {'B03','w02'};
-SamplePath = [pwd '/samples/Teeth/'];
-cPMaps_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPMapsMatrix.mat';
-cPDist_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPDistMatrix.mat';
-cPMSTMaps_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPMST/FeatureFixOff/cPMSTMapsMatrix.mat';
-cPMSTFeatureFixMaps_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPMST/FeatureFixOn/cPMSTMapsMatrix.mat';
-data_path = '~/Work/MATLAB/DATA/PNAS/';
-
-taxa_code = load([data_path 'teeth_taxa_table.mat']);
-taxa_code = taxa_code.taxa_code;
-TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
-
-disp('loading all cPdist...');
-load(cPDist_path);
-disp('loaded');
-
-disp('loading all cPmaps...');
-load(cPMaps_path); % load cell array "cPmapsMatrix"
-cPmaps = {cPMapsMatrix{TAXAind(1),TAXAind(2)},cPMapsMatrix{TAXAind(2),TAXAind(1)}};
-disp('loaded');
-
-disp('loading all cPMSTmaps...');
-load(cPMSTMaps_path); % load cell array "ImprMapsMatrix"
-cPMSTmaps = {ImprMapsMatrix{TAXAind(1),TAXAind(2)},ImprMapsMatrix{TAXAind(2),TAXAind(1)}};
-disp('loaded');
-
-disp('loading all cPMSTFeatureFixmaps...');
-load(cPMSTFeatureFixMaps_path); % load cell array "ImprMapsMatrix"
-FeatCPMSTmaps = {ImprMapsMatrix{TAXAind(1),TAXAind(2)},ImprMapsMatrix{TAXAind(2),TAXAind(1)}};
-disp('loaded');
-
-
-GM = load([SamplePath Names{1} '.mat']);
-GM = GM.G;
-GN = load([SamplePath Names{2} '.mat']);
-GN = GN.G;
-
-%%% original cP maps
-options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
-options.MeshesPath = [data_path 'meshes/'];
-options.landmarks = 'on';
-options.type = 'full';
-options.ShowCPValue = 'on';
-
-[~,R,~] = MapToDist(GM.V,GN.V,cPMapsMatrix{TAXAind(1),TAXAind(2)},GM.Aux.VertArea);
-tGM = Mesh(GM);
-tGM.V = R*GM.V;
-
-ViewTeethCPvsCPMSTvsFeatCPMST(tGM,GN,cPmaps,cPMSTmaps,FeatCPMSTmaps,options);
+% Names = {'B03','w02'};
+% SamplePath = [pwd '/samples/Teeth/'];
+% cPMaps_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPMapsMatrix.mat';
+% cPDist_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPDistMatrix.mat';
+% cPMSTMaps_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPMST/FeatureFixOff/cPMSTMapsMatrix.mat';
+% cPMSTFeatureFixMaps_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPMST/FeatureFixOn/cPMSTMapsMatrix.mat';
+% data_path = '~/Work/MATLAB/DATA/PNAS/';
+% 
+% taxa_code = load([data_path 'teeth_taxa_table.mat']);
+% taxa_code = taxa_code.taxa_code;
+% TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
+% 
+% disp('loading all cPdist...');
+% load(cPDist_path);
+% disp('loaded');
+% 
+% disp('loading all cPmaps...');
+% load(cPMaps_path); % load cell array "cPmapsMatrix"
+% cPmaps = {cPMapsMatrix{TAXAind(1),TAXAind(2)},cPMapsMatrix{TAXAind(2),TAXAind(1)}};
+% disp('loaded');
+% 
+% disp('loading all cPMSTmaps...');
+% load(cPMSTMaps_path); % load cell array "ImprMapsMatrix"
+% cPMSTmaps = {ImprMapsMatrix{TAXAind(1),TAXAind(2)},ImprMapsMatrix{TAXAind(2),TAXAind(1)}};
+% disp('loaded');
+% 
+% disp('loading all cPMSTFeatureFixmaps...');
+% load(cPMSTFeatureFixMaps_path); % load cell array "ImprMapsMatrix"
+% FeatCPMSTmaps = {ImprMapsMatrix{TAXAind(1),TAXAind(2)},ImprMapsMatrix{TAXAind(2),TAXAind(1)}};
+% disp('loaded');
+% 
+% 
+% GM = load([SamplePath Names{1} '.mat']);
+% GM = GM.G;
+% GN = load([SamplePath Names{2} '.mat']);
+% GN = GN.G;
+% 
+% %%% original cP maps
+% options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
+% options.MeshesPath = [data_path 'meshes/'];
+% options.landmarks = 'on';
+% options.type = 'full';
+% options.ShowCPValue = 'on';
+% 
+% [~,R,~] = MapToDist(GM.V,GN.V,cPMapsMatrix{TAXAind(1),TAXAind(2)},GM.Aux.VertArea);
+% tGM = Mesh(GM);
+% tGM.V = R*GM.V;
+% 
+% ViewTeethCPvsCPMSTvsFeatCPMST(tGM,GN,cPmaps,cPMSTmaps,FeatCPMSTmaps,options);
 
 
 

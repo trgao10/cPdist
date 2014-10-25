@@ -5,22 +5,23 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %%% pick ImprType and FeatureFix
-ImprType = 'ComposedLAST'; % if 'Viterbi', should also specify "ViterbiAngle"!
-FeatureFix = 'off';
+ImprType = 'MST'; % if 'Viterbi', should also specify "ViterbiAngle"!
+FeatureFix = 'off'; %% remain 'off', since 'on' can be run with cluster_FeatureFix.m
 
 %%% setup paths
 base_path = [pwd '/'];
-data_path = '../DATA/PNAS/';
+data_path = '../DATA/Clement/';
 rslts_path = [base_path 'rslts/'];
 cluster_path = [base_path 'cluster/'];
-samples_path = [base_path 'samples/Teeth/'];
-cPMaps_path = [base_path 'results/Teeth/cPDist/cPMapsMatrix.mat'];
-cPDist_path = [base_path 'results/Teeth/cPDist/cPDistMatrix.mat'];
-TextureCoords1_path = [pwd '/results/Teeth/cPDist/TextureCoords1/'];
-TextureCoords2_path = [pwd '/results/Teeth/cPDist/TextureCoords2/'];
-landmarks_path = [data_path 'landmarks_teeth.mat'];
-TaxaCode_path = [data_path 'teeth_taxa_table.mat'];
-cPLASTPath = [pwd '/results/Teeth/cPDist/cPComposedLASTGraph_median.mat'];
+samples_path = [base_path 'samples/Clement/'];
+meshes_path = [data_path 'meshes/'];
+landmarks_path = [data_path 'landmarks_clement.mat'];
+TaxaCode_path = [data_path 'clement_taxa_table.mat'];
+cPMaps_path = [base_path 'results/Clement/cPDist/cPMapsMatrix.mat'];
+cPDist_path = [base_path 'results/Clement/cPDist/cPDistMatrix.mat'];
+TextureCoords1_path = [pwd '/results/Clement/cPDist/TextureCoords1/'];
+TextureCoords2_path = [pwd '/results/Clement/cPDist/TextureCoords2/'];
+cPLASTPath = [pwd '/results/Clement/cPDist/cPComposedLASTGraph_median.mat'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];
 outputs_path = [cluster_path 'outputs/'];
@@ -41,7 +42,10 @@ command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text
 taxa_code = load(TaxaCode_path);
 taxa_code = taxa_code.taxa_code;
 GroupSize = length(taxa_code);
-chunk_size = 55;
+% chunk_size = 55; %% PNAS
+% NumLandmarks = 16; %% PNAS
+chunk_size = 20; %% Clement
+NumLandmark = 7; %% Clement
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,6 +107,9 @@ for k1=1:GroupSize
             num2str(k1) ', ' ...
             num2str(k2) ', ''' ...
             landmarks_path ''', ''' ...
+            meshes_path ''', ''' ...
+            '.off' ''', ''' ...
+            num2str(NumLandmark) ''', ''' ...
             ImprType ''', ''' ...
             FeatureFix ''', ' ...
             'cPDistMatrix, cPMapsMatrix, options);'];
@@ -113,16 +120,15 @@ for k1=1:GroupSize
     
 end
 
-if mod(cnt,chunk_size)~=0
-    %%% close the last script file
-    fprintf(fid, '%s ', 'exit; "\n');
-    fclose(fid);
-    
-    %%% qsub last script file
-    jobname = ['TCjob_' num2str(job_id)];
-    serr = [errors_path 'e_job_' num2str(job_id)];
-    sout = [outputs_path 'o_job_' num2str(job_id)];
-    tosub = ['!qsub -N ' jobname ' -o ' sout ' -e ' serr ' ' script_name ];
-    eval(tosub);
-end
+% if mod(cnt,chunk_size)~=0
+%%% close the last script file
+fprintf(fid, '%s ', 'exit; "\n');
+fclose(fid);
+%%% qsub last script file
+jobname = ['TCjob_' num2str(job_id)];
+serr = [errors_path 'e_job_' num2str(job_id)];
+sout = [outputs_path 'o_job_' num2str(job_id)];
+tosub = ['!qsub -N ' jobname ' -o ' sout ' -e ' serr ' ' script_name ];
+eval(tosub);
+% end
 

@@ -6,12 +6,12 @@ addpath(path,genpath([pwd '/utils/']));
 
 %%% setup paths
 base_path = [pwd '/'];
-data_path = '../DATA/PNAS/';
+data_path = '../DATA/Clement/';
 rslts_path = [base_path 'rslts/'];
 cluster_path = [base_path 'cluster/'];
-samples_path = [base_path 'samples/Teeth/'];
+samples_path = [base_path 'samples/Clement/'];
 meshes_path = [data_path 'meshes/'];
-landmarks_path = [data_path 'landmarks_teeth.mat'];
+landmarks_path = [data_path 'landmarks_clement.mat'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];
 outputs_path = [cluster_path 'outputs/'];
@@ -29,11 +29,14 @@ command_text = ['!rm -f ' outputs_path '*']; eval(command_text); disp(command_te
 command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text);
 
 %%% load taxa codes
-taxa_file = [data_path 'teeth_taxa_table.mat'];
+taxa_file = [data_path 'clement_taxa_table.mat'];
 taxa_code = load(taxa_file);
 taxa_code = taxa_code.taxa_code;
 GroupSize = length(taxa_code);
-chunk_size = 55;
+% chunk_size = 55; %% PNAS
+% NumLandmarks = 16; %% PNAS
+chunk_size = 20; %% Clement
+NumLandmark = 7; %% Clement
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +71,7 @@ for k1=1:GroupSize
             fprintf(fid, '#$ -S /bin/bash\n');
             script_text = ['matlab -nodesktop -nodisplay -nojvm -nosplash -r '...
                 '" cd ' base_path '; ' ...
-                'path(genpath(''' base_path 'utils/''), path); ' ];
+                'path(genpath(''' base_path 'utils/''), path);'];
             fprintf(fid, '%s ',script_text);
             
             %%% create new matrix
@@ -86,7 +89,10 @@ for k1=1:GroupSize
             [rslts_path 'rslt_mat_' num2str(job_id)] ' ' ...
             num2str(k1) ' ' ...
             num2str(k2) ' ' ...
-            landmarks_path '; '];
+            landmarks_path ' ' ...
+            meshes_path ' ' ...
+            '.off' ' ' ...
+            num2str(NumLandmark) '; '];
         fprintf(fid, '%s ',script_text);
         
         cnt = cnt+1;
@@ -94,16 +100,15 @@ for k1=1:GroupSize
     
 end
 
-if mod(cnt,chunk_size)~=0
-    %%% close the last script file
-    fprintf(fid, '%s ', 'exit; "\n');
-    fclose(fid);
-    
-    %%% qsub last script file
-    jobname = ['TCjob_' num2str(job_id)];
-    serr = [errors_path 'e_job_' num2str(job_id)];
-    sout = [outputs_path 'o_job_' num2str(job_id)];
-    tosub = ['!qsub -N ' jobname ' -o ' sout ' -e ' serr ' ' script_name ];
-    eval(tosub);
-end
+% if mod(cnt,chunk_size)~=0
+%%% close the last script file
+fprintf(fid, '%s ', 'exit; "\n');
+fclose(fid);
+%%% qsub last script file
+jobname = ['TCjob_' num2str(job_id)];
+serr = [errors_path 'e_job_' num2str(job_id)];
+sout = [outputs_path 'o_job_' num2str(job_id)];
+tosub = ['!qsub -N ' jobname ' -o ' sout ' -e ' serr ' ' script_name ];
+eval(tosub);
+% end
 

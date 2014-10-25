@@ -6,13 +6,14 @@ addpath(path,genpath([pwd '/utils/']));
 
 %%% setup paths
 base_path = [pwd '/'];
-data_path = '../DATA/PNAS/';
-result_path = '/xtmp/ArchivedResults/cPdist/'; 
+data_path = '../DATA/Clement/';
+result_path = '/xtmp/ArchivedResults/Clement/cPdist/'; 
 rslts_path = [result_path 'rslts/'];
 TextureCoords1Matrix_path = [result_path 'TextureCoords1/'];
 TextureCoords2Matrix_path = [result_path 'TextureCoords2/'];
 
 %%% check if texture paths exist
+touch(result_path);
 touch(TextureCoords1Matrix_path);
 touch(TextureCoords2Matrix_path);
 
@@ -23,11 +24,12 @@ command_text = ['!rm -f ' TextureCoords2Matrix_path '*'];
 eval(command_text); disp(command_text);
 
 %%% load taxa codes
-taxa_file = [data_path 'teeth_taxa_table.mat'];
+taxa_file = [data_path 'clement_taxa_table.mat'];
 taxa_code = load(taxa_file);
 taxa_code = taxa_code.taxa_code;
 GroupSize = length(taxa_code);
-chunk_size = 55;
+% chunk_size = 55; %% PNAS
+chunk_size = 20; %% Clement
 
 %%% read rslt matrices and separate distance and landmarkMSE's
 cPDistMatrix = zeros(GroupSize,GroupSize);
@@ -87,11 +89,11 @@ for j=1:GroupSize
         cnt = cnt+1;
     end
 end
-if mod(cnt,chunk_size)~=0
-    save([TextureCoords1Matrix_path 'TextureCoords1_mat_' num2str(job_id) '.mat'],'TextureCoords1Matrix');
-    save([TextureCoords2Matrix_path 'TextureCoords2_mat_' num2str(job_id) '.mat'],'TextureCoords2Matrix');
-    clear TextureCoords1Matrix TextureCoords2Matrix
-end
+% if mod(cnt,chunk_size)~=0
+save([TextureCoords1Matrix_path 'TextureCoords1_mat_' num2str(job_id) '.mat'],'TextureCoords1Matrix');
+save([TextureCoords2Matrix_path 'TextureCoords2_mat_' num2str(job_id) '.mat'],'TextureCoords2Matrix');
+clear TextureCoords1Matrix TextureCoords2Matrix
+% end
 cPDistMatrix = min(cPDistMatrix,cPDistMatrix');
 
 %%% visualize distance and landmarkMSE matrices
