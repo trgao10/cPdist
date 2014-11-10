@@ -6,15 +6,15 @@ addpath(path,genpath([pwd '/utils/']));
 
 %% Set Path
 obj_path = [pwd '/obj/'];
-sample_path = [pwd '/samples/Clement/'];
+sample_path = [pwd '/samples/Teeth/'];
 
-cPMaps_path = [pwd '/results/Clement/cPDist/cPMapsMatrix.mat'];
-cPDist_path = [pwd '/results/Clement/cPDist/cPDistMatrix.mat'];
-cPLAST_path = [pwd '/results/Clement/cPDist/cPLASTGraph_alpha1.mat'];
+cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
+cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
+cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_balanced.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 
-data_path = '~/Work/MATLAB/DATA/Clement/';
+data_path = '~/Work/MATLAB/DATA/PNAS/';
 delete_command = 'rm -f ';
 
 %% Set Parameters
@@ -33,9 +33,9 @@ delete_command = 'rm -f ';
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 % Names = {'x09','B03'}; % LAST fix a peak
-Names = {'11','12'};
+Names = {'k01','j01'};
 
-options.ImprType = 'ComposedLAST';
+options.ImprType = 'MST';
 options.SmoothMap = 0;
 options.FeatureFix = 'on';
 options.GaussMinMatch = 'on';
@@ -46,15 +46,15 @@ options.SamplePath = sample_path;
 options.cPLASTPath = cPLAST_path; % ComposedLAST
 options.TextureCoords1Path = TextureCoords1_path;
 options.TextureCoords2Path = TextureCoords2_path;
-% options.ChunkSize = 55; %% PNAS
-% options.NumLandmark = 16; %% PNAS
-% options.MeshSuffix = '_sas.off'; %% PNAS
-options.ChunkSize = 20; %% Clement
-options.NumLandmark = 7; %% Clement
-options.MeshSuffix = '.off'; %% Clement
+options.ChunkSize = 55; %% PNAS
+options.NumLandmark = 16; %% PNAS
+options.MeshSuffix = '_sas.off'; %% PNAS
+% options.ChunkSize = 20; %% Clement
+% options.NumLandmark = 7; %% Clement
+% options.MeshSuffix = '.off'; %% Clement
 
 %%% options for ViewTeethMapS %%%
-options.LandmarksPath = [data_path 'landmarks_clement.mat'];
+options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
 options.MeshesPath = [data_path 'meshes/'];
 
 %% Parse Parameters
@@ -66,7 +66,7 @@ disp(command_text);
 
 Gs = cell(2,1);
 
-taxa_code = load([data_path 'clement_taxa_table.mat']);
+taxa_code = load([data_path 'teeth_taxa_table.mat']);
 taxa_code = taxa_code.taxa_code;
 TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
 
