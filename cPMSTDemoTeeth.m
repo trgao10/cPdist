@@ -10,7 +10,7 @@ sample_path = [pwd '/samples/Clement/'];
 
 cPMaps_path = [pwd '/results/Clement/cPDist/cPMapsMatrix.mat'];
 cPDist_path = [pwd '/results/Clement/cPDist/cPDistMatrix.mat'];
-cPLAST_path = [pwd '/results/Clement/cPDist/cPLASTGraph_alpha1.mat'];
+cPLAST_path = [pwd '/results/Clement/cPDist/cPLASTGraph_median.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 
@@ -33,14 +33,14 @@ delete_command = 'rm -f ';
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 % Names = {'x09','B03'}; % LAST fix a peak
-Names = {'11','12'};
+Names = {'11','12'}; % for Clement's data set; cP more close to observer than cPComposedLAST
 
-options.ImprType = 'ComposedLAST';
+options.ImprType = 'LAST';
 options.SmoothMap = 0;
 options.FeatureFix = 'on';
 options.GaussMinMatch = 'on';
-options.Angle = 0; % Viterbi with angle costs
-options.alpha = 1; % LAST/ComposedLAST; scalar>1 or 'auto'
+options.Angle = 1.0; % Viterbi with angle costs
+options.alpha = 1.8; % LAST/ComposedLAST; scalar>1 or 'auto'
 options.ProgressBar = 'on';
 options.SamplePath = sample_path;
 options.cPLASTPath = cPLAST_path; % ComposedLAST

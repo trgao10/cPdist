@@ -24,7 +24,7 @@ for RootNode=1:size(DistMatrix,1)
     end
     if ~isnumeric(alpha)
         PointwiseDistortion = DistRootJ./DistMatrix(RootNode,:);
-        alpha = mean(PointwiseDistortion);
+        alpha = mean(PointwiseDistortion); % can replace with median
     end
     HighDistortionInds = find(DistRootJ>DistMatrix(RootNode,:)*alpha);
     ST(RootNode, HighDistortionInds) = DistMatrix(RootNode, HighDistortionInds);
