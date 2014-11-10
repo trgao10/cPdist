@@ -1,18 +1,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% compare & contrast distances
+%%% compare & contrast cPdistances/landmark MSEs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-result_path = '/xtmp/ArchivedResults/Clement/';
-cPDistPath = [result_path 'cPdist/cPlmkMSEMatrix.mat'];
-cPMSTDistOffPath = [result_path 'cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat'];
-cPMSTDistOnPath = [result_path 'cPMST/FeatureFixOn/cPMSTlmkMSEMatrix.mat'];
-GroupSize = 40;
+result_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/';
+% cPDistPath = [result_path 'cPDist/cPlmkMSEMatrix.mat'];
+% cPMSTDistOffPath = [result_path 'cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat'];
+% cPMSTDistOnPath = [result_path 'cPMST/FeatureFixOn/cPMSTlmkMSEMatrix.mat'];
+cPDistPath = [result_path 'cPDist/cPDistMatrix.mat'];
+cPMSTDistOffPath = [result_path 'cPMST/FeatureFixOff/cPMSTDistMatrix.mat'];
+cPMSTDistOnPath = [result_path 'cPMST/FeatureFixOn/cPMSTDistMatrix.mat'];
+GroupSize = 116;
 
 A = load(cPDistPath);
-A = A.cPlmkMSEMatrix;
+A = A.cPDistMatrix;
 B = load(cPMSTDistOffPath);
-B = B.lmkMSEMatrix;
+B = B.ImprDistMatrix;
 C = load(cPMSTDistOnPath);
-C = C.lmkMSEMatrix;
+C = C.ImprDistMatrix;
 
 figure;
 subplot(1,3,1);

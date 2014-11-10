@@ -6,24 +6,29 @@ addpath(path,genpath([pwd '/utils/']));
 
 %% Set Parameters
 ImprType = 'ComposedLAST';
-subImprType = [ImprType 'balance'];
+% subImprType = ImprType;
+subImprType = [ImprType 'median'];
 FeatureFix = 'On';
 NumFeatPts = 64;
-output_filename = [pwd '\morphologika\cP' subImprType '_FeatureFix' uplow(FeatureFix) '_morphologika_' num2str(NumFeatPts) '.txt'];
-delete_command = 'del ';
+output_filename = [pwd '/morphologika/cP' subImprType '/FeatureFix' uplow(FeatureFix) '/cP' subImprType '_FeatureFix' uplow(FeatureFix) '_morphologika_' num2str(NumFeatPts) '.txt'];
+delete_command = 'rm -rf ';
 
 %% Set Path
-ResultPath = ['D:/Work/MATLAB/ArchivedResults/Teeth/cP' subImprType '/'];
-ImprDistPath = [ResultPath 'FeatureFix' uplow(FeatureFix) '/cP' subImprType 'DistMatrix'];
+ResultPath = ['/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cP' subImprType '/'];
+ImprDistPath = [ResultPath 'FeatureFix' uplow(FeatureFix) '/cP' ImprType 'DistMatrix'];
 MapsPath = [ResultPath 'FeatureFix' uplow(FeatureFix) '/cP' ImprType 'MapsMatrix'];
 SamplePath = [pwd '/samples/Teeth/'];
-DataPath = 'D:/Work/MATLAB/ArchivedData/PNAS/';
+DataPath = '~/Work/MATLAB/DATA/PNAS/';
 TaxaPath = [DataPath 'teeth_taxa_table.mat'];
-cPDistPath = 'D:/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPDistMatrix.mat';
+cPDistPath = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPDistMatrix.mat';
+
+%% create path for morphologika files if needed
+touch([pwd '/morphologika/cP' subImprType '/']);
+touch([pwd '/morphologika/cP' subImprType '/FeatureFix' uplow(FeatureFix) '/']);
 
 %% load results
 load(TaxaPath);
-load(DistPath);
+load(ImprDistPath);
 load(cPDistPath);
 disp(['loading maps from ' MapsPath '...']);
 load(MapsPath);
@@ -33,7 +38,6 @@ disp('loaded.');
 TaxaCode = load(TaxaPath);
 TaxaCode = TaxaCode.taxa_code;
 GroupSize = length(TaxaCode);
-
 
 if strcmpi(ImprType,'Viterbi')
     ImprDistMatrix = sparse(ImprDistMatrix);
@@ -45,10 +49,14 @@ elseif strcmpi(ImprType,'ComposedLAST') || strcmpi(ImprType,'Dist')
 else %%% MST or LAST
     if strcmpi(subImprType,'cPLASTbalance')
         options.alpha = 1+sqrt(2);
+    else
+        options = [];
     end
     [~,PRED] = ConstructGraph(cPDistMatrix,ImprType,options);
     RootNode = find(PRED==0);
 end
+% [~,RootNode] = min(sum(ImprDistMatrix.^2)); %% if one needs to fix a RootNode
+disp(['RootNode = ' TaxaCode{RootNode}]);
 
 command_text = [delete_command output_filename];
 system(command_text);
