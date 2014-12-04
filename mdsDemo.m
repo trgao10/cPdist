@@ -1,5 +1,5 @@
-DistMatrix = load('./results/Teeth/cPdist/cPDistMatrix.mat');
-DistMatrix = DistMatrix.cPDistMatrix;
+DistMatrix = load('./results/Clement/cPComposedLAST/FeatureFixOn/cPComposedLASTDistMatrix.mat');
+DistMatrix = DistMatrix.ImprDistMatrix;
 DistMatrix = DistMatrix - diag(diag(DistMatrix));
 
 Y = mdscale(DistMatrix,2);
