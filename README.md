@@ -1,4 +1,9 @@
-# WORKFLOW DESCRIPTION #
+## Demo scripts##
+-----------------
+
+
+-------------------------------------------------
+## WORKFLOW DESCRIPTION FOR COLLECTION ANALYSIS ##
 
 #### CONTINUOUS PROCRUSTES MINIMAL SPANNING TREE (CP-MST) ####
 
@@ -18,5 +23,5 @@
 
 ---------------------------------
 Tingran Gao, Duke University
-Aug 23, 2014
+Feb 3, 2015
 
