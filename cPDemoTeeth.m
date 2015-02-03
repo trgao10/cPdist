@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'Q18','w02'};
+Names = {'u14','u16'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
@@ -29,9 +29,10 @@ delete_command = 'rm -f ';
 %% parse parameters
 touch(sample_path);
 touch(obj_path);
-command_text = [delete_command obj_path '*.obj'];
-system(command_text);
-disp(command_text);
+delete([obj_path '*.obj']);
+% command_text = [delete_command obj_path '*.obj'];
+% system(command_text);
+% disp(command_text);
 
 Gs = cell(2,1);
 
@@ -64,12 +65,12 @@ tic;rslt21 = Gs{2}.ComputeContinuousProcrustes(Gs{1},options);toc;
 
 options.NumLandmark = 16;
 
-lk2 = Gs{2}.V(:,GetLandmarks(Gs{2},[data_path 'landmarks_teeth.mat']));
-lk1 = Gs{2}.V(:,rslt12.cPmap(GetLandmarks(Gs{1},[data_path 'landmarks_teeth.mat'])));
+lk2 = Gs{2}.V(:,GetLandmarks(Gs{2}.Aux.name,[data_path 'landmarks_teeth.mat'],[meshes_path Gs{2}.Aux.name '_sas.off'],options));
+lk1 = Gs{2}.V(:,rslt12.cPmap(GetLandmarks(Gs{1}.Aux.name,[data_path 'landmarks_teeth.mat'],[meshes_path Gs{1}.Aux.name '_sas.off'],options)));
 rslt12.lkMSE = mean(sqrt(sum((lk2-lk1).^2)));
 
-lk1 = Gs{1}.V(:,GetLandmarks(Gs{1},[data_path 'landmarks_teeth.mat']));
-lk2 = Gs{1}.V(:,rslt21.cPmap(GetLandmarks(Gs{2},[data_path 'landmarks_teeth.mat'])));
+lk1 = Gs{1}.V(:,GetLandmarks(Gs{1}.Aux.name,[data_path 'landmarks_teeth.mat'],[meshes_path Gs{1}.Aux.name '_sas.off'],options));
+lk2 = Gs{1}.V(:,rslt21.cPmap(GetLandmarks(Gs{2}.Aux.name,[data_path 'landmarks_teeth.mat'],[meshes_path Gs{2}.Aux.name '_sas.off'],options)));
 rslt21.lkMSE = mean(sqrt(sum((lk1-lk2).^2)));
 
 disp(['rslt12.cPdist = ' num2str(rslt12.cPdist)]);

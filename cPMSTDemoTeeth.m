@@ -8,9 +8,9 @@ addpath(path,genpath([pwd '/utils/']));
 obj_path = [pwd '/obj/'];
 sample_path = [pwd '/samples/Teeth/'];
 
-cPMaps_path = [pwd '/results/Clement/cPDist/cPMapsMatrix.mat'];
-cPDist_path = [pwd '/results/Clement/cPDist/cPDistMatrix.mat'];
-cPLAST_path = [pwd '/results/Clement/cPDist/cPLASTGraph_median.mat'];
+cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
+cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
+cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_median.mat'];
 TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 
@@ -33,9 +33,9 @@ delete_command = 'rm -f ';
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 % Names = {'x09','B03'}; % LAST fix a peak
-Names = {'11','12'}; % for Clement's data set; cP more close to observer than cPComposedLAST
+Names = {'u14','w01'}; % for Clement's data set; cP more close to observer than cPComposedLAST
 
-options.ImprType = 'LAST';
+options.ImprType = 'MST';
 options.SmoothMap = 0;
 options.FeatureFix = 'on';
 options.GaussMinMatch = 'on';
@@ -68,7 +68,7 @@ Gs = cell(2,1);
 
 taxa_code = load([data_path 'teeth_taxa_table.mat']);
 taxa_code = taxa_code.taxa_code;
-TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
+TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names,'UniformOutput',false);
 
 %% Load All cPmaps and cPdists
 disp('loading all cPdist...');
@@ -81,18 +81,18 @@ disp('loaded');
 
 %% Load Flattend Meshes
 for j=1:2
-    Gs{j} = load([sample_path taxa_code{TAXAind(j)} '.mat']);
+    Gs{j} = load([sample_path taxa_code{TAXAind{j}} '.mat']);
     Gs{j} = Gs{j}.G;
 end
 
 %% Visualize Landmark Propagation for Original Maps
-disp(['Original cP distance: ' num2str(cPDistMatrix(TAXAind(1),TAXAind(2)))]);
+disp(['Original cP distance: ' num2str(cPDistMatrix(TAXAind{1},TAXAind{2}))]);
 
-[~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,cPMapsMatrix{TAXAind(1),TAXAind(2)},Gs{1}.Aux.VertArea);
+[~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,cPMapsMatrix{TAXAind{1},TAXAind{2}},Gs{1}.Aux.VertArea);
 tGM = Mesh(Gs{1});
 tGM.V = R*Gs{1}.V;
 
-ViewTeethMapS(tGM, Gs{2}, {cPMapsMatrix{TAXAind(1),TAXAind(2)},cPMapsMatrix{TAXAind(2),TAXAind(1)}}, options);
+ViewTeethMapS(tGM, Gs{2}, {cPMapsMatrix{TAXAind{1},TAXAind{2}},cPMapsMatrix{TAXAind{2},TAXAind{1}}}, options);
 set(gcf,'Name','cP');
 
 %% Improve Maps
