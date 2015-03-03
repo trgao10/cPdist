@@ -1,57 +1,166 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% compare & contrast cPdistances/landmark MSEs
+%%% view PCA scores as coordinates
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-result_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/';
-% cPDistPath = [result_path 'cPDist/cPlmkMSEMatrix.mat'];
-% cPMSTDistOffPath = [result_path 'cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat'];
-% cPMSTDistOnPath = [result_path 'cPMST/FeatureFixOn/cPMSTlmkMSEMatrix.mat'];
-cPDistPath = [result_path 'cPDist/cPDistMatrix.mat'];
-cPMSTDistOffPath = [result_path 'cPMST/FeatureFixOff/cPMSTDistMatrix.mat'];
-cPMSTDistOnPath = [result_path 'cPMST/FeatureFixOn/cPMSTDistMatrix.mat'];
-GroupSize = 116;
+result_path = '/';
+Roots = {'RootB03', 'RootMinSqDist'};
+Methods = {'cPComposedLAST', 'cPComposedLASTbalance', 'cPComposedLASTmean',...
+    'cPComposedLASTmedian', 'cPLAST', 'cPLASTbalance', 'cPMST', 'cPViterbi',...
+    'cPViterbiAngle0.5', 'cPViterbiAngle0.25'};
+FeatureFix = {'FeatureFixOff', 'FeatureFixOn'};
+NumPts = {'64','256','1024'};
+colors = ['r', 'g', 'b', 'm', 'k', 'y'];
 
-A = load(cPDistPath);
-A = A.cPDistMatrix;
-B = load(cPMSTDistOffPath);
-B = B.ImprDistMatrix;
-C = load(cPMSTDistOnPath);
-C = C.ImprDistMatrix;
+RootsIdx = 1;
+MethodsIdx = 5;
+FeatureFixIdx = 1;
 
 figure;
-subplot(1,3,1);
-imagesc(A./max(A(:))*64);
-axis equal;
-axis([1,GroupSize,1,GroupSize]);
-title('cPDist');
-subplot(1,3,2);
-imagesc(B./max(B(:))*64);
-axis equal;
-axis([1,GroupSize,1,GroupSize]);
-title('cPMST Feature Fix Off');
-subplot(1,3,3);
-imagesc(C./max(C(:))*64);
-axis equal;
-axis([1,GroupSize,1,GroupSize]);
-title('cPMST Feature Fix On');
-
-DistanceMatrices = {A,B,C};
-TitleTexts = {'cPDist','cPMST Feature Fix Off', 'cPMST Feature Fix On'};
-figure;
-count = 0;
-for i=1:3
-    for j=i+1:3
-        count = count+1;
-        subplot(1,3,count);
-        plot(DistanceMatrices{i}(:),DistanceMatrices{j}(:),'b.');
-        axis equal;
-        hold on;
-        axis([0,max(DistanceMatrices{i}(:)),0,max(DistanceMatrices{j}(:))]);
-        minLabel = min(max(DistanceMatrices{i}(:)),max(DistanceMatrices{j}(:)));
-        plot([0,minLabel],[0,minLabel],'r-');
-        title([TitleTexts{i} ' vs ' TitleTexts{j}]);
+% hold on
+for j=1:length(NumPts)
+    filePath = [result_path Roots{RootsIdx} filesep Methods{MethodsIdx} filesep FeatureFix{FeatureFixIdx} filesep];
+    if exist([filePath filesep 'RESULTS_' Methods{MethodsIdx} '_' FeatureFix{FeatureFixIdx} '_morphologika_' NumPts{j} '.csv'], 'file')
+        resultFileName = ['RESULTS_' Methods{MethodsIdx} '_' FeatureFix{FeatureFixIdx} '_morphologika_' NumPts{j} '.csv'];
+    else
+        resultFileName = [Methods{MethodsIdx} '_' FeatureFix{FeatureFixIdx} '_morphologika_' NumPts{j} '_RESULTS' '.csv'];
     end
+    disp(resultFileName);
+    M = csvread([filePath resultFileName],687,2,[687,2,802,4]);
+    scatter3(M(:,1),M(:,2),M(:,3),20,colors(j),'filled');
+    hold on;
 end
 
+M = csvread('./PNAS_Observer_Landmarks_18_RESULTS.csv',481,2,[481,2,596,4]);
+scatter3(M(:,1),M(:,2),M(:,3),20,'k','filled');
+
+legend('64 pts', '256 pts', '1024 pts', 'Obs 18 pts');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% processing morphologika analysis results and write to morphologika file
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% result_path = '/media/trgao10/Downloads/BoyerLab/';
+% [~,TaxaCodes] = xlsread([result_path 'mergedResults.xlsx'], 'A03:A123');
+% coordinates = xlsread([result_path 'mergedResults.xlsx'], 'B03:MK123');
+% 
+% %% Write Information to Output File
+% fid = fopen('mergedResults_PC12_morphologika.txt','wt');
+% if(fid==-1)
+%     error('Can''t open the file.');
+% end
+% 
+% %%% header
+% fprintf(fid, '[Individuals]\n');
+% fprintf(fid, '%d\n', length(TaxaCodes));
+% fprintf(fid, '[landmarks]\n');
+% fprintf(fid, '%d\n', size(coordinates,2)/3);
+% fprintf(fid, '[dimensions]\n');
+% fprintf(fid, '3\n');
+% fprintf(fid, '[names]\n');
+% for j=1:length(TaxaCodes)
+%     fprintf(fid, '%s\n', TaxaCodes{j});
+% end
+% 
+% fprintf(fid, '\n[rawpoints]\n');
+% for j=1:length(TaxaCodes)
+%     fprintf(fid,'\n%s\n\n', ['''' TaxaCodes{j}]);
+%     reshapedCoords = reshape(coordinates(j,:),3,size(coordinates,2)/3);
+%     reshapedCoords(3,:) = 0;
+%     fprintf(fid, '%d %d %d\n', reshapedCoords);
+% end
+% 
+% fclose(fid);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% processing morphologika analysis results
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% result_path = '/media/trgao10/Downloads/BoyerLab/';
+% Roots = {'RootB03', 'RootMinSqDist'};
+% Methods = {'cPComposedLAST', 'cPComposedLASTbalance', 'cPComposedLASTmean',...
+%     'cPComposedLASTmedian', 'cPLAST', 'cPLASTbalance', 'cPMST', 'cPViterbi',...
+%     'cPViterbiAngle0.5', 'cPViterbiAngle0.25'};
+% FeatureFix = {'FeatureFixOff', 'FeatureFixOn'};
+% NumPts = {'64','256','1024'};
+% 
+% resultFileName = ['RESULTS_' Methods{1} '_' FeatureFix{1} '_morphologika_' NumPts{1} '.csv'];
+% [~,TaxaCodes] = xlsread([result_path Roots{1} filesep Methods{1} filesep FeatureFix{1} filesep resultFileName],'B688:B803');
+% TaxaCodes = (cellfun(@(x) strtrim(x), TaxaCodes, 'UniformOutput', false));
+% Header = [TaxaCodes'; cell(2,length(TaxaCodes))];
+% Header = reshape(Header, 1, numel(Header));
+% Header = [Header; repmat({'PC1','PC2','PC3'},1,length(TaxaCodes))];
+% Header = [cell(2,1), Header];
+% 
+% for j1=1:length(Roots)
+%     for j2=1:length(Methods)
+%         for j3=1:length(FeatureFix)
+%             for j4=1:length(NumPts)
+%                 filePath = [result_path Roots{j1} filesep Methods{j2} filesep FeatureFix{j3} filesep];
+%                 if exist([filePath filesep 'RESULTS_' Methods{j2} '_' FeatureFix{j3} '_morphologika_' NumPts{j4} '.csv'], 'file')
+%                     resultFileName = ['RESULTS_' Methods{j2} '_' FeatureFix{j3} '_morphologika_' NumPts{j4} '.csv'];
+%                 else
+%                     resultFileName = [Methods{j2} '_' FeatureFix{j3} '_morphologika_' NumPts{j4} '_RESULTS' '.csv'];
+%                 end
+%                 disp(resultFileName);                
+%                 M = csvread([filePath resultFileName],687,2,[687,2,802,4]);
+%                 Header = [Header;[[Methods{j2} '_' FeatureFix{j3} '_morphologika_' NumPts{j4} '_' Roots{j1}], num2cell(reshape(M',1,numel(M)))]];
+%             end
+%         end
+%     end
+% end
+% 
+% xlswrite('mergedResults.xlsx', Header);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% compare & contrast cPdistances/landmark MSEs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% result_path = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/';
+% % cPDistPath = [result_path 'cPDist/cPlmkMSEMatrix.mat'];
+% % cPMSTDistOffPath = [result_path 'cPMST/FeatureFixOff/cPMSTlmkMSEMatrix.mat'];
+% % cPMSTDistOnPath = [result_path 'cPMST/FeatureFixOn/cPMSTlmkMSEMatrix.mat'];
+% cPDistPath = [result_path 'cPDist/cPDistMatrix.mat'];
+% cPMSTDistOffPath = [result_path 'cPMST/FeatureFixOff/cPMSTDistMatrix.mat'];
+% cPMSTDistOnPath = [result_path 'cPMST/FeatureFixOn/cPMSTDistMatrix.mat'];
+% GroupSize = 116;
+% 
+% A = load(cPDistPath);
+% A = A.cPDistMatrix;
+% B = load(cPMSTDistOffPath);
+% B = B.ImprDistMatrix;
+% C = load(cPMSTDistOnPath);
+% C = C.ImprDistMatrix;
+% 
+% figure;
+% subplot(1,3,1);
+% imagesc(A./max(A(:))*64);
+% axis equal;
+% axis([1,GroupSize,1,GroupSize]);
+% title('cPDist');
+% subplot(1,3,2);
+% imagesc(B./max(B(:))*64);
+% axis equal;
+% axis([1,GroupSize,1,GroupSize]);
+% title('cPMST Feature Fix Off');
+% subplot(1,3,3);
+% imagesc(C./max(C(:))*64);
+% axis equal;
+% axis([1,GroupSize,1,GroupSize]);
+% title('cPMST Feature Fix On');
+% 
+% DistanceMatrices = {A,B,C};
+% TitleTexts = {'cPDist','cPMST Feature Fix Off', 'cPMST Feature Fix On'};
+% figure;
+% count = 0;
+% for i=1:3
+%     for j=i+1:3
+%         count = count+1;
+%         subplot(1,3,count);
+%         plot(DistanceMatrices{i}(:),DistanceMatrices{j}(:),'b.');
+%         axis equal;
+%         hold on;
+%         axis([0,max(DistanceMatrices{i}(:)),0,max(DistanceMatrices{j}(:))]);
+%         minLabel = min(max(DistanceMatrices{i}(:)),max(DistanceMatrices{j}(:)));
+%         plot([0,minLabel],[0,minLabel],'r-');
+%         title([TitleTexts{i} ' vs ' TitleTexts{j}]);
+%     end
+% end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% clean up meshes
