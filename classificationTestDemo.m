@@ -13,9 +13,9 @@ data_path = '../DATA/PNAS/';
 spreadsheet_path = [data_path 'GroundTruth.xlsx'];
 
 %%%% load taxa_code and species classification
-%%% old
+%%% old taxa_code
 % taxa_file = [data_path 'taxa_codes_teeth.mat'];
-%%% new
+%%% new taxa_code
 taxa_file = [data_path 'teeth_taxa_table.mat'];
 
 taxa_code = load(taxa_file);
@@ -34,24 +34,30 @@ Methods = {'cPComposedLAST', 'cPComposedLASTbalance', 'cPComposedLASTmean',...
 FeatureFix = {'FeatureFixOff', 'FeatureFixOn'};
 
 %%%% load distance matrix
-%%% old
+%%% old cP
 % DistMatrixPath = '../DATA/PNAS/teethcP.mat';
 % D = load(DistMatrixPath);
 % D = D.Dist;
 % MethodType = 'cP';
 % FeatureFixType = '';
-%%% new
-DistMatrixPath = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPDistMatrix.mat';
-D = load(DistMatrixPath, 'cPDistMatrix');
-D = D.cPDistMatrix;
-MethodType = 'cP';
-FeatureFixType = '';
+%%% new cP
+% DistMatrixPath = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPDistMatrix.mat';
+% D = load(DistMatrixPath, 'cPDistMatrix');
+% D = D.cPDistMatrix;
+% MethodType = 'cP';
+% FeatureFixType = '';
 %%% improved
 % DistMatrixPath = [result_path Methods{MethodsIdx} filesep FeatureFix{FeatureFixIdx} filesep];
 % D = load([DistMatrixPath MethodsType{MethodsIdx} 'DistMatrix'], 'ImprDistMatrix');
 % D = D.ImprDistMatrix;
 % MethodType = Methods{MethodsIdx};
 % FeatureFixType = FeatureFix{FeatureFixIdx};
+%%% HDBM
+MethodType = 'cPMST';
+FeatureFixType = 'FeatureFixOn';
+HDBM_FILE = '../HDM/results/PNAS_HDBM.mat';
+load(HDBM_FILE);
+D = squareform(pdist(HDBM));
 
 %%%
 D = D + diag(Inf(GroupSize,1));
