@@ -1,17 +1,16 @@
 %%% preparation
-clear all;
+clear vars;
 close all;
 path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %%% setup paths
 base_path = [pwd '/'];
-data_path = '../DATA/PNAS/';
+data_path = '../DATA/HDM/';
 rslts_path = [base_path 'rslts/'];
 cluster_path = [base_path 'cluster/'];
-samples_path = [base_path 'samples/PNAS/'];
+samples_path = [base_path 'samples/HDM/'];
 meshes_path = [data_path 'meshes/'];
-landmarks_path = [data_path 'landmarks_clement.mat'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];
 outputs_path = [cluster_path 'outputs/'];
@@ -29,14 +28,11 @@ command_text = ['!rm -f ' outputs_path '*']; eval(command_text); disp(command_te
 command_text = ['!rm -f ' rslts_path '*']; eval(command_text); disp(command_text);
 
 %%% load taxa codes
-taxa_file = [data_path 'teeth_taxa_table.mat'];
+taxa_file = [data_path 'hdm_taxa_table.mat'];
 taxa_code = load(taxa_file);
 taxa_code = taxa_code.taxa_code;
 GroupSize = length(taxa_code);
-% chunk_size = 55; %% PNAS
-% NumLandmarks = 16; %% PNAS
-chunk_size = 20; %% Clement
-NumLandmark = 7; %% Clement
+chunk_size = 25; %% Clement
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,16 +79,12 @@ for k1=1:GroupSize
         filename1 = [samples_path taxa_code{k1} '.mat'];
         filename2 = [samples_path taxa_code{k2} '.mat'];
         
-        script_text = [' cPdist_ongrid ' ...
+        script_text = [' cPdist_landmarkfree_ongrid ' ...
             filename1 ' ' ...
             filename2  ' ' ...
             [rslts_path 'rslt_mat_' num2str(job_id)] ' ' ...
             num2str(k1) ' ' ...
-            num2str(k2) ' ' ...
-            landmarks_path ' ' ...
-            meshes_path ' ' ...
-            '.off' ' ' ...
-            num2str(NumLandmark) '; '];
+            num2str(k2) '; '];
         fprintf(fid, '%s ',script_text);
         
         cnt = cnt+1;

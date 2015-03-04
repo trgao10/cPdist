@@ -35,12 +35,12 @@ end
 rslt.Gname1 = GM.Aux.name;
 rslt.Gname2 = GN.Aux.name;
 
-TAXAind = cellfun(@(name) find(strcmpi(TaxaCode,name)),{GM.Aux.name,GN.Aux.name});
+TAXAind = cellfun(@(name) find(strcmpi(TaxaCode,name)),{GM.Aux.name,GN.Aux.name},'UniformOutput',false);
 GroupSize = length(TaxaCode);
 
 if ~strcmpi(ImprType,'Viterbi') && ~strcmpi(ImprType,'ComposedLAST') %%% MST or ComposedLAST
     ST = ConstructGraph(DistMatrix,ImprType,options);
-    OptimalPath = FindGraphShortestPath(ST,TAXAind(1),TAXAind(2),TaxaCode,options);
+    OptimalPath = FindGraphShortestPath(ST,TAXAind{1},TAXAind{2},TaxaCode,options);
     if SmoothMap==0
         %%% return vertex permutation map
         rslt.ImprMap = ComposeMapsAlongPath(OptimalPath,MapMatrix);
@@ -74,7 +74,7 @@ elseif strcmpi(ImprType,'ComposedLAST') %%% cPLAST
     else
         load(options.cPLASTPath);
     end
-    OptimalPath = FindGraphShortestPath(ST,TAXAind(1),TAXAind(2),TaxaCode,options);
+    OptimalPath = FindGraphShortestPath(ST,TAXAind{1},TAXAind{2},TaxaCode,options);
     if SmoothMap==0
         %%% return vertex permutation map
         rslt.ImprMap = ComposeMapsAlongPath(OptimalPath,MapMatrix);
@@ -103,7 +103,7 @@ elseif strcmpi(ImprType,'ComposedLAST') %%% cPLAST
     end
 elseif strcmpi(ImprType,'Viterbi') %%% Viterbi
     ST = ConstructGraph(DistMatrix,'MST'); %%% MST provides a quick and dirty upper bound for Viterbi
-    MSTPath = FindGraphShortestPath(ST,TAXAind(1),TAXAind(2),TaxaCode,options);
+    MSTPath = FindGraphShortestPath(ST,TAXAind{1},TAXAind{2},TaxaCode,options);
     MSTMap = ComposeMapsAlongPath(MSTPath,MapMatrix);
     [~,R] = MapToDist(GM.V,GN.V,MSTMap,GM.Aux.VertArea);
     options.R = R;

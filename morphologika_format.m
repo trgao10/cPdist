@@ -6,21 +6,27 @@ addpath(path,genpath([pwd '/utils/']));
 
 %% Set Parameters
 ImprType = 'ComposedLAST';
-% subImprType = ImprType;
-subImprType = [ImprType 'median'];
-FeatureFix = 'On';
-NumFeatPts = 64;
+subImprType = ImprType;
+% subImprType = [ImprType 'median'];
+FeatureFix = 'Off';
+NumFeatPts = 1024;
 output_filename = [pwd '/morphologika/cP' subImprType '/FeatureFix' uplow(FeatureFix) '/cP' subImprType '_FeatureFix' uplow(FeatureFix) '_morphologika_' num2str(NumFeatPts) '.txt'];
 delete_command = 'rm -rf ';
+RootNodeMode = 'auto';
 
 %% Set Path
-ResultPath = ['/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cP' subImprType '/'];
+% ResultPath = ['/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cP' subImprType '/'];
+ResultPath = ['/xtmp/ArchivedResults/Clement/cP' subImprType '/'];
 ImprDistPath = [ResultPath 'FeatureFix' uplow(FeatureFix) '/cP' ImprType 'DistMatrix'];
 MapsPath = [ResultPath 'FeatureFix' uplow(FeatureFix) '/cP' ImprType 'MapsMatrix'];
-SamplePath = [pwd '/samples/Teeth/'];
-DataPath = '~/Work/MATLAB/DATA/PNAS/';
-TaxaPath = [DataPath 'teeth_taxa_table.mat'];
-cPDistPath = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPDistMatrix.mat';
+% SamplePath = [pwd '/samples/Teeth/'];
+SamplePath = [pwd '/samples/Clement/'];
+% DataPath = '~/Work/MATLAB/DATA/PNAS/';
+DataPath = '~/Work/MATLAB/DATA/Clement/';
+% TaxaPath = [DataPath 'teeth_taxa_table.mat'];
+TaxaPath = [DataPath 'clement_taxa_table.mat'];
+% cPDistPath = '/media/trgao10/Work/MATLAB/ArchivedResults/Teeth/cPDist/cPDistMatrix.mat';
+cPDistPath = '/xtmp/ArchivedResults/Clement/cPdist/cPDistMatrix.mat';
 
 %% create path for morphologika files if needed
 touch([pwd '/morphologika/cP' subImprType '/']);
@@ -55,7 +61,9 @@ else %%% MST or LAST
     [~,PRED] = ConstructGraph(cPDistMatrix,ImprType,options);
     RootNode = find(PRED==0);
 end
-% [~,RootNode] = min(sum(ImprDistMatrix.^2)); %% if one needs to fix a RootNode
+if strcmpi(RootNodeMode, 'auto')
+    [~,RootNode] = min(sum(ImprDistMatrix.^2)); %% if one needs to fix a RootNode
+end
 disp(['RootNode = ' TaxaCode{RootNode}]);
 
 command_text = [delete_command output_filename];
