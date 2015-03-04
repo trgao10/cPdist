@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'AMNH-M-38792_M904','AMNH-M-76003_M906'};
+Names = {'j07','j13'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
@@ -21,8 +21,8 @@ options.GaussMinMatch = 'on';
 % options.Display = 'on';
 
 obj_path = [pwd '/obj/'];
-sample_path = [pwd '/samples/HDM/'];
-data_path = '~/Work/MATLAB/DATA/HDM/';
+sample_path = [pwd '/samples/PNAS/'];
+data_path = '~/Work/MATLAB/DATA/PNAS/';
 meshes_path = [data_path 'meshes/'];
 delete_command = 'rm -f ';
 
@@ -36,11 +36,15 @@ delete([obj_path '*.obj']);
 
 Gs = cell(2,1);
 
+taxa_code = load([data_path 'teeth_taxa_table.mat']);
+taxa_code = taxa_code.taxa_code;
+TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
+
 %% load mesh and uniformize
 for j=1:2
-    if ~exist([sample_path Names{j} '.mat'],'file')
-        Gs{j} = Mesh('off',[meshes_path Names{j} '.off']);
-        Gs{j}.Aux.name = Names{j};
+    if ~exist([sample_path taxa_code{TAXAind(j)} '.mat'],'file')
+        Gs{j} = Mesh('off',[meshes_path taxa_code{TAXAind(j)} '_sas.off']);
+        Gs{j}.Aux.name = taxa_code{TAXAind(j)};
         [Gs{j}.Aux.Area,Gs{j}.Aux.Center] = Gs{j}.Centralize('ScaleArea');
         Gs{j}.ComputeMidEdgeUniformization(options);
         Gs{j}.Nf = Gs{j}.ComputeFaceNormals;
@@ -48,9 +52,9 @@ for j=1:2
         Gs{j}.Nv = Gs{j}.Nv'*diag(1./sqrt(sum((Gs{j}.Nv').^2,1)));
         Gs{j}.Aux.LB = Gs{j}.ComputeCotanLaplacian;
         G = Mesh(Gs{j});
-        save([sample_path Names{j} '.mat'], 'G');
+        save([sample_path taxa_code{TAXAind(j)} '.mat'], 'G');
     else
-        Gs{j} = load([sample_path Names{j} '.mat']);
+        Gs{j} = load([sample_path taxa_code{TAXAind(j)} '.mat']);
         Gs{j} = Gs{j}.G;
     end
 end
@@ -59,8 +63,20 @@ end
 tic;rslt12 = Gs{1}.ComputeContinuousProcrustes(Gs{2},options);toc;
 tic;rslt21 = Gs{2}.ComputeContinuousProcrustes(Gs{1},options);toc;
 
+options.NumLandmark = 16;
+
+lk2 = Gs{2}.V(:,GetLandmarks(Gs{2}.Aux.name,[data_path 'landmarks_teeth.mat'],[meshes_path Gs{2}.Aux.name '_sas.off'],options));
+lk1 = Gs{2}.V(:,rslt12.cPmap(GetLandmarks(Gs{1}.Aux.name,[data_path 'landmarks_teeth.mat'],[meshes_path Gs{1}.Aux.name '_sas.off'],options)));
+rslt12.lkMSE = mean(sqrt(sum((lk2-lk1).^2)));
+
+lk1 = Gs{1}.V(:,GetLandmarks(Gs{1}.Aux.name,[data_path 'landmarks_teeth.mat'],[meshes_path Gs{1}.Aux.name '_sas.off'],options));
+lk2 = Gs{1}.V(:,rslt21.cPmap(GetLandmarks(Gs{2}.Aux.name,[data_path 'landmarks_teeth.mat'],[meshes_path Gs{2}.Aux.name '_sas.off'],options)));
+rslt21.lkMSE = mean(sqrt(sum((lk1-lk2).^2)));
+
 disp(['rslt12.cPdist = ' num2str(rslt12.cPdist)]);
 disp(['rslt21.cPdist = ' num2str(rslt21.cPdist)]);
+disp(['rslt12.lkMSE = ' num2str(rslt12.lkMSE)]);
+disp(['rslt21.lkMSE = ' num2str(rslt21.lkMSE)]);
 
 %% print maps to texture coordinates
 obj_surf_1 = [obj_path '1.obj'];
@@ -76,4 +92,16 @@ else
     options.Texture.Coordinates = rslt21.TextureCoords1/2+0.5;
     Gs{2}.Write(obj_surf_2,'obj',options);
 end
+
+%% visualize landmarks
+[~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,rslt12.cPmap,Gs{1}.Aux.VertArea);
+sGM = Mesh(Gs{1});
+sGM.V = R*Gs{1}.V;
+
+options.type = 'full';
+options.landmarks = 'on';
+options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
+options.MeshesPath = [data_path 'meshes/'];
+options.MeshSuffix = '_sas.off';
+ViewTeethMapS(sGM, Gs{2}, {rslt12.cPmap,rslt21.cPmap}, options);
 
