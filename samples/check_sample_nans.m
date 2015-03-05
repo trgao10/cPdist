@@ -1,4 +1,4 @@
-samples_path = [pwd '/Clement/'];
+samples_path = [pwd '/HDM/'];
 
 sampleFiles = dir(samples_path);
 sampleFiles(1:2) = [];

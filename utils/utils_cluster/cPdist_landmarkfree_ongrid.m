@@ -11,7 +11,7 @@ options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 1000;
 options.AngleIncrement = 0.01;
 options.NumFeatureMatch = 4;
-options.GaussMinMatch = 'off';
+options.GaussMinMatch = 'on';
 options.ProgressBar = 'off';
 
 disp(['Comparing ' GM.Aux.name ' vs ' GN.Aux.name '...']);
@@ -21,7 +21,7 @@ rslt = GM.ComputeContinuousProcrustes(GN,options);
 cPrslt{str2double(TAXAind1),str2double(TAXAind2)} = rslt;
 save(rslt_mat,'cPrslt');
 
-disp([GM.Aux.name ' vs ' GN.Aux.name ' done.']);
+disp(['cPdist(' GM.Aux.name ', ' GN.Aux.name ' = ' num2str(rslt.cPdist) '.']);
 
 end
 

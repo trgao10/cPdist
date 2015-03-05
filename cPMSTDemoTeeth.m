@@ -8,10 +8,10 @@ addpath(path,genpath([pwd '/utils/']));
 obj_path = [pwd '/obj/'];
 % sample_path = [pwd '/samples/Teeth/'];
 
-result_path = '/gtmp/trgao10/ArchivedResults/HDM/';
+result_path = '/media/trgao10/Work/MATLAB/ArchivedResults/HDM/';
 cPMaps_path = [result_path 'cPdist/cPMapsMatrix.mat'];
 cPDist_path = [result_path 'cPdist/cPDistMatrix.mat'];
-cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_median.mat'];
+% cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_median.mat'];
 TextureCoords1_path = [result_path 'cPdist/TextureCoords1/'];
 TextureCoords2_path = [result_path 'cPdist/TextureCoords2/'];
 
@@ -42,17 +42,17 @@ delete_command = 'rm -f ';
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 % Names = {'x09','B03'}; % LAST fix a peak
 % Names = {'u14','w01'}; % for Clement's data set; cP more close to observer than cPComposedLAST
-Names = {'AMNH-M-76003_M906', 'AMNH-M-211491_M818'};
+Names = {'MCZ-34320_M792', 'AMNH-M-211491_M818'};
 
 options.ImprType = 'MST';
 options.SmoothMap = 0;
-options.FeatureFix = 'on';
+options.FeatureFix = 'off';
 options.GaussMinMatch = 'on';
 options.Angle = 1.0; % Viterbi with angle costs
 options.alpha = 1.8; % LAST/ComposedLAST; scalar>1 or 'auto'
 options.ProgressBar = 'on';
 options.SamplePath = sample_path;
-options.cPLASTPath = cPLAST_path; % ComposedLAST
+% options.cPLASTPath = cPLAST_path; % ComposedLAST
 options.TextureCoords1Path = TextureCoords1_path;
 options.TextureCoords2Path = TextureCoords2_path;
 options.ChunkSize = 25; %% HDM
