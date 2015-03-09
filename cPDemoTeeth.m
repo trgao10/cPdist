@@ -5,10 +5,10 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'MN-Rio-8513_M1220','AMNH-M-76882_M786'};
+Names = {'AMNH-M-67102_M1099','AMNH-M-71787_M784'};
 
 options.FeatureType = 'ConfMax';
-options.NumDensityPnts = 1000;
+options.NumDensityPnts = 100;
 options.AngleIncrement = 0.01;
 % options.NumDensityPnts = 100;
 % options.AngleIncrement = 0.05;

@@ -42,7 +42,7 @@ delete_command = 'rm -f ';
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 % Names = {'x09','B03'}; % LAST fix a peak
 % Names = {'u14','w01'}; % for Clement's data set; cP more close to observer than cPComposedLAST
-Names = {'MCZ-34320_M792', 'AMNH-M-211491_M818'};
+Names = {'AMNH-M-67102_M1099', 'AMNH-M-71787_M784'};
 
 options.ImprType = 'MST';
 options.SmoothMap = 0;
@@ -110,6 +110,9 @@ disp(['Original cP distance: ' num2str(cPDistMatrix(TAXAind{1},TAXAind{2}))]);
 
 %% Improve Maps
 options.ShowTree = 'on';
+simpNames = cellfun(@(x) strtok(x(end:-1:1),'_'), taxa_code, 'UniformOutput', false);
+simpNames = cellfun(@(x) x(end:-1:1), simpNames, 'UniformOutput', false);
+options.labels = simpNames;
 rslt12 = Gs{1}.ImproveMap(Gs{2},cPDistMatrix,cPMapsMatrix,taxa_code,options);
 options.ShowTree = 'off';
 rslt21 = Gs{2}.ImproveMap(Gs{1},cPDistMatrix,cPMapsMatrix,taxa_code,options);
