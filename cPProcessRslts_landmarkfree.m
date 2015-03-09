@@ -7,7 +7,7 @@ addpath(path,genpath([pwd '/utils/']));
 %%% setup paths
 base_path = [pwd '/'];
 data_path = '../DATA/HDM/';
-result_path = '/xtmp/ArchivedResults/HDM/cPdist/'; 
+result_path = '/gtmp/trgao10/ArchivedResults/HDM/cPdist/'; 
 rslts_path = [result_path 'rslts/'];
 TextureCoords1Matrix_path = [result_path 'TextureCoords1/'];
 TextureCoords2Matrix_path = [result_path 'TextureCoords2/'];
