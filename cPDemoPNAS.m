@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'j07','j13'};
+Names = {'u19','j13'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
@@ -99,7 +99,7 @@ sGM = Mesh(Gs{1});
 sGM.V = R*Gs{1}.V;
 
 options.type = 'full';
-options.landmarks = 'on';
+options.Landmarks = 'on';
 options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
 options.MeshesPath = [data_path 'meshes/'];
 options.MeshSuffix = '_sas.off';
