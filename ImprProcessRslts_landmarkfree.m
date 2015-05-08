@@ -1,5 +1,5 @@
 %%% preparation
-clear all;
+clearvars;
 close all;
 path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
@@ -10,7 +10,7 @@ ImprType = 'MST';
 %%% setup paths
 base_path = [pwd '/'];
 data_path = '../DATA/HDM/';
-result_path = '/xtmp/ArchivedResults/HDM/cPMST/FeatureFixOff/';
+result_path = '/gtmp/trgao10/ArchivedResults/HDM/cPMST/FeatureFixOff/';
 rslts_path = [result_path 'rslts/'];
 TextureCoords1Matrix_path = [result_path 'TextureCoords1/'];
 TextureCoords2Matrix_path = [result_path 'TextureCoords2/'];

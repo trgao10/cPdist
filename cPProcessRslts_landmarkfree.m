@@ -1,5 +1,5 @@
 %%% preparation
-clear all;
+clearvars;
 close all;
 path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
