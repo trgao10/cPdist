@@ -94,3 +94,64 @@ end
 cameratoolbar;
 cameratoolbar('SetCoordSys', 'none');
 
+userdata.ToggleSelect3DFlag = 'off';
+userdata.mesh = G;
+set(gcf, 'userdata', userdata);
+set(gcf, 'KeyPressFcn', {@ToggleSelect3D});
+
+end
+
+function ToggleSelect3D(hObject, eventData)
+    
+if(strcmp(eventData.Key, 'return'))
+    userdata = get(gcf, 'userdata');
+    if strcmpi(userdata.ToggleSelect3DFlag,'off')
+        userdata.currentWindowButtonDownFcn = get(gcf, 'WindowButtonDownFcn');
+        set(gcf, 'WindowButtonDownFcn', {@tgDataCursor});
+        userdata.ToggleSelect3DFlag = 'on';
+        frameTitleStr = get(gcf, 'Name');
+        frameTitleStr = strrep(frameTitleStr, 'off', 'on');
+        set(gcf, 'Name', frameTitleStr);
+        set(gcf, 'userdata', userdata);
+    elseif (strcmpi(userdata.ToggleSelect3DFlag,'on'))
+        set(gcf, 'WindowButtonDownFcn', userdata.currentWindowButtonDownFcn);
+        userdata.ToggleSelect3DFlag = 'off';
+        frameTitleStr = get(gcf, 'Name');
+        frameTitleStr = strrep(frameTitleStr, 'on', 'off');
+        set(gcf, 'Name', frameTitleStr);
+        set(gcf, 'userdata', userdata);
+    else
+        disp('Something is not right...');
+    end
+end
+
+end
+
+function tgDataCursor(hObject, eventData)
+
+userdata = get(gcf, 'userdata');
+pt = userdata.mesh.LineMeshIntersect(get(gca, 'CurrentPoint'));
+
+if ~isfield(userdata.mesh.Aux, 'kdtree')
+    userdata.mesh.Aux.kdtree = kdtree_build(userdata.mesh.V');
+    set(gcf, 'userdata', userdata);
+end
+
+if ~isempty(pt)
+    h = findobj(gcf, 'Tag', 'pt');
+    if ~isempty(h)
+        delete(h);
+    end
+    
+    nearestVertex = kdtree_nearest_neighbor(userdata.mesh.Aux.kdtree,pt');
+
+    hold on
+    h = scatter3(userdata.mesh.V(1,nearestVertex),...
+        userdata.mesh.V(2,nearestVertex), userdata.mesh.V(3,nearestVertex),...
+        20, 'g', 'filled');
+    set(h, 'Tag', 'pt');
+    set(gcf, 'Name', ['Vertex ' num2str(nearestVertex) ' (Select3D ' userdata.ToggleSelect3DFlag ')']);
+    hold off
+end
+
+end
