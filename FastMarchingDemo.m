@@ -59,35 +59,3 @@ scatter3(G.V(1,samples),G.V(2,samples),G.V(3,samples),20,'g','filled');
 KM = G.ComputeCPMS(); %% curvature prescription mesh scaling
 DM = KM.ComputeUniformization(struct('method','LSCM','boundary_conditions','disc'));
 
-
-
-% path(pathdef);
-% path(path, genpath('./utils'));
-% 
-% load('./samples/PNAS/Q13.mat');
-% 
-% %%% example of a trivial funtion
-% f1 = ones(G.nV,1);
-% G.ViewFunctionOnMesh(f1, []);
-% 
-% f2 = f1;
-% f2(1:100) = -1;
-% G.ViewFunctionOnMesh(f2, []);
-% 
-% close all
-% % G.ViewFunctionOnMesh(G.Aux.VertArea',struct('mode','native'));
-% % G.ViewFunctionOnMesh(G.Aux.Conf,struct('mode','native'));
-% % localMaxInds = G.FindLocalMax(G.Aux.Conf,1,0);
-% % hold on
-% % scatter3(G.V(1,localMaxInds),G.V(2,localMaxInds),G.V(3,localMaxInds),...
-% %     20,'k','filled');
-% [Umin,Umax,Cmin,Cmax,Cmean,Cgauss,Normal] = G.ComputeCurvature();
-% % G.ViewFunctionOnMesh(Cgauss,struct('mode','native'));
-% % figure;G.ViewFunctionOnMesh(Cmean,struct('mode','native'));
-% 
-% G.draw();
-% hold on
-% quiver3(G.V(1,:),G.V(2,:),G.V(3,:),Normal(1,:),Normal(2,:),Normal(3,:));
-% 
-% H = Mesh('VF',G.V+0.1*Normal,G.F);
-% H.draw();
