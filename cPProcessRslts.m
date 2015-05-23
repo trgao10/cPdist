@@ -6,8 +6,9 @@ addpath(path,genpath([pwd '/utils/']));
 
 %%% setup paths
 base_path = [pwd '/'];
-data_path = '../DATA/Clement/';
-result_path = '/xtmp/ArchivedResults/Clement/cPdist/'; 
+data_path = '../DATA/PNAS/';
+% result_path = '/xtmp/ArchivedResults/Clement/cPdist/'; 
+result_path = '~/Work/cPdist/'; 
 rslts_path = [result_path 'rslts/'];
 TextureCoords1Matrix_path = [result_path 'TextureCoords1/'];
 TextureCoords2Matrix_path = [result_path 'TextureCoords2/'];
@@ -24,12 +25,12 @@ command_text = ['!rm -f ' TextureCoords2Matrix_path '*'];
 eval(command_text); disp(command_text);
 
 %%% load taxa codes
-taxa_file = [data_path 'clement_taxa_table.mat'];
+taxa_file = [data_path 'teeth_taxa_table.mat'];
 taxa_code = load(taxa_file);
 taxa_code = taxa_code.taxa_code;
 GroupSize = length(taxa_code);
-% chunk_size = 55; %% PNAS
-chunk_size = 20; %% Clement
+chunk_size = 55; %% PNAS
+% chunk_size = 20; %% Clement
 
 %%% read rslt matrices and separate distance and landmarkMSE's
 cPDistMatrix = zeros(GroupSize,GroupSize);

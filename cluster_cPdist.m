@@ -33,10 +33,10 @@ taxa_file = [data_path 'teeth_taxa_table.mat'];
 taxa_code = load(taxa_file);
 taxa_code = taxa_code.taxa_code;
 GroupSize = length(taxa_code);
-% chunk_size = 55; %% PNAS
-% NumLandmarks = 16; %% PNAS
-chunk_size = 20; %% Clement
-NumLandmark = 7; %% Clement
+chunk_size = 55; %% PNAS
+NumLandmarks = 16; %% PNAS
+% chunk_size = 20; %% Clement
+% NumLandmark = 7; %% Clement
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
