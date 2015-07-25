@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
-Names = {'J13','T14'};
+Names = {'x09', 'x02'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;

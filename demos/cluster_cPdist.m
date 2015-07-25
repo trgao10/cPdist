@@ -1,5 +1,5 @@
 %%% preparation
-clear all;
+clearvars;
 close all;
 path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
@@ -11,7 +11,7 @@ rslts_path = [base_path 'rslts/'];
 cluster_path = [base_path 'cluster/'];
 samples_path = [base_path 'samples/PNAS/'];
 meshes_path = [data_path 'meshes/'];
-landmarks_path = [data_path 'landmarks_clement.mat'];
+landmarks_path = [data_path 'landmarks_teeth.mat'];
 scripts_path = [cluster_path 'scripts/'];
 errors_path = [cluster_path 'errors/'];
 outputs_path = [cluster_path 'outputs/'];
@@ -34,7 +34,7 @@ taxa_code = load(taxa_file);
 taxa_code = taxa_code.taxa_code;
 GroupSize = length(taxa_code);
 chunk_size = 55; %% PNAS
-NumLandmarks = 16; %% PNAS
+NumLandmark = 16; %% PNAS
 % chunk_size = 20; %% Clement
 % NumLandmark = 7; %% Clement
 

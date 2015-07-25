@@ -1,38 +1,64 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% compare two distance matrices (Lem/Gs)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+load('/home/trgao10/Work/MATLAB/cPdist/from_ellie/LemRslt_midedge.mat');
+load('/home/trgao10/Work/MATLAB/cPdist/from_ellie/GsRslt_midedge.mat');
+
+D1 = min(GsDistMat,GsDistMat'); %% symmetrize the distance matrix
+D1 = D1-diag(diag(D1)); %% set diagonal elements to 0, avoid artifacts
+d1 = squareform(D1, 'tovector'); %% extract the off-diagonal elements
+
+D2 = min(LemDistMat,LemDistMat');
+D2 = D2-diag(diag(D2));
+d2 = squareform(D2, 'tovector');
+
+hist([d1',d2']);
+
+[h,p,ci,stats] = ttest2(d1,d2); %% two-sample t-test
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% compute cP distance from Ellie's downsampled meshes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% path(pathdef);
+% addpath(path,genpath([pwd '/utils/']));
+% 
+% load('from_ellie/Lem.mat');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% view PCA scores as coordinates
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-result_path = '/';
-Roots = {'RootB03', 'RootMinSqDist'};
-Methods = {'cPComposedLAST', 'cPComposedLASTbalance', 'cPComposedLASTmean',...
-    'cPComposedLASTmedian', 'cPLAST', 'cPLASTbalance', 'cPMST', 'cPViterbi',...
-    'cPViterbiAngle0.5', 'cPViterbiAngle0.25'};
-FeatureFix = {'FeatureFixOff', 'FeatureFixOn'};
-NumPts = {'64','256','1024'};
-colors = ['r', 'g', 'b', 'm', 'k', 'y'];
-
-RootsIdx = 1;
-MethodsIdx = 5;
-FeatureFixIdx = 1;
-
-figure;
-% hold on
-for j=1:length(NumPts)
-    filePath = [result_path Roots{RootsIdx} filesep Methods{MethodsIdx} filesep FeatureFix{FeatureFixIdx} filesep];
-    if exist([filePath filesep 'RESULTS_' Methods{MethodsIdx} '_' FeatureFix{FeatureFixIdx} '_morphologika_' NumPts{j} '.csv'], 'file')
-        resultFileName = ['RESULTS_' Methods{MethodsIdx} '_' FeatureFix{FeatureFixIdx} '_morphologika_' NumPts{j} '.csv'];
-    else
-        resultFileName = [Methods{MethodsIdx} '_' FeatureFix{FeatureFixIdx} '_morphologika_' NumPts{j} '_RESULTS' '.csv'];
-    end
-    disp(resultFileName);
-    M = csvread([filePath resultFileName],687,2,[687,2,802,4]);
-    scatter3(M(:,1),M(:,2),M(:,3),20,colors(j),'filled');
-    hold on;
-end
-
-M = csvread('./PNAS_Observer_Landmarks_18_RESULTS.csv',481,2,[481,2,596,4]);
-scatter3(M(:,1),M(:,2),M(:,3),20,'k','filled');
-
-legend('64 pts', '256 pts', '1024 pts', 'Obs 18 pts');
+% result_path = '/';
+% Roots = {'RootB03', 'RootMinSqDist'};
+% Methods = {'cPComposedLAST', 'cPComposedLASTbalance', 'cPComposedLASTmean',...
+%     'cPComposedLASTmedian', 'cPLAST', 'cPLASTbalance', 'cPMST', 'cPViterbi',...
+%     'cPViterbiAngle0.5', 'cPViterbiAngle0.25'};
+% FeatureFix = {'FeatureFixOff', 'FeatureFixOn'};
+% NumPts = {'64','256','1024'};
+% colors = ['r', 'g', 'b', 'm', 'k', 'y'];
+% 
+% RootsIdx = 1;
+% MethodsIdx = 5;
+% FeatureFixIdx = 1;
+% 
+% figure;
+% % hold on
+% for j=1:length(NumPts)
+%     filePath = [result_path Roots{RootsIdx} filesep Methods{MethodsIdx} filesep FeatureFix{FeatureFixIdx} filesep];
+%     if exist([filePath filesep 'RESULTS_' Methods{MethodsIdx} '_' FeatureFix{FeatureFixIdx} '_morphologika_' NumPts{j} '.csv'], 'file')
+%         resultFileName = ['RESULTS_' Methods{MethodsIdx} '_' FeatureFix{FeatureFixIdx} '_morphologika_' NumPts{j} '.csv'];
+%     else
+%         resultFileName = [Methods{MethodsIdx} '_' FeatureFix{FeatureFixIdx} '_morphologika_' NumPts{j} '_RESULTS' '.csv'];
+%     end
+%     disp(resultFileName);
+%     M = csvread([filePath resultFileName],687,2,[687,2,802,4]);
+%     scatter3(M(:,1),M(:,2),M(:,3),20,colors(j),'filled');
+%     hold on;
+% end
+% 
+% M = csvread('./PNAS_Observer_Landmarks_18_RESULTS.csv',481,2,[481,2,596,4]);
+% scatter3(M(:,1),M(:,2),M(:,3),20,'k','filled');
+% 
+% legend('64 pts', '256 pts', '1024 pts', 'Obs 18 pts');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% processing morphologika analysis results and write to morphologika file

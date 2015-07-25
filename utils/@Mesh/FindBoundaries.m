@@ -3,11 +3,11 @@ function [BV,BE] = FindBoundaries(G)
 % out: BV: indices of the boundary vertices
 %      BE: Vx2 matrix containing the indices to the two neighboring
 %      vertices of each vertex
-if ~isempty(G.BE) && ~isempty(G.BV)
-    BE=G.BE;
-    BV=G.BV;
-    return;
-end
+% if ~isempty(G.BE) && ~isempty(G.BV)
+%     BE=G.BE;
+%     BV=G.BV;
+%     return;
+% end
 if isempty(G.E)
     [~,E]=G.ComputeAdjacencyMatrix;
 else

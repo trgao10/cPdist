@@ -8,9 +8,10 @@ addpath(path,genpath([pwd '/utils/']));
 obj_path = [pwd '/obj/'];
 % sample_path = [pwd '/samples/Teeth/'];
 
-result_path = '/media/trgao10/Work/MATLAB/ArchivedResults/HDM/';
-cPMaps_path = [result_path 'cPdist/cPMapsMatrix.mat'];
-cPDist_path = [result_path 'cPdist/cPDistMatrix.mat'];
+% result_path = '/media/trgao10/Work/MATLAB/ArchivedResults/HDM/';
+result_path = '/media/trgao10/Work/MATLAB/ArchivedResults/PNAS/';
+cPMaps_path = [result_path 'cPDist/cPMapsMatrix.mat'];
+cPDist_path = [result_path 'cPDist/cPDistMatrix.mat'];
 % cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_median.mat'];
 TextureCoords1_path = [result_path 'cPdist/TextureCoords1/'];
 TextureCoords2_path = [result_path 'cPdist/TextureCoords2/'];
@@ -21,7 +22,8 @@ TextureCoords2_path = [result_path 'cPdist/TextureCoords2/'];
 % TextureCoords1_path = [pwd '/results/Teeth/cPdist/TextureCoords1/'];
 % TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 
-data_path = '~/Work/MATLAB/DATA/HDM/';
+% data_path = '~/Work/MATLAB/DATA/HDM/';
+data_path = '~/Work/MATLAB/DATA/PNAS/';
 sample_path = [data_path 'samples/'];
 delete_command = 'rm -f ';
 
@@ -37,12 +39,12 @@ delete_command = 'rm -f ';
 % Names = {'T06','h08'}; % compare with {'T05','h08'}
 % Names = {'k01','j01'}; % surprisingly good (cP value indicates it could be much worse)
 % Names = {'k15','a15'}; % makes a lot of sense--k15 is of low mesh quality
-% Names = {'h08','j14'}; % nightmare
+Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 % Names = {'x09','B03'}; % LAST fix a peak
 % Names = {'u14','w01'}; % for Clement's data set; cP more close to observer than cPComposedLAST
-Names = {'AMNH-M-67102_M1099', 'AMNH-M-71787_M784'};
+% Names = {'AMNH-M-67102_M1099', 'AMNH-M-71787_M784'};
 
 options.ImprType = 'MST';
 options.SmoothMap = 0;
@@ -55,18 +57,18 @@ options.SamplePath = sample_path;
 % options.cPLASTPath = cPLAST_path; % ComposedLAST
 options.TextureCoords1Path = TextureCoords1_path;
 options.TextureCoords2Path = TextureCoords2_path;
-options.ChunkSize = 25; %% HDM
+% options.ChunkSize = 25; %% HDM
 % options.NumLandmark = 16; %% HDM
-options.MeshSuffix = '.off'; %% HDM
-% options.ChunkSize = 55; %% PNAS
-% options.NumLandmark = 16; %% PNAS
-% options.MeshSuffix = '_sas.off'; %% PNAS
+% options.MeshSuffix = '.off'; %% HDM
+options.ChunkSize = 55; %% PNAS
+options.NumLandmark = 16; %% PNAS
+options.MeshSuffix = '_sas.off'; %% PNAS
 % options.ChunkSize = 20; %% Clement
 % options.NumLandmark = 7; %% Clement
 % options.MeshSuffix = '.off'; %% Clement
 
 %%% options for ViewTeethMapS %%%
-% options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
+options.LandmarksPath = [data_path 'landmarks_teeth.mat'];
 options.MeshesPath = [data_path 'meshes/'];
 
 %% Parse Parameters
@@ -78,8 +80,8 @@ disp(command_text);
 
 Gs = cell(2,1);
 
-taxa_code = load([data_path 'hdm_taxa_table.mat']);
-% taxa_code = load([data_path 'teeth_taxa_table.mat']);
+% taxa_code = load([data_path 'hdm_taxa_table.mat']);
+taxa_code = load([data_path 'teeth_taxa_table.mat']);
 taxa_code = taxa_code.taxa_code;
 TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names,'UniformOutput',false);
 
@@ -101,12 +103,12 @@ end
 %% Visualize Landmark Propagation for Original Maps
 disp(['Original cP distance: ' num2str(cPDistMatrix(TAXAind{1},TAXAind{2}))]);
 
-% [~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,cPMapsMatrix{TAXAind{1},TAXAind{2}},Gs{1}.Aux.VertArea);
-% tGM = Mesh(Gs{1});
-% tGM.V = R*Gs{1}.V;
-% 
-% ViewTeethMapS(tGM, Gs{2}, {cPMapsMatrix{TAXAind{1},TAXAind{2}},cPMapsMatrix{TAXAind{2},TAXAind{1}}}, options);
-% set(gcf,'Name','cP');
+[~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,cPMapsMatrix{TAXAind{1},TAXAind{2}},Gs{1}.Aux.VertArea);
+tGM = Mesh(Gs{1});
+tGM.V = R*Gs{1}.V;
+
+ViewTeethMapS(tGM, Gs{2}, {cPMapsMatrix{TAXAind{1},TAXAind{2}},cPMapsMatrix{TAXAind{2},TAXAind{1}}}, options);
+set(gcf,'Name','cP');
 
 %% Improve Maps
 options.ShowTree = 'on';
@@ -118,12 +120,12 @@ options.ShowTree = 'off';
 rslt21 = Gs{2}.ImproveMap(Gs{1},cPDistMatrix,cPMapsMatrix,taxa_code,options);
 
 %% Visualize Landmark Propagation for Improved Maps
-% [~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,rslt12.ImprMap,Gs{1}.Aux.VertArea);
-% sGM = Mesh(Gs{1});
-% sGM.V = R*Gs{1}.V;
-% 
-% ViewTeethMapS(sGM, Gs{2}, {rslt12.ImprMap,rslt21.ImprMap}, options);
-% set(gcf,'Name',options.ImprType);
+[~,R,~] = MapToDist(Gs{1}.V,Gs{2}.V,rslt12.ImprMap,Gs{1}.Aux.VertArea);
+sGM = Mesh(Gs{1});
+sGM.V = R*Gs{1}.V;
+
+ViewTeethMapS(sGM, Gs{2}, {rslt12.ImprMap,rslt21.ImprMap}, options);
+set(gcf,'Name',options.ImprType);
 
 %% Print Maps to Texture Coordinates
 obj_surf_1 = [obj_path '1.obj'];

@@ -13,7 +13,7 @@ function [rslt] = ComputeContinuousProcrustes(GM,GN,options)
 %                           =1 if cP map is orientation-reversing
 %
 %   Tingran Gao, trgao10@math.duke.edu
-%   last modified: 10 Aug 2014
+%   last modified: 11 June 2014
 %
 
 
@@ -172,6 +172,22 @@ elseif (length(TPS_FEATURESM)==3) % Affine Transformation
     TextureCoords1 = DISCtoPLANE(pt','p2d')';
 end
 
+%%% linearly interpolate texture coordinates for boundary points
+if ~isfield(GM,'BV')
+    [GM.BV,GM.BE] = GM.FindBoundaries();
+end
+THETA = cart2pol(real(pushGM(GM.BV)),imag(pushGM(GM.BV)));
+regIdx = find(~isnan(compl(TextureCoords1(:,GM.BV))));
+nanIdx = find(isnan(compl(TextureCoords1(:,GM.BV))));
+newTHETA = cart2pol(TextureCoords1(1,GM.BV(regIdx)),TextureCoords1(2,GM.BV(regIdx)));
+%%%%%%%% THETA(regIdx) ---> newTHETA
+%%%%%%%% THETA(nanIdx) ---> ??
+interpBVTextureCoords = interp1(THETA(regIdx),newTHETA,THETA(nanIdx),'spline');
+[X,Y] = pol2cart(interpBVTextureCoords,1);
+TextureCoords1(:,GM.BV(nanIdx)) = [X;Y];
+nanIdx = find(isnan(compl(TextureCoords1)));
+TextureCoords1(:,nanIdx) = [real(pushGM(nanIdx));imag(pushGM(nanIdx))];
+
 TextureCoords2_kdtree = kdtree_build(TextureCoords2');
 cPmap = kdtree_nearest_neighbor(TextureCoords2_kdtree, TextureCoords1');
 
@@ -189,12 +205,32 @@ end
 TextureCoords1_kdtree = kdtree_build(TextureCoords1');
 invcPmap = kdtree_nearest_neighbor(TextureCoords1_kdtree, TextureCoords2');
 
-cPdist = MapToDist(GM.V,GN.V,cPmap,GM.Aux.VertArea);
+%%%%%
+nBV = setdiff(1:GM.nV,GM.BV);
+
+%%%%% linear interpolate images under the map when evaluating the cP functional
+TR = triangulation(GN.F',TextureCoords2');
+ti = pointLocation(TR,TextureCoords1(:,nBV)');
+nBV(isnan(ti)) = [];
+ti(isnan(ti)) = [];
+BC = cartesianToBarycentric(TR,ti,TextureCoords1(:,nBV)');
+
+imagPts = zeros(3,length(nBV));
+for j=1:length(nBV)
+    imagPts(:,j) = GN.V(:,GN.F(:,ti(j)))*BC(j,:)';
+end
+
+cPdist = MapToDist(GM.V(:,nBV),imagPts,1:length(nBV),GM.Aux.VertArea(nBV));
+% cPdist = sqrt(sum((GM.V(:,nBV)-imagPts).^2)*GM.Aux.VertArea(nBV)');
 
 if ref12==1
     TextureCoords1(2,:) = -TextureCoords1(2,:);
     TextureCoords2(2,:) = -TextureCoords2(2,:);
 end
+
+kdtree_delete(TextureCoords1_kdtree);
+kdtree_delete(TextureCoords2_kdtree);
+% kdtree_delete(options.TextureCoords2_kdtree);
 
 if isfield(GM.Aux,'name') && isfield(GN.Aux,'name')
     rslt.Gname1 = GM.Aux.name;

@@ -5,7 +5,7 @@ path(pathdef);
 addpath(path,genpath([pwd '/utils/']));
 
 %%% pick ImprType and FeatureFix
-ImprType = 'ComposedLAST'; % if 'Viterbi', should also specify "ViterbiAngle"!
+ImprType = 'MST'; % if 'Viterbi', should also specify "ViterbiAngle"!
 FeatureFix = 'off'; %% remain 'off', since 'on' can be run with cluster_FeatureFix.m
 
 %%% setup paths
