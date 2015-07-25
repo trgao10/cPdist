@@ -230,7 +230,6 @@ end
 
 kdtree_delete(TextureCoords1_kdtree);
 kdtree_delete(TextureCoords2_kdtree);
-% kdtree_delete(options.TextureCoords2_kdtree);
 
 if isfield(GM.Aux,'name') && isfield(GN.Aux,'name')
     rslt.Gname1 = GM.Aux.name;
