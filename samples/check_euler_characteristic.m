@@ -1,5 +1,5 @@
-% samples_path = [pwd '/HDM/'];
-samples_path = '/media/trgao10/Work/MATLAB/DATA/HDM/samples/';
+samples_path = [pwd '/HDM/'];
+% samples_path = '/media/trgao10/Work/MATLAB/DATA/HDM/samples/';
 
 sampleFiles = dir(samples_path);
 sampleFiles(1:2) = [];
