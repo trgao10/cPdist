@@ -7,6 +7,7 @@ function flatten_ongrid(mesh_file, sample_file)
 %==========================================================================
 
 G = Mesh('off', mesh_file);
+G.DeleteIsolatedVertex();
 revName = strtok(mesh_file(end:-1:1),'/');
 % G.Aux.name = strtok(revName(end:-1:1),'.');
 G.Aux.name = strtok(revName(end:-1:1),'_.');
