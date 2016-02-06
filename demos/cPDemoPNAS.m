@@ -2,10 +2,10 @@
 clear vars;
 % close all;
 path(pathdef);
-addpath(path,genpath([pwd '/utils/']));
+addpath(path,genpath([pwd '/../utils/']));
 
 %% set parameters
-Names = {'x09', 'x02'};
+Names = {'B03', 'u19'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
@@ -21,8 +21,8 @@ options.GaussMinMatch = 'on';
 % options.Display = 'on';
 
 obj_path = [pwd '/obj/'];
-sample_path = [pwd '/samples/PNAS/'];
-data_path = '~/Work/MATLAB/DATA/PNAS/';
+data_path = '/media/trgao10/Work/MATLAB/DATA/PNAS/';
+sample_path = [data_path 'samples/'];
 meshes_path = [data_path 'meshes/'];
 delete_command = 'rm -f ';
 
@@ -36,7 +36,7 @@ delete([obj_path '*.obj']);
 
 Gs = cell(2,1);
 
-taxa_code = load([data_path 'teeth_taxa_table.mat']);
+taxa_code = load([data_path '/teeth_taxa_table.mat']);
 taxa_code = taxa_code.taxa_code;
 TAXAind = cellfun(@(name) find(strcmpi(taxa_code,name)),Names);
 
@@ -79,6 +79,8 @@ disp(['rslt12.lkMSE = ' num2str(rslt12.lkMSE)]);
 disp(['rslt21.lkMSE = ' num2str(rslt21.lkMSE)]);
 
 %% print maps to texture coordinates
+Gs{1}.V = Gs{1}.V*4;
+Gs{2}.V = Gs{2}.V*4;
 obj_surf_1 = [obj_path '1.obj'];
 obj_surf_2 = [obj_path '2.obj'];
 if rslt12.cPdist<rslt21.cPdist

@@ -2,7 +2,8 @@
 clear vars;
 % close all;
 path(pathdef);
-addpath(path,genpath([pwd '/utils/']));
+% addpath(path,genpath([pwd '/utils/']));
+addpath(path,genpath('../utils/'));
 
 %% Set Path
 obj_path = [pwd '/obj/'];
@@ -13,8 +14,8 @@ result_path = '/media/trgao10/Work/MATLAB/ArchivedResults/PNAS/';
 cPMaps_path = [result_path 'cPDist/cPMapsMatrix.mat'];
 cPDist_path = [result_path 'cPDist/cPDistMatrix.mat'];
 % cPLAST_path = [pwd '/results/Teeth/cPdist/cPComposedLASTGraph_median.mat'];
-TextureCoords1_path = [result_path 'cPdist/TextureCoords1/'];
-TextureCoords2_path = [result_path 'cPdist/TextureCoords2/'];
+TextureCoords1_path = [result_path 'cPDist/TextureCoords1/'];
+TextureCoords2_path = [result_path 'cPDist/TextureCoords2/'];
 
 % cPMaps_path = [pwd '/results/Teeth/cPdist/cPMapsMatrix.mat'];
 % cPDist_path = [pwd '/results/Teeth/cPdist/cPDistMatrix.mat'];
@@ -23,11 +24,14 @@ TextureCoords2_path = [result_path 'cPdist/TextureCoords2/'];
 % TextureCoords2_path = [pwd '/results/Teeth/cPdist/TextureCoords2/'];
 
 % data_path = '~/Work/MATLAB/DATA/HDM/';
-data_path = '~/Work/MATLAB/DATA/PNAS/';
+% data_path = '~/Work/MATLAB/DATA/PNAS/';
+data_path = '/media/trgao10/Work/MATLAB/DATA/PNAS/';
 sample_path = [data_path 'samples/'];
 delete_command = 'rm -f ';
 
 %% Set Parameters
+% Names = {'B03', 'D09'};
+Names = {'u14', 'U02'};
 % Names = {'um-adcc181','w02'}; % Viterbi Path Search can't fix this without MST
 % Names = {'V09','x23'}; % how can these two teeth belong to the same genus??
 % Names = {'V09','V13'}; % good
@@ -39,7 +43,7 @@ delete_command = 'rm -f ';
 % Names = {'T06','h08'}; % compare with {'T05','h08'}
 % Names = {'k01','j01'}; % surprisingly good (cP value indicates it could be much worse)
 % Names = {'k15','a15'}; % makes a lot of sense--k15 is of low mesh quality
-Names = {'h08','j14'}; % nightmare
+% Names = {'h08','j14'}; % nightmare
 % Names = {'j01','j14'}; % beautiful results from Viterbi
 % Names = {'a16','x14'}; % cP reverses orientation; MST fixes it; Viterbi reverses orientation as well
 % Names = {'x09','B03'}; % LAST fix a peak
@@ -47,7 +51,7 @@ Names = {'h08','j14'}; % nightmare
 % Names = {'AMNH-M-67102_M1099', 'AMNH-M-71787_M784'};
 
 options.ImprType = 'MST';
-options.SmoothMap = 0;
+options.SmoothMap = 1;
 options.FeatureFix = 'off';
 options.GaussMinMatch = 'on';
 options.Angle = 1.0; % Viterbi with angle costs
@@ -131,19 +135,19 @@ set(gcf,'Name',options.ImprType);
 obj_surf_1 = [obj_path '1.obj'];
 obj_surf_2 = [obj_path '2.obj'];
 
-if rslt12.ImprDist<rslt21.ImprDist
+% if rslt12.ImprDist<rslt21.ImprDist
     options.Texture.Coordinates = rslt12.TextureCoords1/2+0.5;
     Gs{1}.Write(obj_surf_1,'obj',options);
     options.Texture.Coordinates = rslt12.TextureCoords2/2+0.5;
     Gs{2}.Write(obj_surf_2,'obj',options);
     
     disp(['Improve cP' options.ImprType ' distance: ' num2str(rslt12.ImprDist)]);
-else
-    options.Texture.Coordinates = rslt21.TextureCoords2/2+0.5;
-    Gs{1}.Write(obj_surf_1,'obj',options);
-    options.Texture.Coordinates = rslt21.TextureCoords1/2+0.5;
-    Gs{2}.Write(obj_surf_2,'obj',options);
-    
-    disp(['Improve cP' options.ImprType ' distance: ' num2str(rslt21.ImprDist)]);
-end
+% else
+%     options.Texture.Coordinates = rslt21.TextureCoords2/2+0.5;
+%     Gs{1}.Write(obj_surf_1,'obj',options);
+%     options.Texture.Coordinates = rslt21.TextureCoords1/2+0.5;
+%     Gs{2}.Write(obj_surf_2,'obj',options);
+%     
+%     disp(['Improve cP' options.ImprType ' distance: ' num2str(rslt21.ImprDist)]);
+% end
 

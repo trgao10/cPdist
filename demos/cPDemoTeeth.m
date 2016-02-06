@@ -2,17 +2,17 @@
 clear vars;
 % close all;
 path(pathdef);
-addpath(path,genpath([pwd '/utils/']));
+addpath(path,genpath('../utils/'));
 
 %% set parameters
-Names = {'AMNH-M-67102_M1099','AMNH-M-71787_M784'};
+Names = {'SBU-NAl13_M994','USNM-241384_M1085'};
 
 options.FeatureType = 'ConfMax';
 options.NumDensityPnts = 100;
 options.AngleIncrement = 0.01;
 % options.NumDensityPnts = 100;
 % options.AngleIncrement = 0.05;
-options.NumFeatureMatch = 4;
+options.NumFeatureMatch = 5;
 options.GaussMinMatch = 'off';
 % options.FeatureMatchType = 'Laplacian';
 % options.ConfMaxLocalWidth = 5;
@@ -23,9 +23,9 @@ options.GaussMinMatch = 'off';
 % options.Display = 'on';
 
 obj_path = [pwd '/obj/'];
-sample_path = [pwd '/samples/HDM/'];
-data_path = '~/Work/MATLAB/DATA/HDM/';
+data_path = '/media/trgao10/Work/MATLAB/DATA/HDM/';
 meshes_path = [data_path 'meshes/'];
+sample_path = [data_path 'samples/'];
 delete_command = 'rm -f ';
 
 %% parse parameters
