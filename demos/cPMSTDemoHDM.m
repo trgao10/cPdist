@@ -21,7 +21,8 @@ TextureCoords2_path = [result_path 'cPdist/TextureCoords2/'];
 % data_path = '~/Work/MATLAB/DATA/HDM/';
 % data_path = '~/Work/MATLAB/DATA/PNAS/';
 data_path = '/media/trgao10/Work/MATLAB/DATA/HDM/';
-sample_path = [data_path 'samples/'];
+% sample_path = [data_path 'samples/'];
+sample_path = '/media/trgao10/Work/MATLAB/cPdist/samples/HDM/';
 delete_command = 'rm -f ';
 
 %% Set Parameters

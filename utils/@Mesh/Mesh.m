@@ -42,6 +42,8 @@ methods
             obj.E2E=varargin{1}.E2E;
         elseif length(varargin)>=2
             switch(varargin{1})
+                case 'ply'
+                    [obj.V,obj.F] = obj.read_ply(varargin{2});
                 case 'off'
                     [obj.V,obj.F] = obj.read_off(varargin{2});
                 case 'obj'
@@ -68,6 +70,7 @@ end
 methods(Static)
     [V,F,Fs] = read_off(filename)
     [V,F,Fs] = read_obj(filename)
+    [V,F,Fs] = read_ply(filename)
     v = getoptions(options, name, v, mendatory)
     [D,S,Q] = PerformFrontPropagation(vertex, faces, W,start_points,end_points, nb_iter_max, H, L, values, dmax)
 end

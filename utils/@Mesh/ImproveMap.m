@@ -35,7 +35,8 @@ end
 rslt.Gname1 = GM.Aux.name;
 rslt.Gname2 = GN.Aux.name;
 
-TAXAind = cellfun(@(name) find(strcmpi(TaxaCode,name)),{GM.Aux.name,GN.Aux.name},'UniformOutput',false);
+tempTaxaCode = cellfun(@(x) strtok(x, '_'), TaxaCode, 'UniformOutput', false);
+TAXAind = cellfun(@(name) find(strcmpi(tempTaxaCode,name)),{GM.Aux.name,GN.Aux.name},'UniformOutput',false);
 GroupSize = length(TaxaCode);
 
 if ~strcmpi(ImprType,'Viterbi') && ~strcmpi(ImprType,'ComposedLAST') %%% MST or ComposedLAST
