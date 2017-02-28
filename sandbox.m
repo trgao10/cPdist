@@ -1,20 +1,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% turn meshes into obj files with texture coordinates
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-path(pathdef);
-addpath(path,genpath([pwd '/utils/']));
-
-taxa_file = '/media/trgao10/Work/MATLAB/DATA/PNAS/teeth_taxa_table.mat';
-taxa_code = load(taxa_file);
-taxa_code = taxa_code.taxa_code;
-
-for j=1:length(taxa_code)
-    meshName = taxa_code{j};
-    load(['/media/trgao10/Work/MATLAB/DATA/PNAS/samples/' meshName '.mat']);
-    options.Texture.Coordinates = G.Aux.UniformizationV(1:2, :)/2+0.5;
-    G1 = Mesh('off', ['/media/trgao10/Work/MATLAB/DATA/PNAS/meshes/' meshName '_sas.off']);
-%     G1.Write(['./demos/obj/' meshName '.obj'],'obj',options);
-end
+% path(pathdef);
+% addpath(path,genpath([pwd '/utils/']));
+% 
+% taxa_file = '/media/trgao10/Work/MATLAB/DATA/PNAS/teeth_taxa_table.mat';
+% taxa_code = load(taxa_file);
+% taxa_code = taxa_code.taxa_code;
+% 
+% for j=1:length(taxa_code)
+%     meshName = taxa_code{j};
+%     load(['/media/trgao10/Work/MATLAB/DATA/PNAS/samples/' meshName '.mat']);
+%     options.Texture.Coordinates = G.Aux.UniformizationV(1:2, :)/2+0.5;
+%     G1 = Mesh('off', ['/media/trgao10/Work/MATLAB/DATA/PNAS/meshes/' meshName '_sas.off']);
+% %     G1.Write(['./demos/obj/' meshName '.obj'],'obj',options);
+% end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% view mesh
@@ -525,3 +525,4 @@ end
 % tGM.V = R*GM.V;
 % 
 % ViewTeethCPvsCPMSTvsFeatCPMST(tGM,GN,cPmaps,cPMSTmaps,FeatCPMSTmaps,options);
+

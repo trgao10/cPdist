@@ -2,7 +2,7 @@
 clear vars;
 % close all;
 path(pathdef);
-addpath(path,genpath([pwd '/../utils/']));
+addpath(path,genpath([pwd '/utils/']));
 
 %% set parameters
 Names = {'B03', 'u19'};
@@ -20,7 +20,7 @@ options.GaussMinMatch = 'on';
 % options.ExcludeBoundary = 1;
 % options.Display = 'on';
 
-obj_path = [pwd '/obj/'];
+obj_path = [pwd '/viewer/obj/'];
 data_path = '~/Work/MATLAB/DATA/PNAS/';
 sample_path = [data_path 'samples/'];
 meshes_path = [data_path 'meshes/'];
@@ -81,8 +81,8 @@ disp(['rslt21.lkMSE = ' num2str(rslt21.lkMSE)]);
 %% print maps to texture coordinates
 Gs{1}.V = Gs{1}.V*4;
 Gs{2}.V = Gs{2}.V*4;
-obj_surf_1 = [obj_path '1.obj'];
-obj_surf_2 = [obj_path '2.obj'];
+obj_surf_1 = [obj_path 'source.obj'];
+obj_surf_2 = [obj_path 'target.obj'];
 if rslt12.cPdist<rslt21.cPdist
     options.Texture.Coordinates = rslt12.TextureCoords1/2+0.5;
     Gs{1}.Write(obj_surf_1,'obj',options);

@@ -99,7 +99,7 @@ if (strcmpi(Landmarks, 'on'))
     lighting phong;
     if (strcmpi(Type, 'sample'))
         samples = GM.V(:,GM.Aux.VertSampInd);
-        scatter3(samples(1,:),samples(2,:),samples(3,:),5,'k','filled');
+        scatter3(samples(1,:),samples(2,:),samples(3,:),10,'k','filled');
     end
     map = maps{1};
     PropagLandmarkCoords = GN.V(:,map(IndsOnSource));
@@ -109,10 +109,10 @@ end
 Link = linkprop(h, {'CameraUpVector', 'CameraPosition', 'CameraTarget', 'CameraViewAngle'});
 setappdata(gcf, 'StoreTheLink', Link);
 
-set(gca, 'CameraUpVector', [0.8469,-0.5272,-0.0696]);
-set(gca, 'CameraPosition', [0.0425,0.5383,-3.7461]);
-set(gca, 'CameraTarget', [0.0122,-0.0075,0.0173]);
-set(gca, 'CameraViewAngle', 10.5477);
+% set(gca, 'CameraUpVector', [0.8469,-0.5272,-0.0696]);
+% set(gca, 'CameraPosition', [0.0425,0.5383,-3.7461]);
+% set(gca, 'CameraTarget', [0.0122,-0.0075,0.0173]);
+% set(gca, 'CameraViewAngle', 10.5477);
 
 userdata.maps = maps;
 userdata.Type = Type;
@@ -178,7 +178,8 @@ NumLandmarks = max(size(Landmarks));
 colmap =  [1,0,0;0,1,0;0,0,1;1,1,0;1,0,1;0,1,1];
 colmap = [colmap;colmap*0.5;colmap*0.25];
 
-R = 0.015;
+% R = 0.015;
+R = 0.05;
 CORR_draw_spheres(Landmarks',R,colmap(1:NumLandmarks,:));
 
 end
